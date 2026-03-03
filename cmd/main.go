@@ -16,14 +16,13 @@ import (
 )
 
 func main() {
-
 	// 1. Load config
 	cfg := config.Load()
 
 	// 2. Initialize dependencies
 	repo := repository.NewUserRepository()
-	svc  := service.NewUserService(repo)
-	h    := handler.NewUserHandler(svc)
+	svc := service.NewUserService(repo)
+	h := handler.NewUserHandler(svc)
 
 	// 3. Setup router
 	mux := http.NewServeMux()
@@ -37,7 +36,7 @@ func main() {
 
 	// Run server in goroutine
 	go func() {
-		log.Println("Server running on port 123 1234444", cfg.Port)
+		log.Println("Server running on port", cfg.Port)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatal(err)
 		}
