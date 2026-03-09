@@ -1,60 +1,52 @@
 package main
 
 import (
-	"context"
+	// "context"
+	// "net/http"
+	// "os"
+	// "os/signal"
+	// "syscall"
+	// "time"
 	"log"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 
-	"github.com/conmeo200/Golang-V1/internal/config"
+	//"github.com/conmeo200/Golang-V1/internal/config"
+	//"github.com/conmeo200/Golang-V1/internal/handler"
+	//"github.com/conmeo200/Golang-V1/internal/repository"
+	//"github.com/conmeo200/Golang-V1/internal/model"
+	"github.com/conmeo200/Golang-V1/internal/database"
 	"github.com/conmeo200/Golang-V1/internal/handler"
-	"github.com/conmeo200/Golang-V1/internal/repository"
+	"github.com/conmeo200/Golang-V1/internal/router"
 	"github.com/conmeo200/Golang-V1/internal/service"
 )
 
 func main() {
 	// 1. Load config
-	cfg := config.Load()
 
 	// 2. Initialize dependencies
-	repo := repository.NewUserRepository()
-	svc := service.NewUserService(repo)
-	h := handler.NewUserHandler(svc)
 
 	// 3. Setup router
-	mux := http.NewServeMux()
-	h.RegisterRoutes(mux)
+
 
 	// 4. Create server
-	server := &http.Server{
-		Addr:    ":" + cfg.Port,
-		Handler: mux,
+
+	dbPostgres, err := database.NewPostgres()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//Service, Handler and Route User
+	userService := service.NewUserService(dbPostgres)
+	userHandler := handler.NewUserHandler(userService)
+	router := router.New(userHandler)
+
+	log.Printf("Server starting on :%s\n", "8080")
+
+	err = http.ListenAndServe(":8080", router)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// Run server in goroutine
-	go func() {
-		log.Println("Server running on port", cfg.Port)
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatal(err)
-		}
-	}()
-
-	// 6. Graceful shutdown
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-
-	<-quit
-	log.Println("Shutting down server...")
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := server.Shutdown(ctx); err != nil {
-		log.Fatal("Server forced to shutdown:", err)
-	}
-
-	log.Println("Server exited properly")
+	
 }
