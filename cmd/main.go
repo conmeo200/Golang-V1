@@ -1,19 +1,10 @@
 package main
 
 import (
-	// "context"
-	// "net/http"
-	// "os"
-	// "os/signal"
-	// "syscall"
-	// "time"
 	"log"
 	"net/http"
-
-	//"github.com/conmeo200/Golang-V1/internal/config"
-	//"github.com/conmeo200/Golang-V1/internal/handler"
-	//"github.com/conmeo200/Golang-V1/internal/repository"
 	//"github.com/conmeo200/Golang-V1/internal/model"
+	//"github.com/conmeo200/Golang-V1/database/seeder"
 	"github.com/conmeo200/Golang-V1/internal/database"
 	"github.com/conmeo200/Golang-V1/internal/handler"
 	"github.com/conmeo200/Golang-V1/internal/router"
@@ -27,13 +18,28 @@ func main() {
 
 	// 3. Setup router
 
-
 	// 4. Create server
 
 	dbPostgres, err := database.NewPostgres()
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Run Migration
+		// dbPostgres.Migrator().DropTable(&model.User{})
+		// err = dbPostgres.AutoMigrate(&model.User{})
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
+
+		// log.Println("Migration successfuly!")
+
+	//Run Seeder
+		// err = seeder.SeedUsers(dbPostgres)
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
+
+		// log.Println("Seeder successfuly!")
 
 	//Service, Handler and Route User
 	userService := service.NewUserService(dbPostgres)
@@ -44,8 +50,10 @@ func main() {
 
 	err = http.ListenAndServe(":8080", router)
 	if err != nil {
+		log.Println("Error HTTP", err)
 		log.Fatal(err)
 	}
+
 
 	// Run server in goroutine
 	

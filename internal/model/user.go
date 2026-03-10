@@ -1,9 +1,18 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"github.com/google/uuid"
+)
 
 type User struct {
-	gorm.Model
-	Email   string  `gorm:"uniqueIndex"`
-	Balance float64
+	ID uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	Email        string `gorm:"size:255;uniqueIndex;not null"`
+	PasswordHash string `gorm:"size:255;not null"`
+	Role string `gorm:"size:50;default:user;index"`
+	Status string `gorm:"size:50;default:active;index"`
+	Balance float64 `gorm:"type:numeric(15,2);default:0"`
+	LastLoginAt int64
+	CreatedAt int64
+	UpdatedAt int64
+	DeletedAt int64
 }

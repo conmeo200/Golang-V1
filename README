@@ -1,0 +1,13 @@
+main.go
+   ↓
+router.New()
+   ↓
+routes
+   ↓
+ServeMux
+   ↓
+handler
+   ↓
+service
+   ↓
+database

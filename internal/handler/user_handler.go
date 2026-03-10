@@ -60,6 +60,7 @@ func (h *UserHandler) ListUser(w http.ResponseWriter, r *http.Request) {
 	log.Println("List User")
 
 	users, err := h.service.ListUser()
+	log.Println("List User", users)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
