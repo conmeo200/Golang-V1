@@ -2,18 +2,13 @@ package router
 
 import (
 	"net/http"
-	"github.com/conmeo200/Golang-V1/internal/handler"
+
+	"github.com/conmeo200/Golang-V1/internal/app"
 )
 
-func New(
-	userHandler *handler.UserHandler,
-	//orderHandler *handler.OrderHandler,
-) *http.ServeMux {
+func RegisterRoutes(mux *http.ServeMux, app *app.App) {
 
-	mux := http.NewServeMux()
+	RegisterUserRoutes(mux, app.UserHandler)
+	RegisterAuthRoutes(mux, app.AuthHandler)
 
-	registerUserRoutes(mux, userHandler)
-	//registerOrderRoutes(mux, orderHandler)
-
-	return mux
 }

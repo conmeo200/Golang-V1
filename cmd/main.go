@@ -3,12 +3,14 @@ package main
 import (
 	"log"
 	"net/http"
+
 	//"github.com/conmeo200/Golang-V1/internal/model"
 	//"github.com/conmeo200/Golang-V1/database/seeder"
+	"github.com/conmeo200/Golang-V1/internal/app"
 	"github.com/conmeo200/Golang-V1/internal/database"
-	"github.com/conmeo200/Golang-V1/internal/handler"
+	//"github.com/conmeo200/Golang-V1/internal/handler"
 	"github.com/conmeo200/Golang-V1/internal/router"
-	"github.com/conmeo200/Golang-V1/internal/service"
+	//"github.com/conmeo200/Golang-V1/internal/service"
 )
 
 func main() {
@@ -20,10 +22,12 @@ func main() {
 
 	// 4. Create server
 
+	// Connect DB
 	dbPostgres, err := database.NewPostgres()
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	// Run Migration
 		// dbPostgres.Migrator().DropTable(&model.User{})
 		// err = dbPostgres.AutoMigrate(&model.User{})
@@ -42,18 +46,15 @@ func main() {
 		// log.Println("Seeder successfuly!")
 
 	//Service, Handler and Route User
-	userService := service.NewUserService(dbPostgres)
-	userHandler := handler.NewUserHandler(userService)
-	router := router.New(userHandler)
+	app := app.NewApp(dbPostgres)
+
+	mux := http.NewServeMux()
+	
+	router.RegisterRoutes(mux, app)
+
+	http.ListenAndServe(":8080", mux)
 
 	log.Printf("Server starting on :%s\n", "8080")
-
-	err = http.ListenAndServe(":8080", router)
-	if err != nil {
-		log.Println("Error HTTP", err)
-		log.Fatal(err)
-	}
-
 
 	// Run server in goroutine
 	

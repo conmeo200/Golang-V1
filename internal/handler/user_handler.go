@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/conmeo200/Golang-V1/internal/dto"
 	"github.com/conmeo200/Golang-V1/internal/service"
 )
 
@@ -22,6 +23,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	type request struct {
 		Email   string  `json:"email"`
 		Balance float64 `json:"balance"`
+		PasswordHash string `json:"password"`
 	}
 
 	var req request
@@ -29,44 +31,85 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	if req.Email == "" || req.PasswordHash == "" {
+		http.Error(w, "Data Invalid", http.StatusBadRequest)
+		return
+	}
+
 	log.Println(req)
-	err := h.service.CreateUser(req.Email, req.Balance)
+	result, err := h.service.CreateUser(req.Email, req.Balance, req.PasswordHash)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte("User created"))
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(dto.SendSuccess(dto.ToUserResponse(result)))
 }
 
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 
 	idStr := r.URL.Query().Get("id")
 	log.Println("Param IDS", idStr)
-	id, _ := strconv.Atoi(idStr)
+	//id, _ := strconv.Atoi(idStr)
 
-	user, err := h.service.GetUser(uint(id))
+	user, err := h.service.GetUser(idStr)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
-	json.NewEncoder(w).Encode(user)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(dto.SendSuccess(dto.ToUserResponse(user)))
 }
 
-func (h *UserHandler) ListUser(w http.ResponseWriter, r *http.Request) {
+func (h *UserHandler) FindFirstByEmail(w http.ResponseWriter, r *http.Request) {
 
-	log.Println("List User")
+	type request struct {
+		Email   string  `json:"email"`
+	}
 
-	users, err := h.service.ListUser()
-	log.Println("List User", users)
+	var req request
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if req.Email == "" {
+		http.Error(w, "Data Invalid", http.StatusBadRequest)
+		return
+	}
+
+	user, err := h.service.FindFirstByEmail(req.Email)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
-	json.NewEncoder(w).Encode(users)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(dto.SendSuccess(dto.ToUserResponse(user)))
+}
+
+
+func (h *UserHandler) ListUser(w http.ResponseWriter, r *http.Request) {
+	users, err := h.service.ListUser()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+	
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(dto.ToUserResponsesArray(users))
 }
 
 type UpdateUserRequest struct {
@@ -97,14 +140,22 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Update user id=%d balance=%f", id, req.Balance)
 
-	err = h.service.Update(uint(id), req.Balance)
+	err = h.service.UpdateBalance(uint(id), req.Balance)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	result, err := h.service.GetUser(idStr)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("User updated"))
+
+	json.NewEncoder(w).Encode(dto.SendSuccess(dto.ToUserResponse(result)))
 }
 
 func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
@@ -122,12 +173,14 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.service.Delete(uint(id))
+	err = h.service.DeleteUser(uint(id))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode("User deleted")
+	w.WriteHeader(http.StatusOK)
+
+	json.NewEncoder(w).Encode(dto.SendSuccess(nil))
 }
