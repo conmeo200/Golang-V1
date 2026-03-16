@@ -2,11 +2,11 @@ package handler
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/conmeo200/Golang-V1/internal/dto"
+	"github.com/conmeo200/Golang-V1/internal/logger"
 	"github.com/conmeo200/Golang-V1/internal/service"
 )
 
@@ -28,6 +28,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	var req request
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		logger.ErrorLogger.Printf("CreateUser decode error: %v", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -37,10 +38,11 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println(req)
+	logger.AppLogger.Println("CreateUser request received:", req.Email)
 	result, err := h.service.CreateUser(r.Context(), req.Email, req.Balance, req.PasswordHash)
 
 	if err != nil {
+		logger.ErrorLogger.Printf("CreateUser error from DB: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -54,11 +56,12 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 
 	idStr := r.URL.Query().Get("id")
-	log.Println("Param IDS", idStr)
+	logger.AppLogger.Println("Param IDS", idStr)
 	//id, _ := strconv.Atoi(idStr)
 
 	user, err := h.service.GetUser(r.Context(), idStr)
 	if err != nil {
+		logger.ErrorLogger.Printf("GetUser error: %v", err)
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
@@ -77,6 +80,7 @@ func (h *UserHandler) FindFirstByEmail(w http.ResponseWriter, r *http.Request) {
 
 	var req request
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		logger.ErrorLogger.Printf("FindFirstByEmail decode error: %v", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -88,6 +92,7 @@ func (h *UserHandler) FindFirstByEmail(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.service.FindFirstByEmail(r.Context(), req.Email)
 	if err != nil {
+		logger.ErrorLogger.Printf("FindFirstByEmail error: %v", err)
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
@@ -138,7 +143,7 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("Update user id=%d balance=%f", id, req.Balance)
+	logger.AppLogger.Printf("Update user id=%d balance=%f", id, req.Balance)
 
 	err = h.service.UpdateBalance(r.Context(), uint(id), req.Balance)
 	if err != nil {

@@ -2,11 +2,11 @@ package handler
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/conmeo200/Golang-V1/internal/auth"
 	"github.com/conmeo200/Golang-V1/internal/dto"
+	"github.com/conmeo200/Golang-V1/internal/logger"
 	"github.com/conmeo200/Golang-V1/internal/service"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -25,17 +25,17 @@ func NewAuthHandler(s *service.AuthService) *AuthHandler {
 }
 
 func (h *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("Handler Register")
 
 	var req Request
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		logger.ErrorLogger.Printf("RegisterHandler: invalid request format")
 		return
 	}
 
-	log.Println("Request", req)
+	logger.AppLogger.Printf("Register Request received for %s", req.Email)
 
 	user, err := h.service.RegisterUser(r.Context(), req.Email, req.Password)
 	if err != nil {
@@ -73,6 +73,7 @@ func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		logger.ErrorLogger.Printf("LoginHandler: invalid request format")
 		return
 	}
 
@@ -81,6 +82,7 @@ func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(dto.SendError(err.Error()))
+		logger.ErrorLogger.Printf("LoginHandler Unauthorized: %v", err)
 		return
 	}
 
@@ -139,7 +141,9 @@ func (h *AuthHandler) ForgotPasswordHandler(w http.ResponseWriter, r *http.Reque
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
+
 		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		logger.ErrorLogger.Printf("ForgotPasswordHandler decode error: %v", err)
 		return
 	}
 
@@ -147,9 +151,13 @@ func (h *AuthHandler) ForgotPasswordHandler(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
+
 		json.NewEncoder(w).Encode(dto.SendError(err.Error()))
+		logger.ErrorLogger.Printf("ForgotPasswordHandler error: %v", err)
 		return
 	}
+
+	logger.AppLogger.Printf("ForgotPassword token generated for %s", req.Email)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(dto.APIResponse{
@@ -203,7 +211,9 @@ func (h *AuthHandler) RefreshTokenHandler(w http.ResponseWriter, r *http.Request
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
+
 		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		logger.ErrorLogger.Printf("RefreshTokenHandler decode error: %v", err)
 		return
 	}
 
@@ -211,9 +221,13 @@ func (h *AuthHandler) RefreshTokenHandler(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
+
 		json.NewEncoder(w).Encode(dto.SendError(err.Error()))
+		logger.ErrorLogger.Printf("RefreshTokenHandler error: %v", err)
 		return
 	}
+
+	logger.AppLogger.Printf("Token refreshed successfully")
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(dto.APIResponse{
@@ -230,10 +244,13 @@ func (h *AuthHandler) RevokeTokenHandler(w http.ResponseWriter, r *http.Request)
 	var req struct {
 		RefreshToken string `json:"refresh_token"`
 	}
+
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
+
 		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		logger.ErrorLogger.Printf("RevokeTokenHandler decode error: %v", err)
 		return
 	}
 
@@ -242,7 +259,12 @@ func (h *AuthHandler) RevokeTokenHandler(w http.ResponseWriter, r *http.Request)
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
 			exp, _ := claims["exp"].(float64)
 			h.service.RevokeToken(r.Context(), req.RefreshToken, int64(exp))
+			logger.AppLogger.Printf("Token revoked via API")
+		} else {
+			logger.ErrorLogger.Printf("RevokeTokenHandler claims format error")
 		}
+	} else {
+		logger.ErrorLogger.Printf("RevokeTokenHandler validate error or invalid token: %v", err)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
