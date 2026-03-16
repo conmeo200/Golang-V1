@@ -69,6 +69,12 @@ func (r *UserRepository) UpdateBalance(id uint, newBalance float64) error {
 		Update("balance", newBalance).Error
 }
 
+func (r *UserRepository) UpdatePassword(id string, newHash string) error {
+	return r.db.Model(&model.User{}).
+		Where("id = ?", id).
+		Update("password_hash", newHash).Error
+}
+
 func (r *UserRepository) Delete(id uint) error {
 
 	return r.db.Delete(&model.User{}, id).Error

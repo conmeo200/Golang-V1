@@ -2,15 +2,20 @@ package router
 
 import (
 	"net/http"
+
 	"github.com/conmeo200/Golang-V1/internal/handler"
-	//"github.com/conmeo200/Golang-V1/internal/help"
+	"github.com/conmeo200/Golang-V1/internal/help"
+	"github.com/conmeo200/Golang-V1/internal/middleware"
 )
 
 func RegisterAuthRoutes(mux *http.ServeMux, h *handler.AuthHandler) {
 
-	// mux.HandleFunc("/users", help.Method(http.MethodGet, h.ListUser))
-	// mux.HandleFunc("/users", help.Method(http.MethodPost, h.CreateUser))
-	// mux.HandleFunc("/users", help.Method(http.MethodPut, h.UpdateUser))
-	// mux.HandleFunc("/users", help.Method(http.MethodDelete, h.DeleteUser))
-	// mux.HandleFunc("/find-first-email", help.Method(http.MethodPost, h.FindFirstByEmail))
+	mux.HandleFunc("/register", help.Method(http.MethodPost, h.RegisterHandler))
+	mux.HandleFunc("/login", help.Method(http.MethodPost, h.LoginHandler))
+	mux.HandleFunc("/forgot-password", help.Method(http.MethodPost, h.ForgotPasswordHandler))
+	mux.HandleFunc("/refresh-token", help.Method(http.MethodPost, h.RefreshTokenHandler))
+
+	mux.Handle("/logout", middleware.JWTMiddleware(help.Method(http.MethodPost, h.LogoutHandler)))
+	mux.Handle("/change-password", middleware.JWTMiddleware(help.Method(http.MethodPost, h.ChangePasswordHandler)))
+	mux.Handle("/revoke-token", middleware.JWTMiddleware(help.Method(http.MethodPost, h.RevokeTokenHandler)))
 }

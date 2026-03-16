@@ -46,10 +46,6 @@ func (s *UserService) CreateUser(email string, balance float64, password string)
 		return nil, errors.New("password is required")
 	}
 
-	if balance < 0 {
-		return nil, errors.New("balance cannot be negative")
-	}
-
 	// check existing user
 	existing, err := s.repo.FindByEmail(email)
 	if err != nil {

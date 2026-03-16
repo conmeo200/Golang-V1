@@ -18,10 +18,11 @@ func NewApp(db *gorm.DB) *App {
 	// repositories
 	userRepo := repository.NewUserRepository(db)
 	authRepo := repository.NewAuthRepository(db)
+	tokenRepo := repository.NewTokenRepository(db)
 
 	// services
 	userService := service.NewUserService(userRepo)
-	authService := service.NewAuthService(authRepo)
+	authService := service.NewAuthService(authRepo, userRepo, tokenRepo)
 
 	// handlers
 	userHandler := handler.NewUserHandler(userService)

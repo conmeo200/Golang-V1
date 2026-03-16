@@ -1,15 +1,14 @@
 package handler
 
 import (
-	//"encoding/json"
 	"encoding/json"
 	"log"
 	"net/http"
 
-	//"github.com/conmeo200/Golang-V1/internal/auth"
-	//"github.com/conmeo200/Golang-V1/internal/dto"
-	"github.com/conmeo200/Golang-V1/internal/model"
+	"github.com/conmeo200/Golang-V1/internal/auth"
+	"github.com/conmeo200/Golang-V1/internal/dto"
 	"github.com/conmeo200/Golang-V1/internal/service"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type AuthHandler struct {
@@ -17,12 +16,8 @@ type AuthHandler struct {
 }
 
 type Request struct {
-	Email string 
-	Password  string
-}
-
-func CheckPassword(password string, user *model.User) bool {
-	return true
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 func NewAuthHandler(s *service.AuthService) *AuthHandler {
@@ -31,196 +26,228 @@ func NewAuthHandler(s *service.AuthService) *AuthHandler {
 
 func (h *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Handler Register")
+
 	var req Request
-	json.NewDecoder(r.Body).Decode(&req)
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		return
+	}
 
 	log.Println("Request", req)
-	// user, err := h.serviceUser.FindByEmail(req.Email)
-	// if err != nil {
-	// 	http.Error(w, "user not found", 401)
-	// 	return
-	// }
 
-	// if !CheckPassword(req.Password, user.PasswordHash) {
-	// 	http.Error(w, "invalid password", 401)
-	// 	return
-	// }
+	user, err := h.service.RegisterUser(req.Email, req.Password)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(dto.SendError(err.Error()))
+		return
+	}
 
-	// token, _ := auth.GenerateToken(user.ID.String())
+	// Generate Token here
+	accessToken, refreshToken, err := auth.GenerateTokens(user.ID.String())
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(dto.SendError("failed to generate token"))
+		return
+	}
 
-	// resp := dto.APIResponse{
-	// 	Status: true,
-	// 	Data: map[string]string{
-	// 		"token": token,
-	// 	},
-	// }
-
-	// json.NewEncoder(w).Encode(resp)
+	w.Header().Set("Content-Type", "application/json")
+	resp := dto.APIResponse{
+		Status:  true,
+		Message: "success",
+		Data: map[string]interface{}{
+			"access_token":  accessToken,
+			"user":          user,
+			"refresh_token": refreshToken,
+		},
+	}
+	json.NewEncoder(w).Encode(resp)
 }
 func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
-	// var req LoginRequest
-	// json.NewDecoder(r.Body).Decode(&req)
+	var req Request
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		return
+	}
 
-	// user, err := h.serviceUser.FindByEmail(req.Email)
-	// if err != nil {
-	// 	http.Error(w, "user not found", 401)
-	// 	return
-	// }
+	user, err := h.service.LoginUser(req.Email, req.Password)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(dto.SendError(err.Error()))
+		return
+	}
 
-	// if !CheckPassword(req.Password, user.PasswordHash) {
-	// 	http.Error(w, "invalid password", 401)
-	// 	return
-	// }
+	accessToken, refreshToken, err := auth.GenerateTokens(user.ID.String())
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(dto.SendError("failed to generate token"))
+		return
+	}
 
-	// token, _ := auth.GenerateToken(user.ID.String())
-
-	// resp := dto.APIResponse{
-	// 	Status: true,
-	// 	Data: map[string]string{
-	// 		"token": token,
-	// 	},
-	// }
-
-	// json.NewEncoder(w).Encode(resp)
+	w.Header().Set("Content-Type", "application/json")
+	resp := dto.APIResponse{
+		Status:  true,
+		Message: "success",
+		Data: map[string]interface{}{
+			"access_token":  accessToken,
+			"user":          user,
+			"refresh_token": refreshToken,
+		},
+	}
+	json.NewEncoder(w).Encode(resp)
 }
 
 func (h *AuthHandler) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
-	// var req LoginRequest
-	// json.NewDecoder(r.Body).Decode(&req)
+	// Typically we require the refresh token to revoke it in logout
+	var req struct {
+		RefreshToken string `json:"refresh_token"`
+	}
+	// Decode may fail if body is empty, we ignore or handle
+	json.NewDecoder(r.Body).Decode(&req)
 
-	// user, err := h.serviceUser.FindByEmail(req.Email)
-	// if err != nil {
-	// 	http.Error(w, "user not found", 401)
-	// 	return
-	// }
+	if req.RefreshToken != "" {
+		// Attempt to revoke
+		token, err := auth.ValidateToken(req.RefreshToken)
+		if err == nil && token.Valid {
+			if claims, ok := token.Claims.(jwt.MapClaims); ok {
+				exp, _ := claims["exp"].(float64)
+				h.service.RevokeToken(req.RefreshToken, int64(exp))
+			}
+		}
+	}
 
-	// if !CheckPassword(req.Password, user.PasswordHash) {
-	// 	http.Error(w, "invalid password", 401)
-	// 	return
-	// }
-
-	// token, _ := auth.GenerateToken(user.ID.String())
-
-	// resp := dto.APIResponse{
-	// 	Status: true,
-	// 	Data: map[string]string{
-	// 		"token": token,
-	// 	},
-	// }
-
-	// json.NewEncoder(w).Encode(resp)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(dto.APIResponse{
+		Status:  true,
+		Message: "logged out successfuly",
+	})
 }
 
-func (h *AuthHandler) ForgetPasswordHandler(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) ForgotPasswordHandler(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		Email string `json:"email"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		return
+	}
 
-	// var req LoginRequest
-	// json.NewDecoder(r.Body).Decode(&req)
+	resetToken, err := h.service.ForgotPassword(req.Email)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(dto.SendError(err.Error()))
+		return
+	}
 
-	// user, err := h.serviceUser.FindByEmail(req.Email)
-	// if err != nil {
-	// 	http.Error(w, "user not found", 401)
-	// 	return
-	// }
-
-	// if !CheckPassword(req.Password, user.PasswordHash) {
-	// 	http.Error(w, "invalid password", 401)
-	// 	return
-	// }
-
-	// token, _ := auth.GenerateToken(user.ID.String())
-
-	// resp := dto.APIResponse{
-	// 	Status: true,
-	// 	Data: map[string]string{
-	// 		"token": token,
-	// 	},
-	// }
-
-	// json.NewEncoder(w).Encode(resp)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(dto.APIResponse{
+		Status:  true,
+		Message: "reset token generated (mock email sent)",
+		Data: map[string]interface{}{
+			"reset_token": resetToken,
+		},
+	})
 }
 
 func (h *AuthHandler) ChangePasswordHandler(w http.ResponseWriter, r *http.Request) {
+	userID, ok := r.Context().Value("user_id").(string)
+	if !ok || userID == "" {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(dto.SendError("unauthorized: user id not in context"))
+		return
+	}
 
-	// var req LoginRequest
-	// json.NewDecoder(r.Body).Decode(&req)
+	var req struct {
+		OldPassword string `json:"old_password"`
+		NewPassword string `json:"new_password"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		return
+	}
 
-	// user, err := h.serviceUser.FindByEmail(req.Email)
-	// if err != nil {
-	// 	http.Error(w, "user not found", 401)
-	// 	return
-	// }
+	err := h.service.ChangePassword(userID, req.OldPassword, req.NewPassword)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(dto.SendError(err.Error()))
+		return
+	}
 
-	// if !CheckPassword(req.Password, user.PasswordHash) {
-	// 	http.Error(w, "invalid password", 401)
-	// 	return
-	// }
-
-	// token, _ := auth.GenerateToken(user.ID.String())
-
-	// resp := dto.APIResponse{
-	// 	Status: true,
-	// 	Data: map[string]string{
-	// 		"token": token,
-	// 	},
-	// }
-
-	// json.NewEncoder(w).Encode(resp)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(dto.APIResponse{
+		Status:  true,
+		Message: "password changed successfully",
+	})
 }
 
 func (h *AuthHandler) RefreshTokenHandler(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		RefreshToken string `json:"refresh_token"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		return
+	}
 
-	// var req LoginRequest
-	// json.NewDecoder(r.Body).Decode(&req)
+	accessToken, newRefreshToken, err := h.service.RefreshToken(req.RefreshToken)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(dto.SendError(err.Error()))
+		return
+	}
 
-	// user, err := h.serviceUser.FindByEmail(req.Email)
-	// if err != nil {
-	// 	http.Error(w, "user not found", 401)
-	// 	return
-	// }
-
-	// if !CheckPassword(req.Password, user.PasswordHash) {
-	// 	http.Error(w, "invalid password", 401)
-	// 	return
-	// }
-
-	// token, _ := auth.GenerateToken(user.ID.String())
-
-	// resp := dto.APIResponse{
-	// 	Status: true,
-	// 	Data: map[string]string{
-	// 		"token": token,
-	// 	},
-	// }
-
-	// json.NewEncoder(w).Encode(resp)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(dto.APIResponse{
+		Status:  true,
+		Message: "token refreshed",
+		Data: map[string]interface{}{
+			"access_token":  accessToken,
+			"refresh_token": newRefreshToken,
+		},
+	})
 }
 
 func (h *AuthHandler) RevokeTokenHandler(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		RefreshToken string `json:"refresh_token"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		return
+	}
 
-	// var req LoginRequest
-	// json.NewDecoder(r.Body).Decode(&req)
+	token, err := auth.ValidateToken(req.RefreshToken)
+	if err == nil && token.Valid {
+		if claims, ok := token.Claims.(jwt.MapClaims); ok {
+			exp, _ := claims["exp"].(float64)
+			h.service.RevokeToken(req.RefreshToken, int64(exp))
+		}
+	}
 
-	// user, err := h.serviceUser.FindByEmail(req.Email)
-	// if err != nil {
-	// 	http.Error(w, "user not found", 401)
-	// 	return
-	// }
-
-	// if !CheckPassword(req.Password, user.PasswordHash) {
-	// 	http.Error(w, "invalid password", 401)
-	// 	return
-	// }
-
-	// token, _ := auth.GenerateToken(user.ID.String())
-
-	// resp := dto.APIResponse{
-	// 	Status: true,
-	// 	Data: map[string]string{
-	// 		"token": token,
-	// 	},
-	// }
-
-	// json.NewEncoder(w).Encode(resp)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(dto.APIResponse{
+		Status:  true,
+		Message: "token revoked successfully",
+	})
 }
