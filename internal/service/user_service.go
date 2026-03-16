@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"strings"
 
@@ -17,7 +18,7 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 	return &UserService{repo: repo}
 }
 
-func (s *UserService) FindFirstByEmail(email string) (*model.User, error) {
+func (s *UserService) FindFirstByEmail(ctx context.Context, email string) (*model.User, error) {
 
 	email = strings.TrimSpace(email)
 
@@ -25,7 +26,7 @@ func (s *UserService) FindFirstByEmail(email string) (*model.User, error) {
 		return nil, errors.New("email is required")
 	}
 
-	user, err := s.repo.FindByEmail(email)
+	user, err := s.repo.FindByEmail(ctx, email)
 
 	if err != nil {
 		return nil, err
@@ -34,7 +35,7 @@ func (s *UserService) FindFirstByEmail(email string) (*model.User, error) {
 	return user, nil
 }
 
-func (s *UserService) CreateUser(email string, balance float64, password string) (*model.User, error) {
+func (s *UserService) CreateUser(ctx context.Context, email string, balance float64, password string) (*model.User, error) {
 
 	email = strings.TrimSpace(email)
 
@@ -47,7 +48,7 @@ func (s *UserService) CreateUser(email string, balance float64, password string)
 	}
 
 	// check existing user
-	existing, err := s.repo.FindByEmail(email)
+	existing, err := s.repo.FindByEmail(ctx, email)
 	if err != nil {
 		return nil, err
 	}
@@ -68,21 +69,21 @@ func (s *UserService) CreateUser(email string, balance float64, password string)
 		PasswordHash: string(hash),
 	}
 
-	return s.repo.CreateUser(&user)
+	return s.repo.CreateUser(ctx, &user)
 }
 
-func (s *UserService) GetUser(id string) (*model.User, error) {
+func (s *UserService) GetUser(ctx context.Context, id string) (*model.User, error) {
 
 	if strings.TrimSpace(id) == "" {
 		return nil, errors.New("id is required")
 	}
 
-	return s.repo.GetUser(id)
+	return s.repo.GetUser(ctx, id)
 }
 
-func (s *UserService) ListUser() ([]model.User, error) {
+func (s *UserService) ListUser(ctx context.Context) ([]model.User, error) {
 
-	users, err := s.repo.ListUser()
+	users, err := s.repo.ListUser(ctx)
 
 	if err != nil {
 		return nil, err
@@ -91,7 +92,7 @@ func (s *UserService) ListUser() ([]model.User, error) {
 	return users, nil
 }
 
-func (s *UserService) UpdateBalance(id uint, newBalance float64) error {
+func (s *UserService) UpdateBalance(ctx context.Context, id uint, newBalance float64) error {
 
 	if id == 0 {
 		return errors.New("invalid user id")
@@ -101,14 +102,14 @@ func (s *UserService) UpdateBalance(id uint, newBalance float64) error {
 		return errors.New("balance cannot be negative")
 	}
 
-	return s.repo.UpdateBalance(id, newBalance)
+	return s.repo.UpdateBalance(ctx, id, newBalance)
 }
 
-func (s *UserService) DeleteUser(id uint) error {
+func (s *UserService) DeleteUser(ctx context.Context, id uint) error {
 
 	if id == 0 {
 		return errors.New("invalid user id")
 	}
 
-	return s.repo.Delete(id)
+	return s.repo.Delete(ctx, id)
 }

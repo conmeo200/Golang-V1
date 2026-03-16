@@ -37,7 +37,7 @@ func (h *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("Request", req)
 
-	user, err := h.service.RegisterUser(req.Email, req.Password)
+	user, err := h.service.RegisterUser(r.Context(), req.Email, req.Password)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
@@ -76,7 +76,7 @@ func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := h.service.LoginUser(req.Email, req.Password)
+	user, err := h.service.LoginUser(r.Context(), req.Email, req.Password)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -120,7 +120,7 @@ func (h *AuthHandler) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		if err == nil && token.Valid {
 			if claims, ok := token.Claims.(jwt.MapClaims); ok {
 				exp, _ := claims["exp"].(float64)
-				h.service.RevokeToken(req.RefreshToken, int64(exp))
+				h.service.RevokeToken(r.Context(), req.RefreshToken, int64(exp))
 			}
 		}
 	}
@@ -143,7 +143,7 @@ func (h *AuthHandler) ForgotPasswordHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	resetToken, err := h.service.ForgotPassword(req.Email)
+	resetToken, err := h.service.ForgotPassword(r.Context(), req.Email)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
@@ -181,7 +181,7 @@ func (h *AuthHandler) ChangePasswordHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	err := h.service.ChangePassword(userID, req.OldPassword, req.NewPassword)
+	err := h.service.ChangePassword(r.Context(), userID, req.OldPassword, req.NewPassword)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
@@ -207,7 +207,7 @@ func (h *AuthHandler) RefreshTokenHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	accessToken, newRefreshToken, err := h.service.RefreshToken(req.RefreshToken)
+	accessToken, newRefreshToken, err := h.service.RefreshToken(r.Context(), req.RefreshToken)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -241,7 +241,7 @@ func (h *AuthHandler) RevokeTokenHandler(w http.ResponseWriter, r *http.Request)
 	if err == nil && token.Valid {
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
 			exp, _ := claims["exp"].(float64)
-			h.service.RevokeToken(req.RefreshToken, int64(exp))
+			h.service.RevokeToken(r.Context(), req.RefreshToken, int64(exp))
 		}
 	}
 

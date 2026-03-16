@@ -7,7 +7,7 @@ import (
 	//"github.com/conmeo200/Golang-V1/internal/model"
 	//"github.com/conmeo200/Golang-V1/database/seeder"
 	"github.com/conmeo200/Golang-V1/internal/app"
-	"github.com/conmeo200/Golang-V1/internal/auth"
+	//"github.com/conmeo200/Golang-V1/internal/auth"
 	"github.com/conmeo200/Golang-V1/internal/database"
 
 	//"github.com/conmeo200/Golang-V1/internal/handler"
@@ -55,9 +55,9 @@ func main() {
 
 	router.RegisterRoutes(mux, app)
 
-	accessToken, refreshToken, err := auth.GenerateTokens("123")
+	//accessToken, refreshToken, err := auth.GenerateTokens("123")
 
-	log.Println("GenerateTokens", accessToken, refreshToken, err)
+	//log.Println("GenerateTokens", accessToken, refreshToken, err)
 
 	http.ListenAndServe(":8080", mux)
 

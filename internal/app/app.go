@@ -11,6 +11,7 @@ import (
 type App struct {
 	UserHandler *handler.UserHandler
 	AuthHandler *handler.AuthHandler
+	WebHandler  *handler.WebHandler
 }
 
 func NewApp(db *gorm.DB) *App {
@@ -27,9 +28,11 @@ func NewApp(db *gorm.DB) *App {
 	// handlers
 	userHandler := handler.NewUserHandler(userService)
 	authHandler := handler.NewAuthHandler(authService)
+	webHandler  := handler.NewWebHandler()
 
 	return &App{
 		UserHandler: userHandler,
 		AuthHandler: authHandler,
+		WebHandler:  webHandler,
 	}
 }

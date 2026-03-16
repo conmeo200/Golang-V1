@@ -10,7 +10,8 @@ import (
 
 func RegisterUserRoutes(mux *http.ServeMux, h *handler.UserHandler) {
 
-	mux.Handle("/users", middleware.JWTMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// User routes
+	mux.Handle("/api/v1/users", middleware.RequireAPIKey(middleware.JWTMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		switch r.Method {
 
@@ -30,7 +31,7 @@ func RegisterUserRoutes(mux *http.ServeMux, h *handler.UserHandler) {
 			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		}
 
-	})))
+	}))))
 
-	mux.Handle("/find-first-email", middleware.JWTMiddleware(help.Method(http.MethodPost, h.FindFirstByEmail)))
+	mux.Handle("/api/v1/find-first-email", middleware.RequireAPIKey(middleware.JWTMiddleware(help.Method(http.MethodPost, h.FindFirstByEmail))))
 }

@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"errors"
 
 	"github.com/conmeo200/Golang-V1/internal/model"
@@ -18,11 +19,11 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
+func (r *UserRepository) FindByEmail(ctx context.Context, email string) (*model.User, error) {
 
 	var user model.User
 
-	err := r.db.Where("email = ?", email).First(&user).Error
+	err := r.db.WithContext(ctx).Where("email = ?", email).First(&user).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, nil
 	}
@@ -30,9 +31,9 @@ func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 	return &user, err
 }
 
-func (r *UserRepository) CreateUser(user *model.User) (*model.User, error) {
+func (r *UserRepository) CreateUser(ctx context.Context, user *model.User) (*model.User, error) {
 
-	result := r.db.Create(user)
+	result := r.db.WithContext(ctx).Create(user)
 
 	if result.Error != nil {
 		return nil, result.Error
@@ -41,11 +42,11 @@ func (r *UserRepository) CreateUser(user *model.User) (*model.User, error) {
 	return user, nil
 }
 
-func (r *UserRepository) GetUser(id string) (*model.User, error) {
+func (r *UserRepository) GetUser(ctx context.Context, id string) (*model.User, error) {
 
 	var user model.User
 
-	err := r.db.First(&user, "id = ?", id).Error
+	err := r.db.WithContext(ctx).First(&user, "id = ?", id).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, nil
 	}
@@ -53,29 +54,29 @@ func (r *UserRepository) GetUser(id string) (*model.User, error) {
 	return &user, err
 }
 
-func (r *UserRepository) ListUser() ([]model.User, error) {
+func (r *UserRepository) ListUser(ctx context.Context) ([]model.User, error) {
 
 	var users []model.User
 
-	err := r.db.Find(&users).Error
+	err := r.db.WithContext(ctx).Find(&users).Error
 
 	return users, err
 }
 
-func (r *UserRepository) UpdateBalance(id uint, newBalance float64) error {
+func (r *UserRepository) UpdateBalance(ctx context.Context, id uint, newBalance float64) error {
 
-	return r.db.Model(&model.User{}).
+	return r.db.WithContext(ctx).Model(&model.User{}).
 		Where("id = ?", id).
 		Update("balance", newBalance).Error
 }
 
-func (r *UserRepository) UpdatePassword(id string, newHash string) error {
-	return r.db.Model(&model.User{}).
+func (r *UserRepository) UpdatePassword(ctx context.Context, id string, newHash string) error {
+	return r.db.WithContext(ctx).Model(&model.User{}).
 		Where("id = ?", id).
 		Update("password_hash", newHash).Error
 }
 
-func (r *UserRepository) Delete(id uint) error {
+func (r *UserRepository) Delete(ctx context.Context, id uint) error {
 
-	return r.db.Delete(&model.User{}, id).Error
+	return r.db.WithContext(ctx).Delete(&model.User{}, id).Error
 }

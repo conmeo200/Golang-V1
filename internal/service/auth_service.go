@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"strings"
 
@@ -28,7 +29,7 @@ func NewAuthService(
 		}
 }
 
-func (s *AuthService)RegisterUser(email string, password string) (*model.User, error) {
+func (s *AuthService)RegisterUser(ctx context.Context, email string, password string) (*model.User, error) {
 	email = strings.TrimSpace(email)
 
 	if email == "" {
@@ -40,7 +41,7 @@ func (s *AuthService)RegisterUser(email string, password string) (*model.User, e
 	}
 
 	// check existing user
-	existing, err := s.userRepo.FindByEmail(email)
+	existing, err := s.userRepo.FindByEmail(ctx, email)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +61,7 @@ func (s *AuthService)RegisterUser(email string, password string) (*model.User, e
 		PasswordHash : string(hash),
 	}
 
-	user, err = s.userRepo.CreateUser(user)
+	user, err = s.userRepo.CreateUser(ctx, user)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +70,7 @@ func (s *AuthService)RegisterUser(email string, password string) (*model.User, e
 	return user, nil
 }
 
-func (s *AuthService) LoginUser(email string, password string) (*model.User, error) {
+func (s *AuthService) LoginUser(ctx context.Context, email string, password string) (*model.User, error) {
 	email = strings.TrimSpace(email)
 
 	if email == "" {
@@ -80,7 +81,7 @@ func (s *AuthService) LoginUser(email string, password string) (*model.User, err
 		return nil, errors.New("password is required")
 	}
 
-	user, err := s.userRepo.FindByEmail(email)
+	user, err := s.userRepo.FindByEmail(ctx, email)
 	if err != nil {
 		return nil, err
 	}
@@ -101,20 +102,20 @@ func CheckPassword(password string, password_hash string) bool {
 	return err == nil
 }
 
-func (s *AuthService) RevokeToken(tokenString string, expiresAt int64) error {
+func (s *AuthService) RevokeToken(ctx context.Context, tokenString string, expiresAt int64) error {
 	blacklist := &model.TokenBlacklist{
 		Token:     tokenString,
 		ExpiresAt: expiresAt,
 	}
-	return s.tokenRepo.BlacklistToken(blacklist)
+	return s.tokenRepo.BlacklistToken(ctx, blacklist)
 }
 
-func (s *AuthService) IsTokenBlacklisted(tokenString string) bool {
-	return s.tokenRepo.IsBlacklisted(tokenString)
+func (s *AuthService) IsTokenBlacklisted(ctx context.Context, tokenString string) bool {
+	return s.tokenRepo.IsBlacklisted(ctx, tokenString)
 }
 
-func (s *AuthService) ChangePassword(userID string, oldPassword string, newPassword string) error {
-	user, err := s.userRepo.GetUser(userID)
+func (s *AuthService) ChangePassword(ctx context.Context, userID string, oldPassword string, newPassword string) error {
+	user, err := s.userRepo.GetUser(ctx, userID)
 	if err != nil {
 		return err
 	}
@@ -131,16 +132,16 @@ func (s *AuthService) ChangePassword(userID string, oldPassword string, newPassw
 		return err
 	}
 
-	return s.userRepo.UpdatePassword(userID, string(hash))
+	return s.userRepo.UpdatePassword(ctx, userID, string(hash))
 }
 
-func (s *AuthService) ForgotPassword(email string) (string, error) {
+func (s *AuthService) ForgotPassword(ctx context.Context, email string) (string, error) {
 	email = strings.TrimSpace(email)
 	if email == "" {
 		return "", errors.New("email is required")
 	}
 
-	user, err := s.userRepo.FindByEmail(email)
+	user, err := s.userRepo.FindByEmail(ctx, email)
 	if err != nil {
 		return "", err
 	}
@@ -153,8 +154,8 @@ func (s *AuthService) ForgotPassword(email string) (string, error) {
 	return resetToken, nil
 }
 
-func (s *AuthService) RefreshToken(tokenString string) (string, string, error) {
-	if s.IsTokenBlacklisted(tokenString) {
+func (s *AuthService) RefreshToken(ctx context.Context, tokenString string) (string, string, error) {
+	if s.IsTokenBlacklisted(ctx, tokenString) {
 		return "", "", errors.New("token is blacklisted")
 	}
 
@@ -175,7 +176,7 @@ func (s *AuthService) RefreshToken(tokenString string) (string, string, error) {
 
 	// Revoke old refresh token so it can't be used again
 	exp, _ := claims["exp"].(float64)
-	s.RevokeToken(tokenString, int64(exp))
+	s.RevokeToken(ctx, tokenString, int64(exp))
 
 	return auth.GenerateTokens(userID)
 }

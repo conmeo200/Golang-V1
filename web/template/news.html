@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Title }}</title>
+    <!-- Use Google Fonts: Serif for Newspaper, Sans for utility -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-top">
+            <h1 class="logo">NEWS HOT</h1>
+        </div>
+        <nav class="nav">
+            <a href="/" class="nav-link active">Front Page</a>
+            <a href="#world" class="nav-link">World</a>
+            <a href="#politics" class="nav-link">Politics</a>
+            <a href="#business" class="nav-link">Business</a>
+            <a href="#tech" class="nav-link">Technology</a>
+        </nav>
+    </header>
+
+    <main class="main-container">
+
+        <div class="date-bar">
+            <span>Vol. CLI ... No. 59,214</span>
+            <span>MONDAY, OCTOBER 16, 2026</span>
+            <span>Printed in Go</span>
+        </div>
+
+        <div class="news-layout">
+            <!-- Main Column for Headline -->
+            <div class="main-column">
+                {{ if gt (len .NewsList) 0 }}
+                <!-- First item is the Headline -->
+                {{ $headline := index .NewsList 0 }}
+                <article class="headline">
+                    <div class="article-header headline">
+                        <span class="news-category">{{$headline.Category}}</span>
+                        <h2 class="headline-title">{{$headline.Title}}</h2>
+                    </div>
+
+                    <div class="news-meta">
+                        <span class="news-author">By <strong>{{$headline.Author}}</strong></span>
+                        <span class="news-date"> &mdash; {{$headline.Date}}</span>
+                    </div>
+
+                    <p class="news-excerpt">{{$headline.Excerpt}}</p>
+                    <button class="read-more-link" onclick="handleReadMore('{{$headline.Title}}')">Continue
+                        reading</button>
+                </article>
+                {{ end }}
+
+                {{ if gt (len .NewsList) 2 }}
+                <hr class="article-divider">
+                <!-- Second item in main column -->
+                {{ $second := index .NewsList 1 }}
+                <article class="sub-article">
+                    <span class="news-category">{{$second.Category}}</span>
+                    <h3 class="news-title">{{$second.Title}}</h3>
+                    <div class="news-meta">By {{$second.Author}}</div>
+                    <p class="news-excerpt">{{$second.Excerpt}}</p>
+                    <button class="read-more-link" onclick="handleReadMore('{{$second.Title}}')">Continue
+                        reading</button>
+                </article>
+                {{ end }}
+            </div>
+
+            <!-- Side Column for smaller news -->
+            <div class="side-column">
+                <div class="op-ed-section">
+                    <h3
+                        style="font-family: var(--font-sans); text-transform: uppercase; border-bottom: 2px solid #000; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+                        More News</h3>
+
+                    {{ if gt (len .NewsList) 2 }}
+                    <!-- Rendering the rest of the items in the sidebar -->
+                    {{ range $index, $element := .NewsList }}
+                    {{ if gt $index 1 }}
+                    <article class="sub-article">
+                        <span class="news-category">{{$element.Category}}</span>
+                        <h3 class="news-title" style="font-size: 1.35rem;">{{$element.Title}}</h3>
+                        <div class="news-meta" style="margin-bottom: 0.5rem;">By {{$element.Author}}</div>
+                        <p class="news-excerpt" style="font-size: 0.9rem;">{{$element.Excerpt}}</p>
+                        <button class="read-more-link" onclick="handleReadMore('{{$element.Title}}')">Read</button>
+                    </article>
+                    <hr class="article-divider" style="margin: 1.5rem 0;">
+                    {{ end }}
+                    {{ end }}
+                    {{ else }}
+                    <p style="font-style: italic;">No more stories at this time.</p>
+                    {{ end }}
+
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 The Heelo Times Company</p>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+</body>
+
+</html>
