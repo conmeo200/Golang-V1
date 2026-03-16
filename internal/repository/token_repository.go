@@ -8,23 +8,25 @@ import (
 	"gorm.io/gorm"
 )
 
-type TokenRepository struct {
+// tokenRepository is the concrete implementation of TokenRepository.
+type tokenRepository struct {
 	db *gorm.DB
 }
 
-func NewTokenRepository(db *gorm.DB) *TokenRepository {
+// NewTokenRepository creates a new instance that implements TokenRepository.
+func NewTokenRepository(db *gorm.DB) TokenRepository {
 	if db == nil {
 		panic("db cannot be nil")
 	}
-	return &TokenRepository{db: db}
+	return &tokenRepository{db: db}
 }
 
-func (r *TokenRepository) BlacklistToken(ctx context.Context, token *model.TokenBlacklist) error {
+func (r *tokenRepository) BlacklistToken(ctx context.Context, token *model.TokenBlacklist) error {
 	result := r.db.WithContext(ctx).Create(token)
 	return result.Error
 }
 
-func (r *TokenRepository) IsBlacklisted(ctx context.Context, tokenString string) bool {
+func (r *tokenRepository) IsBlacklisted(ctx context.Context, tokenString string) bool {
 	var token model.TokenBlacklist
 	err := r.db.WithContext(ctx).Where("token = ?", tokenString).First(&token).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
