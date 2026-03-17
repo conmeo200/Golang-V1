@@ -3,98 +3,180 @@ package service
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"github.com/conmeo200/Golang-V1/internal/auth"
-	"github.com/conmeo200/Golang-V1/internal/dto"
 	"github.com/conmeo200/Golang-V1/internal/model"
 	"github.com/conmeo200/Golang-V1/internal/repository"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
-// authService is the concrete implementation of the AuthService interface.
-type authService struct {
-	userRepo  repository.UserRepository
-	tokenRepo repository.TokenRepository // Assuming TokenRepository interface exists
+type AuthService struct {
+	authRepo *repository.AuthRepository
+	userRepo *repository.UserRepository
+	tokenRepo *repository.TokenRepository
 }
 
-// NewAuthService creates a new instance that implements AuthService.
-func NewAuthService(userRepo repository.UserRepository, tokenRepo repository.TokenRepository) AuthService {
-	return &authService{
-		userRepo:  userRepo,
-		tokenRepo: tokenRepo,
+func NewAuthService(
+	authRepo *repository.AuthRepository,
+	userRepo *repository.UserRepository,
+	tokenRepo *repository.TokenRepository) *AuthService {
+		return &AuthService{
+			authRepo: authRepo,
+			userRepo: userRepo,
+			tokenRepo: tokenRepo,
+		}
+}
+
+func (s *AuthService)RegisterUser(ctx context.Context, email string, password string) (*model.User, error) {
+	email = strings.TrimSpace(email)
+
+	if email == "" {
+		return nil, errors.New("email is required")
 	}
-}
 
-// Register handles new user registration.
-func (s *authService) Register(ctx context.Context, req dto.CreateUserRequest) (*dto.UserResponse, error) {
-	// Check if user already exists
-	_, err := s.userRepo.FindByEmail(ctx, req.Email)
-	if err == nil {
-		// If err is nil, it means a user was found
+	if password == "" {
+		return nil, errors.New("password is required")
+	}
+
+	// check existing user
+	existing, err := s.userRepo.FindByEmail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+
+	if existing == nil {
 		return nil, errors.New("email already exists")
 	}
 
-	// Hash the password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	// hash password
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
 	}
 
-	newUser := &model.User{
-		Email:        req.Email,
-		PasswordHash: string(hashedPassword),
-		Balance:      req.Balance, // Assuming balance comes from the request
+	user := &model.User{
+		Email		 :    email,
+		PasswordHash : string(hash),
 	}
 
-	if err := s.userRepo.Create(ctx, newUser); err != nil {
+	user, err = s.userRepo.CreateUser(ctx, user)
+	if err != nil {
 		return nil, err
 	}
 
-	// Convert to DTO for the response
-	userResponse := &dto.UserResponse{
-		ID:      newUser.ID.String(),
-		Email:   newUser.Email,
-		Balance: newUser.Balance,
-		Role:    newUser.Role,
-		Status:  newUser.Status,
-	}
-
-	return userResponse, nil
+	// return token
+	return user, nil
 }
 
-// Login handles user authentication and token generation.
-func (s *authService) Login(ctx context.Context, req dto.LoginRequest) (string, error) {
-	user, err := s.userRepo.FindByEmail(ctx, req.Email)
+func (s *AuthService) LoginUser(ctx context.Context, email string, password string) (*model.User, error) {
+	email = strings.TrimSpace(email)
+
+	if email == "" {
+		return nil, errors.New("email is required")
+	}
+
+	if password == "" {
+		return nil, errors.New("password is required")
+	}
+
+	user, err := s.userRepo.FindByEmail(ctx, email)
 	if err != nil {
-		return "", errors.New("invalid email or password")
+		return nil, err
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
-		return "", errors.New("invalid email or password")
+	if user == nil {
+		return nil, errors.New("invalid email or password")
 	}
 
-	// Generate JWT token
-	token, err := auth.GenerateToken(user.ID.String()) // Simplified token generation
-	if err != nil {
-		return "", err
+	if !CheckPassword(password, user.PasswordHash) {
+		return nil, errors.New("invalid email or password")
 	}
 
-	return token, nil
+	return user, nil
 }
 
-// NOTE: The following methods are kept from the old implementation.
-// They should also be refactored to use interfaces and DTOs consistently.
+func CheckPassword(password string, password_hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(password_hash), []byte(password))
+	return err == nil
+}
 
-func (s *authService) RevokeToken(ctx context.Context, tokenString string, expiresAt int64) error {
+func (s *AuthService) RevokeToken(ctx context.Context, tokenString string, expiresAt int64) error {
 	blacklist := &model.TokenBlacklist{
 		Token:     tokenString,
 		ExpiresAt: expiresAt,
 	}
-	// This will cause an error if tokenRepo is not initialized with a concrete type
-	// that has the BlacklistToken method.
 	return s.tokenRepo.BlacklistToken(ctx, blacklist)
 }
 
-func (s *authService) IsTokenBlacklisted(ctx context.Context, tokenString string) bool {
+func (s *AuthService) IsTokenBlacklisted(ctx context.Context, tokenString string) bool {
 	return s.tokenRepo.IsBlacklisted(ctx, tokenString)
+}
+
+func (s *AuthService) ChangePassword(ctx context.Context, userID string, oldPassword string, newPassword string) error {
+	user, err := s.userRepo.GetUser(ctx, userID)
+	if err != nil {
+		return err
+	}
+	if user == nil {
+		return errors.New("user not found")
+	}
+
+	if !CheckPassword(oldPassword, user.PasswordHash) {
+		return errors.New("invalid old password")
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	return s.userRepo.UpdatePassword(ctx, userID, string(hash))
+}
+
+func (s *AuthService) ForgotPassword(ctx context.Context, email string) (string, error) {
+	email = strings.TrimSpace(email)
+	if email == "" {
+		return "", errors.New("email is required")
+	}
+
+	user, err := s.userRepo.FindByEmail(ctx, email)
+	if err != nil {
+		return "", err
+	}
+	if user == nil {
+		return "", errors.New("user not found")
+	}
+
+	// Mocking email sending by returning a reset token
+	resetToken := "mock_reset_token_" + user.ID.String()
+	return resetToken, nil
+}
+
+func (s *AuthService) RefreshToken(ctx context.Context, tokenString string) (string, string, error) {
+	if s.IsTokenBlacklisted(ctx, tokenString) {
+		return "", "", errors.New("token is blacklisted")
+	}
+
+	token, err := auth.ValidateToken(tokenString)
+	if err != nil || !token.Valid {
+		return "", "", errors.New("invalid refresh token")
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return "", "", errors.New("invalid token claims")
+	}
+
+	userID, ok := claims["user_id"].(string)
+	if !ok {
+		return "", "", errors.New("invalid user id in token")
+	}
+
+	// Revoke old refresh token so it can't be used again
+	exp, _ := claims["exp"].(float64)
+	s.RevokeToken(ctx, tokenString, int64(exp))
+
+	return auth.GenerateTokens(userID)
 }

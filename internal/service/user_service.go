@@ -3,56 +3,113 @@ package service
 import (
 	"context"
 	"errors"
+	"strings"
 
-	"github.com/conmeo200/Golang-V1/internal/dto"
 	"github.com/conmeo200/Golang-V1/internal/model"
 	"github.com/conmeo200/Golang-V1/internal/repository"
 	"golang.org/x/crypto/bcrypt"
 )
 
-// userService is the concrete implementation of the UserService interface.
-type userService struct {
-	repo repository.UserRepository
+type UserService struct {
+	repo *repository.UserRepository
 }
 
-// NewUserService creates a new instance of the user service that implements UserService interface.
-func NewUserService(repo repository.UserRepository) UserService {
-	return &userService{repo: repo}
+func NewUserService(repo *repository.UserRepository) *UserService {
+	return &UserService{repo: repo}
 }
 
-// CreateUser handles the logic for creating a new user.
-func (s *userService) CreateUser(ctx context.Context, req dto.CreateUserRequest) (*model.User, error) {
-	// Hash the password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+func (s *UserService) FindFirstByEmail(ctx context.Context, email string) (*model.User, error) {
+
+	email = strings.TrimSpace(email)
+
+	if email == "" {
+		return nil, errors.New("email is required")
+	}
+
+	user, err := s.repo.FindByEmail(ctx, email)
+
 	if err != nil {
 		return nil, err
 	}
 
-	// Create the user model
-	newUser := &model.User{
-		Email:        req.Email,
-		PasswordHash: string(hashedPassword),
-		Balance:      req.Balance,
-	}
-
-	err = s.repo.Create(ctx, newUser)
-	if err != nil {
-		return nil, err
-	}
-
-	return newUser, nil
-}
-
-// GetUserByID retrieves a user by their ID.
-func (s *userService) GetUserByID(ctx context.Context, id string) (*model.User, error) {
-	user, err := s.repo.FindByID(ctx, id)
-	if err != nil {
-		return nil, errors.New("user not found")
-	}
 	return user, nil
 }
 
-// GetAllUsers retrieves all users.
-func (s *userService) GetAllUsers(ctx context.Context) ([]model.User, error) {
-	return s.repo.GetAll(ctx)
+func (s *UserService) CreateUser(ctx context.Context, email string, balance float64, password string) (*model.User, error) {
+
+	email = strings.TrimSpace(email)
+
+	if email == "" {
+		return nil, errors.New("email is required")
+	}
+
+	if password == "" {
+		return nil, errors.New("password is required")
+	}
+
+	// check existing user
+	existing, err := s.repo.FindByEmail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+
+	if existing != nil {
+		return nil, errors.New("email already exists")
+	}
+
+	// hash password
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+
+	user := model.User{
+		Email:        email,
+		Balance:      balance,
+		PasswordHash: string(hash),
+	}
+
+	return s.repo.CreateUser(ctx, &user)
+}
+
+func (s *UserService) GetUser(ctx context.Context, id string) (*model.User, error) {
+
+	if strings.TrimSpace(id) == "" {
+		return nil, errors.New("id is required")
+	}
+
+	return s.repo.GetUser(ctx, id)
+}
+
+func (s *UserService) ListUser(ctx context.Context) ([]model.User, error) {
+
+	users, err := s.repo.ListUser(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func (s *UserService) UpdateBalance(ctx context.Context, id uint, newBalance float64) error {
+
+	if id == 0 {
+		return errors.New("invalid user id")
+	}
+
+	if newBalance < 0 {
+		return errors.New("balance cannot be negative")
+	}
+
+	return s.repo.UpdateBalance(ctx, id, newBalance)
+}
+
+func (s *UserService) DeleteUser(ctx context.Context, id uint) error {
+
+	if id == 0 {
+		return errors.New("invalid user id")
+	}
+
+	return s.repo.Delete(ctx, id)
 }
