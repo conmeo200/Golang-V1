@@ -28,9 +28,7 @@ func (h *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	var req Request
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		dto.RespondWithError(w, dto.ErrInvalidRequest)
 		logger.ErrorLogger.Printf("RegisterHandler: invalid request format")
 		return
 	}
@@ -39,72 +37,50 @@ func (h *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.service.RegisterUser(r.Context(), req.Email, req.Password)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(dto.SendError(err.Error()))
+		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, err.Error(), "REGISTRATION_FAILED"))
 		return
 	}
 
 	// Generate Token here
 	accessToken, refreshToken, err := auth.GenerateTokens(user.ID.String())
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(dto.SendError("failed to generate token"))
+		dto.RespondWithError(w, dto.ErrInternal)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	resp := dto.APIResponse{
-		Status:  true,
-		Message: "success",
-		Data: map[string]interface{}{
-			"access_token":  accessToken,
-			"user":          user,
-			"refresh_token": refreshToken,
-		},
-	}
-	json.NewEncoder(w).Encode(resp)
+	dto.RespondWithSuccess(w, http.StatusOK, map[string]interface{}{
+		"access_token":  accessToken,
+		"user":          user,
+		"refresh_token": refreshToken,
+	}, "success")
 }
 func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	var req Request
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		dto.RespondWithError(w, dto.ErrInvalidRequest)
 		logger.ErrorLogger.Printf("LoginHandler: invalid request format")
 		return
 	}
 
 	user, err := h.service.LoginUser(r.Context(), req.Email, req.Password)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(dto.SendError(err.Error()))
+		dto.RespondWithError(w, dto.NewAppError(http.StatusUnauthorized, err.Error(), "INVALID_CREDENTIALS"))
 		logger.ErrorLogger.Printf("LoginHandler Unauthorized: %v", err)
 		return
 	}
 
 	accessToken, refreshToken, err := auth.GenerateTokens(user.ID.String())
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(dto.SendError("failed to generate token"))
+		dto.RespondWithError(w, dto.ErrInternal)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	resp := dto.APIResponse{
-		Status:  true,
-		Message: "success",
-		Data: map[string]interface{}{
-			"access_token":  accessToken,
-			"user":          user,
-			"refresh_token": refreshToken,
-		},
-	}
-	json.NewEncoder(w).Encode(resp)
+	dto.RespondWithSuccess(w, http.StatusOK, map[string]interface{}{
+		"access_token":  accessToken,
+		"user":          user,
+		"refresh_token": refreshToken,
+	}, "success")
 }
 
 func (h *AuthHandler) LogoutHandler(w http.ResponseWriter, r *http.Request) {
@@ -128,10 +104,7 @@ func (h *AuthHandler) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(dto.APIResponse{
-		Status:  true,
-		Message: "logged out successfuly",
-	})
+	dto.RespondWithSuccess(w, http.StatusOK, nil, "logged out successfuly")
 }
 
 func (h *AuthHandler) ForgotPasswordHandler(w http.ResponseWriter, r *http.Request) {
@@ -139,42 +112,29 @@ func (h *AuthHandler) ForgotPasswordHandler(w http.ResponseWriter, r *http.Reque
 		Email string `json:"email"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-
-		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		dto.RespondWithError(w, dto.ErrInvalidRequest)
 		logger.ErrorLogger.Printf("ForgotPasswordHandler decode error: %v", err)
 		return
 	}
 
 	resetToken, err := h.service.ForgotPassword(r.Context(), req.Email)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-
-		json.NewEncoder(w).Encode(dto.SendError(err.Error()))
+		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, err.Error(), "FORGOT_PASSWORD_FAILED"))
 		logger.ErrorLogger.Printf("ForgotPasswordHandler error: %v", err)
 		return
 	}
 
 	logger.AppLogger.Printf("ForgotPassword token generated for %s", req.Email)
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(dto.APIResponse{
-		Status:  true,
-		Message: "reset token generated (mock email sent)",
-		Data: map[string]interface{}{
-			"reset_token": resetToken,
-		},
-	})
+	dto.RespondWithSuccess(w, http.StatusOK, map[string]interface{}{
+		"reset_token": resetToken,
+	}, "reset token generated (mock email sent)")
 }
 
 func (h *AuthHandler) ChangePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value("user_id").(string)
 	if !ok || userID == "" {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(dto.SendError("unauthorized: user id not in context"))
+		dto.RespondWithError(w, dto.ErrUnauthorized)
 		return
 	}
 
@@ -183,25 +143,17 @@ func (h *AuthHandler) ChangePasswordHandler(w http.ResponseWriter, r *http.Reque
 		NewPassword string `json:"new_password"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		dto.RespondWithError(w, dto.ErrInvalidRequest)
 		return
 	}
 
 	err := h.service.ChangePassword(r.Context(), userID, req.OldPassword, req.NewPassword)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(dto.SendError(err.Error()))
+		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, err.Error(), "PASSWORD_CHANGE_FAILED"))
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(dto.APIResponse{
-		Status:  true,
-		Message: "password changed successfully",
-	})
+	dto.RespondWithSuccess(w, http.StatusOK, nil, "password changed successfully")
 }
 
 func (h *AuthHandler) RefreshTokenHandler(w http.ResponseWriter, r *http.Request) {
@@ -209,35 +161,26 @@ func (h *AuthHandler) RefreshTokenHandler(w http.ResponseWriter, r *http.Request
 		RefreshToken string `json:"refresh_token"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-
-		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		dto.RespondWithError(w, dto.ErrInvalidRequest)
 		logger.ErrorLogger.Printf("RefreshTokenHandler decode error: %v", err)
 		return
 	}
 
 	accessToken, newRefreshToken, err := h.service.RefreshToken(r.Context(), req.RefreshToken)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnauthorized)
-
-		json.NewEncoder(w).Encode(dto.SendError(err.Error()))
+		dto.RespondWithError(w, dto.ErrUnauthorized)
 		logger.ErrorLogger.Printf("RefreshTokenHandler error: %v", err)
 		return
 	}
 
 	logger.AppLogger.Printf("Token refreshed successfully")
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(dto.APIResponse{
-		Status:  true,
-		Message: "token refreshed",
-		Data: map[string]interface{}{
-			"access_token":  accessToken,
-			"refresh_token": newRefreshToken,
-		},
-	})
+	logger.AppLogger.Printf("Token refreshed successfully")
+
+	dto.RespondWithSuccess(w, http.StatusOK, map[string]interface{}{
+		"access_token":  accessToken,
+		"refresh_token": newRefreshToken,
+	}, "token refreshed")
 }
 
 func (h *AuthHandler) RevokeTokenHandler(w http.ResponseWriter, r *http.Request) {
@@ -246,10 +189,7 @@ func (h *AuthHandler) RevokeTokenHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-
-		json.NewEncoder(w).Encode(dto.SendError("invalid request format"))
+		dto.RespondWithError(w, dto.ErrInvalidRequest)
 		logger.ErrorLogger.Printf("RevokeTokenHandler decode error: %v", err)
 		return
 	}
@@ -267,9 +207,5 @@ func (h *AuthHandler) RevokeTokenHandler(w http.ResponseWriter, r *http.Request)
 		logger.ErrorLogger.Printf("RevokeTokenHandler validate error or invalid token: %v", err)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(dto.APIResponse{
-		Status:  true,
-		Message: "token revoked successfully",
-	})
+	dto.RespondWithSuccess(w, http.StatusOK, nil, "token revoked successfully")
 }

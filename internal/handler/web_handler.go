@@ -4,6 +4,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+
+	"github.com/conmeo200/Golang-V1/internal/dto"
 )
 
 type WebHandler struct {
@@ -33,7 +35,7 @@ func (h *WebHandler) NewsPage(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("web/template/news.html")
 	if err != nil {
 		log.Printf("Error parsing template: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		dto.RespondWithError(w, dto.ErrInternal)
 		return
 	}
 
@@ -84,6 +86,6 @@ func (h *WebHandler) NewsPage(w http.ResponseWriter, r *http.Request) {
 	err = tmpl.Execute(w, data)
 	if err != nil {
 		log.Printf("Error executing template: %v", err)
-		http.Error(w, "Error rendering page", http.StatusInternalServerError)
+		dto.RespondWithError(w, dto.NewAppError(http.StatusInternalServerError, "Error rendering page", "RENDER_ERROR"))
 	}
 }

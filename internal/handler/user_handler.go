@@ -29,12 +29,12 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var req request
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logger.ErrorLogger.Printf("CreateUser decode error: %v", err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		dto.RespondWithError(w, dto.ErrInvalidRequest)
 		return
 	}
 
 	if req.Email == "" || req.PasswordHash == "" {
-		http.Error(w, "Data Invalid", http.StatusBadRequest)
+		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, "Data Invalid", "DATA_INVALID"))
 		return
 	}
 
@@ -43,14 +43,11 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		logger.ErrorLogger.Printf("CreateUser error from DB: %v", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		dto.RespondWithError(w, err)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	json.NewEncoder(w).Encode(dto.SendSuccess(dto.ToUserResponse(result)))
+	dto.RespondWithSuccess(w, http.StatusCreated, dto.ToUserResponse(result), "User created successfully")
 }
 
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
@@ -62,14 +59,11 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	user, err := h.service.GetUser(r.Context(), idStr)
 	if err != nil {
 		logger.ErrorLogger.Printf("GetUser error: %v", err)
-		http.Error(w, err.Error(), http.StatusNotFound)
+		dto.RespondWithError(w, dto.NewAppError(http.StatusNotFound, err.Error(), "USER_NOT_FOUND"))
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	json.NewEncoder(w).Encode(dto.SendSuccess(dto.ToUserResponse(user)))
+	dto.RespondWithSuccess(w, http.StatusOK, dto.ToUserResponse(user), "User found")
 }
 
 func (h *UserHandler) FindFirstByEmail(w http.ResponseWriter, r *http.Request) {
@@ -81,40 +75,34 @@ func (h *UserHandler) FindFirstByEmail(w http.ResponseWriter, r *http.Request) {
 	var req request
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logger.ErrorLogger.Printf("FindFirstByEmail decode error: %v", err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		dto.RespondWithError(w, dto.ErrInvalidRequest)
 		return
 	}
 
 	if req.Email == "" {
-		http.Error(w, "Data Invalid", http.StatusBadRequest)
+		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, "Email is required", "EMAIL_REQUIRED"))
 		return
 	}
 
 	user, err := h.service.FindFirstByEmail(r.Context(), req.Email)
 	if err != nil {
 		logger.ErrorLogger.Printf("FindFirstByEmail error: %v", err)
-		http.Error(w, err.Error(), http.StatusNotFound)
+		dto.RespondWithError(w, dto.NewAppError(http.StatusNotFound, err.Error(), "USER_NOT_FOUND"))
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	json.NewEncoder(w).Encode(dto.SendSuccess(dto.ToUserResponse(user)))
+	dto.RespondWithSuccess(w, http.StatusOK, dto.ToUserResponse(user), "User found")
 }
 
 
 func (h *UserHandler) ListUser(w http.ResponseWriter, r *http.Request) {
 	users, err := h.service.ListUser(r.Context())
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		dto.RespondWithError(w, err)
 		return
 	}
-	
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 
-	json.NewEncoder(w).Encode(dto.ToUserResponsesArray(users))
+	dto.RespondWithSuccess(w, http.StatusOK, dto.ToUserResponsesArray(users), "User list")
 }
 
 type UpdateUserRequest struct {
@@ -126,20 +114,20 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	idStr := r.URL.Query().Get("id")
 
 	if idStr == "" {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, "Invalid user ID", "INVALID_ID"))
 		return
 	}
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, "Invalid user ID", "INVALID_ID"))
 		return
 	}
 
 	var req UpdateUserRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		dto.RespondWithError(w, dto.ErrInvalidRequest)
 		return
 	}
 
@@ -147,20 +135,17 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	err = h.service.UpdateBalance(r.Context(), uint(id), req.Balance)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		dto.RespondWithError(w, err)
 		return
 	}
 
 	result, err := h.service.GetUser(r.Context(), idStr)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		dto.RespondWithError(w, dto.NewAppError(http.StatusNotFound, err.Error(), "USER_NOT_FOUND"))
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	json.NewEncoder(w).Encode(dto.SendSuccess(dto.ToUserResponse(result)))
+	dto.RespondWithSuccess(w, http.StatusOK, dto.ToUserResponse(result), "User updated successfully")
 }
 
 func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
@@ -168,24 +153,21 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	idStr := r.URL.Query().Get("id")
 
 	if idStr == "" {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, "Invalid user ID", "INVALID_ID"))
 		return
 	}
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, "Invalid user ID", "INVALID_ID"))
 		return
 	}
 
 	err = h.service.DeleteUser(r.Context(), uint(id))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		dto.RespondWithError(w, err)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	json.NewEncoder(w).Encode(dto.SendSuccess(nil))
+	dto.RespondWithSuccess(w, http.StatusOK, nil, "User deleted successfully")
 }

@@ -2,21 +2,21 @@ package database
 
 import (
 	"fmt"
-	"os"
 
+	"github.com/conmeo200/Golang-V1/internal/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func NewPostgres() (*gorm.DB, error) {
+func NewPostgres(cfg *config.Config) (*gorm.DB, error) {
 
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"),
-		os.Getenv("DB_PORT"),
+		cfg.DBHost,
+		cfg.DBUser,
+		cfg.DBPassword,
+		cfg.DBName,
+		cfg.DBPort,
 	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})

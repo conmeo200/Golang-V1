@@ -6,29 +6,23 @@ import (
 	//"github.com/conmeo200/Golang-V1/internal/model"
 	//"github.com/conmeo200/Golang-V1/database/seeder"
 	"github.com/conmeo200/Golang-V1/internal/app"
+	"github.com/conmeo200/Golang-V1/internal/config"
 	"github.com/conmeo200/Golang-V1/internal/database"
 	"github.com/conmeo200/Golang-V1/internal/logger"
-
-	//"github.com/conmeo200/Golang-V1/internal/handler"
 	"github.com/conmeo200/Golang-V1/internal/router"
-	//"github.com/conmeo200/Golang-V1/internal/service"
 )
 
 func main() {
 	// 1. Load config
+	cfg := config.Load()
 
 	// 2. Initialize dependencies
-
-	// 3. Setup router
-
-	// 4. Create server
-
 	// Initialize custom loggers
 	logger.Init()
 
 	logger.AppLogger.Println("Starting application...")
 
-	dbPostgres, err := database.NewPostgres()
+	dbPostgres, err := database.NewPostgres(cfg)
 	if err != nil {
 		logger.ErrorLogger.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -62,10 +56,6 @@ func main() {
 
 	//log.Println("GenerateTokens", accessToken, refreshToken, err)
 
-	http.ListenAndServe(":8080", mux)
-
-	logger.AppLogger.Printf("Server starting on :%s\n", "8080")
-
-	// Run server in goroutine
-
+	logger.AppLogger.Printf("Server starting on :%s\n", cfg.Port)
+	http.ListenAndServe(":"+cfg.Port, mux)
 }
