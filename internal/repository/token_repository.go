@@ -8,6 +8,11 @@ import (
 	"gorm.io/gorm"
 )
 
+type TokenRepo interface {
+	BlacklistToken(ctx context.Context, token *model.TokenBlacklist) error
+	IsBlacklisted(ctx context.Context, tokenString string) bool
+}
+
 type TokenRepository struct {
 	db *gorm.DB
 }

@@ -13,15 +13,15 @@ import (
 )
 
 type AuthService struct {
-	authRepo *repository.AuthRepository
-	userRepo *repository.UserRepository
-	tokenRepo *repository.TokenRepository
+	authRepo  *repository.AuthRepository
+	userRepo  repository.UserRepo
+	tokenRepo repository.TokenRepo
 }
 
 func NewAuthService(
 	authRepo *repository.AuthRepository,
-	userRepo *repository.UserRepository,
-	tokenRepo *repository.TokenRepository) *AuthService {
+	userRepo repository.UserRepo,
+	tokenRepo repository.TokenRepo) *AuthService {
 		return &AuthService{
 			authRepo: authRepo,
 			userRepo: userRepo,
@@ -46,7 +46,7 @@ func (s *AuthService)RegisterUser(ctx context.Context, email string, password st
 		return nil, err
 	}
 
-	if existing == nil {
+	if existing != nil {
 		return nil, errors.New("email already exists")
 	}
 

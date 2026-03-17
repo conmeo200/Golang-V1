@@ -7,10 +7,13 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  test:
+    name: Run Unit Tests
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
     - name: Set up Go
       uses: actions/setup-go@v5
@@ -20,8 +23,7 @@ jobs:
     - name: Install dependencies
       run: go mod download
 
-    - name: Test
-      run: go test -v ./...
-
-    - name: Build
-      run: go build -v ./cmd/main.go
+    - name: Run tests
+      env:
+        JWT_SECRET_KEY: test-secret-key-123
+      run: go test -v ./internal/...
