@@ -9,9 +9,10 @@ import (
 )
 
 type App struct {
-	UserHandler *handler.UserHandler
-	AuthHandler *handler.AuthHandler
-	WebHandler  *handler.WebHandler
+	UserHandler  *handler.UserHandler
+	AuthHandler  *handler.AuthHandler
+	OrderHandler *handler.OrderHandler
+	WebHandler   *handler.WebHandler
 }
 
 func NewApp(db *gorm.DB) *App {
@@ -20,19 +21,23 @@ func NewApp(db *gorm.DB) *App {
 	userRepo := repository.NewUserRepository(db)
 	authRepo := repository.NewAuthRepository(db)
 	tokenRepo := repository.NewTokenRepository(db)
+	orderRepo := repository.NewOrderRepository(db)
 
 	// services
 	userService := service.NewUserService(userRepo)
 	authService := service.NewAuthService(authRepo, userRepo, tokenRepo)
+	orderService := service.NewOrderService(orderRepo)
 
 	// handlers
 	userHandler := handler.NewUserHandler(userService)
 	authHandler := handler.NewAuthHandler(authService)
+	orderHandler := handler.NewOrderHandler(orderService)
 	webHandler  := handler.NewWebHandler()
 
 	return &App{
-		UserHandler: userHandler,
-		AuthHandler: authHandler,
-		WebHandler:  webHandler,
+		UserHandler:  userHandler,
+		AuthHandler:  authHandler,
+		OrderHandler: orderHandler,
+		WebHandler:   webHandler,
 	}
 }

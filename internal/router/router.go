@@ -10,6 +10,7 @@ func RegisterRoutes(mux *http.ServeMux, app *app.App) {
 
 	RegisterUserRoutes(mux, app.UserHandler)
 	RegisterAuthRoutes(mux, app.AuthHandler)
+	RegisterOrderRoutes(mux, app.OrderHandler)
 	RegisterWebRoutes(mux, app.WebHandler)
 
 }

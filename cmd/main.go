@@ -1,6 +1,8 @@
 package main
 
 import (
+	//"log"
+	//"fmt"
 	"net/http"
 
 	//"github.com/conmeo200/Golang-V1/internal/model"
@@ -9,6 +11,8 @@ import (
 	"github.com/conmeo200/Golang-V1/internal/config"
 	"github.com/conmeo200/Golang-V1/internal/database"
 	"github.com/conmeo200/Golang-V1/internal/logger"
+
+	//"github.com/conmeo200/Golang-V1/internal/model"
 	"github.com/conmeo200/Golang-V1/internal/router"
 )
 
@@ -28,14 +32,16 @@ func main() {
 	}
 
 	// Run Migration
-	// dbPostgres.Migrator().DropTable(&model.User{})
-	// err = dbPostgres.AutoMigrate(&model.User{})
-	// err = dbPostgres.AutoMigrate(&model.TokenBlacklist{})
+	// err = dbPostgres.AutoMigrate(
+	// 	// &model.User{},
+	// 	// &model.TokenBlacklist{},
+	// 	&model.Order{},
+	// )
 	// if err != nil {
-	// 	log.Fatal(err)
+	// 	logger.ErrorLogger.Fatalf("Migration failed: %v", err)
 	// }
 
-	// log.Println("Migration successfuly!")
+	// logger.AppLogger.Println("Migration successful!")
 
 	//Run Seeder
 	// err = seeder.SeedUsers(dbPostgres)

@@ -8,13 +8,18 @@ import (
 )
 
 type Config struct {
-	Port         string
-	DBHost       string
-	DBPort       string
-	DBUser       string
-	DBPassword   string
-	DBName       string
-	JWTSecretKey string
+	Port           string
+	DBHost         string
+	DBPort         string
+	DBUser         string
+	DBPassword     string
+	DBName         string
+	JWTSecretKey     string
+	DBReplicaHosts   []string
+	RabbitMQHost     string
+	RabbitMQPort     string
+	RabbitMQUser     string
+	RabbitMQPassword string
 }
 
 func Load() *Config {
@@ -47,5 +52,16 @@ func Load() *Config {
 		DBPassword:   v.GetString("DB_PASSWORD"),
 		DBName:       v.GetString("DB_NAME"),
 		JWTSecretKey: v.GetString("JWT_SECRET_KEY"),
+		DBReplicaHosts: func() []string {
+			hosts := v.GetString("DB_REPLICA_HOSTS")
+			if hosts == "" {
+				return []string{}
+			}
+			return strings.Split(hosts, ",")
+		}(),
+		RabbitMQHost:     v.GetString("RABBITMQ_HOST"),
+		RabbitMQPort:     v.GetString("RABBITMQ_PORT"),
+		RabbitMQUser:     v.GetString("RABBITMQ_USER"),
+		RabbitMQPassword: v.GetString("RABBITMQ_PASSWORD"),
 	}
 }

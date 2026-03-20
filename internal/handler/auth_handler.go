@@ -50,7 +50,7 @@ func (h *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	dto.RespondWithSuccess(w, http.StatusOK, map[string]interface{}{
 		"access_token":  accessToken,
-		"user":          user,
+		"user":          dto.ToUserResponse(user),
 		"refresh_token": refreshToken,
 	}, "success")
 }
