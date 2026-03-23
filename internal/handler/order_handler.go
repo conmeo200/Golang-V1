@@ -26,9 +26,16 @@ func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userUUID, err := uuid.Parse(req.UserID)
+	// Lấy user_id từ context (do JWTMiddleware thiết lập)
+	userID, ok := r.Context().Value("user_id").(string)
+	if !ok || userID == "" {
+		dto.RespondWithError(w, dto.NewAppError(http.StatusUnauthorized, "User not authenticated", "UNAUTHORIZED"))
+		return
+	}
+
+	userUUID, err := uuid.Parse(userID)
 	if err != nil {
-		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, "Invalid User ID", "INVALID_USER_ID"))
+		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, "Invalid User ID in context", "INVALID_USER_ID"))
 		return
 	}
 

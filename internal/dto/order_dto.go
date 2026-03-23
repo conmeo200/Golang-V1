@@ -17,7 +17,6 @@ type OrderResponse struct {
 }
 
 type CreateOrderRequest struct {
-	UserID         string  `json:"user_id"`
 	Amount         float64 `json:"amount"`
 	IdempotencyKey string  `json:"idempotency_key"`
 }

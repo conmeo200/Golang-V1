@@ -19,7 +19,7 @@ type RefreshClaims struct {
 	jwt.RegisteredClaims
 }
 
-var AccessTokenExpire  = 15 * time.Minute
+var AccessTokenExpire  = 60 * time.Minute
 var RefreshTokenExpire = 7 * 24 * time.Hour
 
 func GenerateTokens(userID string) (string, string, error) {

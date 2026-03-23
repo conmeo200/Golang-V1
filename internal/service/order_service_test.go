@@ -48,7 +48,7 @@ func (m *MockOrderRepository) Delete(ctx context.Context, uuid uuid.UUID) error 
 
 func TestCreateOrder(t *testing.T) {
 	mockRepo := new(MockOrderRepository)
-	service := NewOrderService(mockRepo)
+	service := NewOrderService(mockRepo, nil)
 	ctx := context.Background()
 
 	t.Run("Success", func(t *testing.T) {
@@ -83,7 +83,7 @@ func TestCreateOrder(t *testing.T) {
 
 func TestGetOrder(t *testing.T) {
 	mockRepo := new(MockOrderRepository)
-	service := NewOrderService(mockRepo)
+	service := NewOrderService(mockRepo, nil)
 	ctx := context.Background()
 
 	t.Run("Success", func(t *testing.T) {
@@ -100,7 +100,7 @@ func TestGetOrder(t *testing.T) {
 
 func TestUpdateOrderStatus(t *testing.T) {
 	mockRepo := new(MockOrderRepository)
-	service := NewOrderService(mockRepo)
+	service := NewOrderService(mockRepo, nil)
 	ctx := context.Background()
 
 	t.Run("Success", func(t *testing.T) {

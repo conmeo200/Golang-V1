@@ -8,12 +8,12 @@ import (
 )
 
 type Config struct {
-	Port           string
-	DBHost         string
-	DBPort         string
-	DBUser         string
-	DBPassword     string
-	DBName         string
+	Port             string
+	DBHost           string
+	DBPort           string
+	DBUser           string
+	DBPassword       string
+	DBName           string
 	JWTSecretKey     string
 	DBReplicaHosts   []string
 	RabbitMQHost     string
@@ -30,19 +30,16 @@ func Load() *Config {
 	v.SetDefault("DB_HOST", "localhost")
 	v.SetDefault("DB_PORT", "5432")
 
-	// Tự động đọc từ biến môi trường
+	// Đọc từ file .env nếu tồn tại
+	v.SetConfigFile(".env")
+	v.SetConfigType("env")
+	if err := v.ReadInConfig(); err != nil {
+		log.Printf("Note: .env file not found or could not be read: %s", err)
+	}
+
+	// Tự động đọc từ biến môi trường hệ thống
 	v.AutomaticEnv()
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-
-	// Đọc từ file nếu tồn tại
-	v.SetConfigName("config")
-	v.SetConfigType("yaml")
-	v.AddConfigPath(".")
-	if err := v.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			log.Printf("Error reading config file: %s", err)
-		}
-	}
 
 	return &Config{
 		Port:         v.GetString("APP_PORT"),

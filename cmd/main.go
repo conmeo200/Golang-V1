@@ -1,7 +1,6 @@
 package main
 
 import (
-	//"log"
 	//"fmt"
 	"net/http"
 
@@ -11,6 +10,10 @@ import (
 	"github.com/conmeo200/Golang-V1/internal/config"
 	"github.com/conmeo200/Golang-V1/internal/database"
 	"github.com/conmeo200/Golang-V1/internal/logger"
+	"github.com/conmeo200/Golang-V1/internal/queue/rabbitmq"
+	consumer "github.com/conmeo200/Golang-V1/internal/queue/rabbitmq/consumers"
+
+	//"github.com/conmeo200/Golang-V1/internal/queue/consumer"
 
 	//"github.com/conmeo200/Golang-V1/internal/model"
 	"github.com/conmeo200/Golang-V1/internal/router"
@@ -19,48 +22,35 @@ import (
 func main() {
 	// 1. Load config
 	cfg := config.Load()
-
-	// 2. Initialize dependencies
-	// Initialize custom loggers
+	// 2. Initialize custom loggers
 	logger.Init()
-
-	logger.AppLogger.Println("Starting application...")
 
 	dbPostgres, err := database.NewPostgres(cfg)
 	if err != nil {
 		logger.ErrorLogger.Fatalf("Failed to connect to database: %v", err)
 	}
+	
+	// 3. Init RabbitMQ
+	rabbitMQ, err := rabbitmq.NewRabbitMQ(cfg)
+	if err != nil {
+		logger.ErrorLogger.Fatalf("failed to connect to RabbitMQ: %v", err)
+	}
+	//defer rabbitMQ.Close()
 
-	// Run Migration
-	// err = dbPostgres.AutoMigrate(
-	// 	// &model.User{},
-	// 	// &model.TokenBlacklist{},
-	// 	&model.Order{},
-	// )
-	// if err != nil {
-	// 	logger.ErrorLogger.Fatalf("Migration failed: %v", err)
-	// }
+	// 5. Initialize App (Service, Handler and Route User)
+	myApp := app.NewApp(dbPostgres, rabbitMQ)
 
-	// logger.AppLogger.Println("Migration successful!")
+	// 6. Start Consumer
+	orderConsumer := consumer.NewOrderConsumer(rabbitMQ, myApp.OrderService)
+	go orderConsumer.StartOrder()
 
-	//Run Seeder
-	// err = seeder.SeedUsers(dbPostgres)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	logger.AppLogger.Println("Starting application...")
 
-	// log.Println("Seeder successfuly!")
-
-	//Service, Handler and Route User
-	app := app.NewApp(dbPostgres)
+	// Run Migration...
+	// ... (Migration commented out)
 
 	mux := http.NewServeMux()
-
-	router.RegisterRoutes(mux, app)
-
-	//accessToken, refreshToken, err := auth.GenerateTokens("123")
-
-	//log.Println("GenerateTokens", accessToken, refreshToken, err)
+	router.RegisterRoutes(mux, myApp)
 
 	logger.AppLogger.Printf("Server starting on :%s\n", cfg.Port)
 	http.ListenAndServe(":"+cfg.Port, mux)
