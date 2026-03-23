@@ -16,6 +16,183 @@ func NewWebHandler() *WebHandler {
 	return &WebHandler{}
 }
 
+func (h *WebHandler) LoginPage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("web/template/login.html")
+	if err != nil {
+		log.Printf("Error parsing login template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	tmpl.Execute(w, nil)
+}
+
+func (h *WebHandler) RegisterPage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("web/template/register.html")
+	if err != nil {
+		log.Printf("Error parsing register template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	tmpl.Execute(w, nil)
+}
+
+type DashboardData struct {
+	Title      string
+	ActiveMenu string
+}
+
+func (h *WebHandler) DashboardPage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("web/template/layout.html", "web/template/dashboard.html")
+	if err != nil {
+		log.Printf("Error parsing dashboard template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	data := DashboardData{
+		Title:      "Overview",
+		ActiveMenu: "dashboard",
+	}
+
+	err = tmpl.ExecuteTemplate(w, "layout.html", data)
+	if err != nil {
+		log.Printf("Error executing dashboard template: %v", err)
+	}
+}
+
+type UserItem struct {
+	ID       int
+	Name     string
+	Email    string
+	Role     string
+	Status   string
+	JoinedAt string
+}
+
+type UserListPageData struct {
+	Title      string
+	ActiveMenu string
+	Users      []UserItem
+}
+
+func (h *WebHandler) UserListPage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("web/template/layout.html", "web/template/crud_list.html")
+	if err != nil {
+		log.Printf("Error parsing user list template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	data := UserListPageData{
+		Title:      "Users Management",
+		ActiveMenu: "users",
+		Users: []UserItem{
+			{ID: 1, Name: "Admin User", Email: "admin@heelo.com", Role: "Admin", Status: "Active", JoinedAt: "Jan 10, 2026"},
+			{ID: 2, Name: "Editor Mike", Email: "mike@example.com", Role: "Editor", Status: "Active", JoinedAt: "Feb 15, 2026"},
+			{ID: 3, Name: "Newbie Joe", Email: "joe@test.com", Role: "User", Status: "Pending", JoinedAt: "Mar 01, 2026"},
+		},
+	}
+
+	tmpl.ExecuteTemplate(w, "layout.html", data)
+}
+
+type UserFormPageData struct {
+	Title      string
+	ActiveMenu string
+	IsEdit     bool
+	User       UserItem
+}
+
+func (h *WebHandler) UserFormPage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("web/template/layout.html", "web/template/crud_form.html")
+	if err != nil {
+		log.Printf("Error parsing form template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	data := UserFormPageData{
+		Title:      "Add User",
+		ActiveMenu: "users",
+		IsEdit:     false,
+	}
+
+	// Mocking edit mode if path contains 'edit'
+	if r.URL.Path == "/dashboard/users/edit/1" {
+		data.IsEdit = true
+		data.Title = "Edit User"
+		data.User = UserItem{ID: 1, Name: "Admin User", Email: "admin@heelo.com", Role: "Admin", Status: "Active"}
+	}
+
+	tmpl.ExecuteTemplate(w, "layout.html", data)
+}
+
+func (h *WebHandler) GradesPage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("web/template/layout.html", "web/template/grade_list.html")
+	if err != nil {
+		log.Printf("Error parsing grades template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	data := DashboardData{
+		Title:      "My Grades",
+		ActiveMenu: "grades",
+	}
+
+	tmpl.ExecuteTemplate(w, "layout.html", data)
+}
+
+func (h *WebHandler) ProfilePage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("web/template/layout.html", "web/template/student_profile.html")
+	if err != nil {
+		log.Printf("Error parsing profile template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Mock summary user data
+	data := struct {
+		Title      string
+		ActiveMenu string
+		User       struct {
+			Name    string
+			Initial string
+			Email   string
+		}
+	}{
+		Title:      "My Profile",
+		ActiveMenu: "profile",
+		User: struct {
+			Name    string
+			Initial string
+			Email   string
+		}{
+			Name:    "Admin User",
+			Initial: "AU",
+			Email:   "admin@heelo.com",
+		},
+	}
+
+	tmpl.ExecuteTemplate(w, "layout.html", data)
+}
+
+func (h *WebHandler) AnalyticsPage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("web/template/layout.html", "web/template/analytics.html")
+	if err != nil {
+		log.Printf("Error parsing analytics template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	data := DashboardData{
+		Title:      "Academic Analytics",
+		ActiveMenu: "analytics",
+	}
+
+	tmpl.ExecuteTemplate(w, "layout.html", data)
+}
+
 type NewsItem struct {
 	Title    string
 	Category string
@@ -31,7 +208,6 @@ type NewsPageData struct {
 }
 
 func (h *WebHandler) NewsPage(w http.ResponseWriter, r *http.Request) {
-	// 1. Parsing the template
 	tmpl, err := template.ParseFiles("web/template/news.html")
 	if err != nil {
 		log.Printf("Error parsing template: %v", err)
@@ -39,7 +215,6 @@ func (h *WebHandler) NewsPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 2. Preparing Mock Data
 	data := NewsPageData{
 		Title:   "HeeloNews - Latest Updates",
 		Heading: "Latest Insights & Updates",
@@ -47,45 +222,62 @@ func (h *WebHandler) NewsPage(w http.ResponseWriter, r *http.Request) {
 			{
 				Title:    "Go 1.25 Released with Context Improvements",
 				Category: "Technology",
-				Excerpt:  "The latest version of Go introduces new ways to handle request scoping and context cancellation effectively across massive microservices. Engineers at major tech companies are already reporting up to 30% reduction in memory leaks and dangling goroutines. \"This is the paradigm shift we've been waiting for,\" says a lead developer from the Go Team. The release also brings subtle compiler optimizations that speed up build times for large applications.",
+				Excerpt:  "Latest Go version focus on concurrency and performance.",
 				Author:   "Alice Wonderland",
 				Date:     "Oct 15, 2026",
-			},
-			{
-				Title:    "Why Docker is still relevant in 2026",
-				Category: "DevOps",
-				Excerpt:  "Despite the rise of serverless and new orchestration tools, containerization remains the backbone of modern cloud native applications. The community continues to find ways to strip down image sizes and improve security profiles. Our correspondent explores how the old whale learned some new tricks.",
-				Author:   "Bob Builder",
-				Date:     "Oct 12, 2026",
-			},
-			{
-				Title:    "Building Aesthetic UIs with Pure CSS",
-				Category: "Design",
-				Excerpt:  "You don't always need a heavy CSS framework. Discover how pure CSS variables and flexbox can create stunning, responsive interfaces. We dive into the revival of traditional newspaper layouts using modern CSS Grid.",
-				Author:   "Charlie Chaplin",
-				Date:     "Oct 10, 2026",
-			},
-			{
-				Title:    "The Return of the Monolith",
-				Category: "Architecture",
-				Excerpt:  "Some startups are ditching microservices and returning to majestic monoliths to reduce operational overhead. Is this a step backwards or a pragmatic evolution? A detailed report on the industry's shifting tide.",
-				Author:   "Diana Prince",
-				Date:     "Oct 08, 2026",
-			},
-			{
-				Title:    "Stock Markets Rally on AI News",
-				Category: "Finance",
-				Excerpt:  "Tech stocks saw an unprecedented surge today following major breakthroughs in generative AI capabilities. Analysts are calling it the 'Golden Age of Silicon'. Could this momentum last through the quarter?",
-				Author:   "Edison Teller",
-				Date:     "Oct 16, 2026",
 			},
 		},
 	}
 
-	// 3. Executing the template with data
 	err = tmpl.Execute(w, data)
 	if err != nil {
 		log.Printf("Error executing template: %v", err)
-		dto.RespondWithError(w, dto.NewAppError(http.StatusInternalServerError, "Error rendering page", "RENDER_ERROR"))
 	}
+}
+
+func (h *WebHandler) SportsPage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("web/template/uniscore.html")
+	if err != nil {
+		log.Printf("Error parsing sports template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	data := DashboardData{
+		Title:      "Live Sports Center",
+		ActiveMenu: "sports",
+	}
+
+	// Because uniscore.html is a standalone page, we don't need layout.html
+	tmpl.ExecuteTemplate(w, "uniscore.html", data)
+}
+
+func (h *WebHandler) MatchDetailPage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("web/template/match_detail.html")
+	if err != nil {
+		log.Printf("Error parsing match detail template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	data := DashboardData{
+		Title: "Match Detail - Real Madrid vs Atlético Madrid",
+	}
+
+	tmpl.ExecuteTemplate(w, "match_detail.html", data)
+}
+
+func (h *WebHandler) StandingsPage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("web/template/standings.html")
+	if err != nil {
+		log.Printf("Error parsing standings template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	data := DashboardData{
+		Title: "Bảng xếp hạng - Uniscore",
+	}
+
+	tmpl.ExecuteTemplate(w, "standings.html", data)
 }

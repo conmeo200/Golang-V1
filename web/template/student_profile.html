@@ -1,0 +1,80 @@
+{{define "content"}}
+<h1>Student Profile</h1>
+
+<div style="display: grid; grid-template-columns: 300px 1fr; gap: 2rem;">
+    <!-- Profile Card -->
+    <div class="card" style="text-align: center;">
+        <div style="width: 120px; height: 120px; background: #f1f5f9; border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--primary);">
+            {{if .User.Initial}}{{.User.Initial}}{{else}}JD{{end}}
+        </div>
+        <h2 style="margin-bottom: 0.5rem;">{{.User.Name}}</h2>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Student ID: #20261001</p>
+        
+        <div style="text-align: left; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+            <div class="form-group">
+                <label class="form-label">Department</label>
+                <div style="font-weight: 600;">Computer Science</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <div style="font-weight: 600;">{{.User.Email}}</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Phone</label>
+                <div style="font-weight: 600;">+84 987 654 321</div>
+            </div>
+        </div>
+        
+        <button class="btn btn-outline" style="width: 100%; margin-top: 1rem;">Edit Profile</button>
+    </div>
+
+    <!-- Academic History -->
+    <div>
+        <div class="card">
+            <h2>Academic Summary</h2>
+            <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 0;">
+                <div style="text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">3.82</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Current GPA</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">112</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Credits Earned</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">4th</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Year / Senior</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Enrolled Courses</h2>
+            <div class="course-card">
+                <div class="grade-circle grade-a">A</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600;">Software Engineering</div>
+                    <div style="font-size: 0.875rem; color: var(--text-muted);">Prof. Alan Kay</div>
+                </div>
+                <span class="badge badge-info">In Progress</span>
+            </div>
+            <div class="course-card">
+                <div class="grade-circle grade-b">B</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600;">Compiler Design</div>
+                    <div style="font-size: 0.875rem; color: var(--text-muted);">Prof. Grace Hopper</div>
+                </div>
+                <span class="badge badge-info">In Progress</span>
+            </div>
+            <div class="course-card">
+                <div class="grade-circle grade-a">A</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600;">Cloud Architecture</div>
+                    <div style="font-size: 0.875rem; color: var(--text-muted);">Prof. Jeff Dean</div>
+                </div>
+                <span class="badge badge-info">In Progress</span>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

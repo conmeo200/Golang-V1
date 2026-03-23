@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match Detail - Uniscore</title>
+    <style>
+        :root {
+            --bg-base: #0a0a0a;
+            --bg-surface: #161616;
+            --bg-card: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent-blue: #3b82f6;
+            --accent-yellow: #facc15;
+            --accent-red: #ef4444;
+            --border-color: #262626;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+
+        /* Match Header Section */
+        .match-header {
+            background: var(--bg-surface);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .match-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at center, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .league-info {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .scoreboard {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+        }
+
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .team-logo {
+            width: 80px;
+            height: 80px;
+            background: #2a2a2a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 900;
+        }
+
+        .team-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .score-big {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--accent-yellow);
+        }
+
+        .match-time {
+            color: var(--accent-red);
+            font-weight: 800;
+            font-size: 1.125rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+            gap: 2rem;
+        }
+
+        .tab {
+            padding: 1rem 0;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-size: 0.875rem;
+        }
+
+        .tab.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+        }
+
+        /* Grid Content */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Timeline Items */
+        .timeline-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .timeline-time {
+            width: 30px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 700;
+        }
+
+        .timeline-event {
+            flex: 1;
+            padding: 0.75rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+
+        .event-main { font-weight: 600; margin-bottom: 0.25rem; }
+        .event-sub { color: var(--text-secondary); font-size: 0.75rem; }
+
+        /* Stats Rows */
+        .stat-row {
+            margin-bottom: 1.25rem;
+        }
+
+        .stat-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-bar-container {
+            display: flex;
+            height: 8px;
+            background: #222;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .stat-bar { height: 100%; border-radius: 4px; }
+        .stat-home { background: var(--accent-blue); }
+        .stat-away { background: var(--accent-yellow); margin-left: auto; }
+
+        /* Video Highlights Card */
+        .video-highlight {
+            width: 100%;
+            height: 200px;
+            background: #111;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        .video-highlight::after {
+            content: '▶ Play Highlights';
+            padding: 0.75rem 1.5rem;
+            background: var(--accent-yellow);
+            color: #000;
+            font-weight: 800;
+            border-radius: 20px;
+            font-size: 0.875rem;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <a href="/dashboard/sports" class="back-btn">← Quay lại</a>
+        <div style="font-weight: 700;">Chi tiết trận đấu</div>
+    </header>
+
+    <div class="match-header">
+        <div class="league-info">La Liga - Vòng 29 | 23/03/2026</div>
+        
+        <div class="scoreboard">
+            <div class="team">
+                <div class="team-logo" style="background:#fff; color:#000;">RM</div>
+                <div class="team-name">Real Madrid</div>
+            </div>
+
+            <div style="flex-direction: column; display: flex;">
+                <div class="score-big">3 - 2</div>
+                <div class="match-time">LIVE 68'</div>
+            </div>
+
+            <div class="team">
+                <div class="team-logo" style="background:#dc2626; color:#fff;">AM</div>
+                <div class="team-name">Atlético Madrid</div>
+            </div>
+        </div>
+
+        <div style="font-size: 0.875rem; color: var(--text-secondary);">
+            📍 Santiago Bernabéu | 🏟️ 81,044 khán giả
+        </div>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active">DIỄN BIẾN</div>
+        <div class="tab">ĐỘI HÌNH</div>
+        <div class="tab">THỐNG KÊ</div>
+        <div class="tab">ĐỐI ĐẦU</div>
+    </div>
+
+    <div class="content-grid">
+        <!-- Main Content -->
+        <div>
+            <div class="card">
+                <div class="card-title">⚽ Bàn thắng & Sự kiện chính</div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-time">65'</div>
+                    <div class="timeline-event">
+                        <div class="event-main">⚽ BÀN THẮNG - Antoine Griezmann</div>
+                        <div class="event-sub">Kiến tạo: Koke (Atlético Madrid)</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-time">58'</div>
+                    <div class="timeline-event" style="background: rgba(59, 130, 246, 0.1);">
+                        <div class="event-main">⚽ BÀN THẮNG - Jude Bellingham</div>
+                        <div class="event-sub">Real Madrid dẫn trước 3-1</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-time">45'</div>
+                    <div class="timeline-event">
+                        <div class="event-main">⏸ Hết hiệp 1</div>
+                        <div class="event-sub">Tỷ số tạm thời 2-1</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-time">42'</div>
+                    <div class="timeline-event" style="background: rgba(59, 130, 246, 0.1);">
+                        <div class="event-main">⚽ BÀN THẮNG - Vinícius Júnior</div>
+                        <div class="event-sub">Real Madrid 2-1</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Content -->
+        <div>
+            <div class="card" style="padding: 1rem;">
+                <div class="card-title">📹 Highlight Video</div>
+                <div class="video-highlight"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📊 Thống kê nhanh</div>
+                
+                <div class="stat-row">
+                    <div class="stat-labels"><span>58%</span><span>Kiểm soát bóng</span><span>42%</span></div>
+                    <div class="stat-bar-container">
+                        <div class="stat-bar stat-home" style="width: 58%;"></div>
+                        <div class="stat-bar stat-away" style="width: 42%;"></div>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="stat-labels"><span>14</span><span>Tổng số cú sút</span><span>9</span></div>
+                    <div class="stat-bar-container">
+                        <div class="stat-bar stat-home" style="width: 60%;"></div>
+                        <div class="stat-bar stat-away" style="width: 40%;"></div>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="stat-labels"><span>5</span><span>Sút trúng đích</span><span>3</span></div>
+                    <div class="stat-bar-container">
+                        <div class="stat-bar stat-home" style="width: 62%;"></div>
+                        <div class="stat-bar stat-away" style="width: 38%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

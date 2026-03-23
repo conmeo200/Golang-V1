@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng Xếp Hạng - Uniscore</title>
+    <style>
+        :root {
+            --bg-base: #0a0a0a;
+            --bg-surface: #161616;
+            --bg-card: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent-blue: #3b82f6;
+            --accent-yellow: #facc15;
+            --border-color: #262626;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .back-btn:hover { background: var(--bg-card); }
+
+        .title-section h1 {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .league-tabs {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .league-tab {
+            padding: 1rem 0;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.875rem;
+            border-bottom: 2px solid transparent;
+        }
+
+        .league-tab.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+        }
+
+        .standings-card {
+            background: var(--bg-surface);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        th {
+            background: rgba(255,255,255,0.02);
+            text-align: left;
+            padding: 1rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        tr:hover { background: rgba(255,255,255,0.01); }
+
+        .pos-cell { width: 50px; text-align: center; font-weight: 700; color: var(--text-secondary); }
+        .team-cell { display: flex; align-items: center; gap: 1rem; font-weight: 600; }
+        .team-logo {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 800;
+        }
+
+        .stats-cell { width: 60px; text-align: center; }
+        .pts-cell { width: 80px; text-align: center; font-weight: 800; color: var(--accent-yellow); }
+
+        .rank-up { color: #10b981; }
+        .rank-down { color: #ef4444; }
+
+        .form-dots { display: flex; gap: 4px; justify-content: center; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .dot.w { background: #10b981; }
+        .dot.d { background: #6b7280; }
+        .dot.l { background: #ef4444; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="title-section">
+            <div style="font-size: 0.75rem; color: var(--accent-blue); font-weight: 700; text-transform: uppercase; margin-bottom: 0.25rem;">Football Rankings</div>
+            <h1>Bảng Xếp Hạng</h1>
+        </div>
+        <a href="/dashboard/sports" class="back-btn">← Quay lại Sports</a>
+    </header>
+
+    <div class="league-tabs">
+        <div class="league-tab active">LA LIGA</div>
+        <div class="league-tab">PREMIER LEAGUE</div>
+        <div class="league-tab">BUNDESLIGA</div>
+        <div class="league-tab">SERIE A</div>
+        <div class="league-tab">LIGUE 1</div>
+    </div>
+
+    <div class="standings-card">
+        <table>
+            <thead>
+                <tr>
+                    <th class="pos-cell">#</th>
+                    <th>Đội bóng</th>
+                    <th class="stats-cell">P</th>
+                    <th class="stats-cell">W</th>
+                    <th class="stats-cell">D</th>
+                    <th class="stats-cell">L</th>
+                    <th class="stats-cell">GD</th>
+                    <th class="pts-cell">PTS</th>
+                    <th style="text-align: center;">5 Trận gần nhất</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="pos-cell">1</td>
+                    <td class="team-cell">
+                        <div class="team-logo" style="background:#fff; color:#000;">RM</div>
+                        Real Madrid
+                    </td>
+                    <td class="stats-cell">28</td>
+                    <td class="stats-cell">21</td>
+                    <td class="stats-cell">6</td>
+                    <td class="stats-cell">1</td>
+                    <td class="stats-cell">+42</td>
+                    <td class="pts-cell">69</td>
+                    <td>
+                        <div class="form-dots">
+                            <div class="dot w"></div>
+                            <div class="dot w"></div>
+                            <div class="dot d"></div>
+                            <div class="dot w"></div>
+                            <div class="dot w"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pos-cell">2</td>
+                    <td class="team-cell">
+                        <div class="team-logo" style="background:#ef4444; color:#fff;">GI</div>
+                        Girona
+                    </td>
+                    <td class="stats-cell">28</td>
+                    <td class="stats-cell">19</td>
+                    <td class="stats-cell">5</td>
+                    <td class="stats-cell">4</td>
+                    <td class="stats-cell">+26</td>
+                    <td class="pts-cell">62</td>
+                    <td>
+                        <div class="form-dots">
+                            <div class="dot w"></div>
+                            <div class="dot l"></div>
+                            <div class="dot w"></div>
+                            <div class="dot w"></div>
+                            <div class="dot l"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pos-cell">3</td>
+                    <td class="team-cell">
+                        <div class="team-logo" style="background:#0ea5e9; color:#fff;">BC</div>
+                        Barcelona
+                    </td>
+                    <td class="stats-cell">28</td>
+                    <td class="stats-cell">18</td>
+                    <td class="stats-cell">7</td>
+                    <td class="stats-cell">3</td>
+                    <td class="stats-cell">+23</td>
+                    <td class="pts-cell">61</td>
+                    <td>
+                        <div class="form-dots">
+                            <div class="dot w"></div>
+                            <div class="dot d"></div>
+                            <div class="dot w"></div>
+                            <div class="dot w"></div>
+                            <div class="dot d"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pos-cell">4</td>
+                    <td class="team-cell">
+                        <div class="team-logo" style="background:#dc2626; color:#fff;">AM</div>
+                        Atlético Madrid
+                    </td>
+                    <td class="stats-cell">28</td>
+                    <td class="stats-cell">17</td>
+                    <td class="stats-cell">4</td>
+                    <td class="stats-cell">7</td>
+                    <td class="stats-cell">+22</td>
+                    <td class="pts-cell">55</td>
+                    <td>
+                        <div class="form-dots">
+                            <div class="dot l"></div>
+                            <div class="dot w"></div>
+                            <div class="dot d"></div>
+                            <div class="dot w"></div>
+                            <div class="dot l"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="pos-cell">5</td>
+                    <td class="team-cell">
+                        <div class="team-logo" style="background:#3b82f6; color:#fff;">AB</div>
+                        Athletic Bilbao
+                    </td>
+                    <td class="stats-cell">28</td>
+                    <td class="stats-cell">15</td>
+                    <td class="stats-cell">8</td>
+                    <td class="stats-cell">5</td>
+                    <td class="stats-cell">+20</td>
+                    <td class="pts-cell">53</td>
+                    <td>
+                        <div class="form-dots">
+                            <div class="dot d"></div>
+                            <div class="dot w"></div>
+                            <div class="dot l"></div>
+                            <div class="dot w"></div>
+                            <div class="dot w"></div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

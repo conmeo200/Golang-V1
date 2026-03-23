@@ -1,0 +1,141 @@
+{{define "content"}}
+<header style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end;">
+    <div>
+        <h1 style="margin-bottom: 0.25rem;">Live Football Center</h1>
+        <p style="color: var(--text-muted);">Real-time scores, fixtures, and league standings.</p>
+    </div>
+    <div style="display: flex; gap: 1rem;">
+        <select class="form-control" style="width: auto;">
+            <option>🏆 All Leagues</option>
+            <option>🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</option>
+            <option>🇪🇸 La Liga</option>
+            <option>🇪🇺 Champions League</option>
+        </select>
+    </div>
+</header>
+
+<!-- Live Matches Section -->
+<div style="margin-bottom: 2.5rem;">
+    <h2 style="font-size: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+        <span class="live-badge"><span class="live-dot"></span> Live Now</span>
+        In-Play Matches
+    </h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 1.5rem;">
+        
+        <!-- Live Match Card -->
+        <div class="match-card" style="border-left: 4px solid #ef4444;">
+            <div class="team" style="justify-content: flex-end;">
+                <span class="team-name">Arsenal</span>
+                <div class="team-logo">A</div>
+            </div>
+            
+            <div style="text-align: center;">
+                <div class="score">2 - 1</div>
+                <div class="match-status" style="color: #ef4444; font-weight: 700;">68'</div>
+            </div>
+            
+            <div class="team">
+                <div class="team-logo">C</div>
+                <span class="team-name">Chelsea</span>
+            </div>
+        </div>
+
+        <div class="match-card" style="border-left: 4px solid #ef4444;">
+            <div class="team" style="justify-content: flex-end;">
+                <span class="team-name">Real Madrid</span>
+                <div class="team-logo">R</div>
+            </div>
+            
+            <div style="text-align: center;">
+                <div class="score">0 - 0</div>
+                <div class="match-status" style="color: #ef4444; font-weight: 700;">12'</div>
+            </div>
+            
+            <div class="team">
+                <div class="team-logo">B</div>
+                <span class="team-name">Barcelona</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+    <!-- Upcoming Fixtures -->
+    <div>
+        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">📅 Upcoming Fixtures</h2>
+        
+        <div class="match-card">
+            <div class="team" style="justify-content: flex-end;">
+                <span class="team-name">Man City</span>
+                <div class="team-logo">M</div>
+            </div>
+            
+            <div style="text-align: center;">
+                <div class="score" style="background: transparent; font-size: 1rem; padding: 0;">vs</div>
+                <div class="match-status">Tomorrow<br>20:00</div>
+            </div>
+            
+            <div class="team">
+                <div class="team-logo">L</div>
+                <span class="team-name">Liverpool</span>
+            </div>
+        </div>
+
+        <div class="match-card">
+            <div class="team" style="justify-content: flex-end;">
+                <span class="team-name">Bayern Munich</span>
+                <div class="team-logo">B</div>
+            </div>
+            
+            <div style="text-align: center;">
+                <div class="score" style="background: transparent; font-size: 1rem; padding: 0;">vs</div>
+                <div class="match-status">Sun, 18th<br>15:30</div>
+            </div>
+            
+            <div class="team">
+                <div class="team-logo">D</div>
+                <span class="team-name">Dortmund</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- League Table Sidebar -->
+    <div>
+        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">🏆 Top Standings</h2>
+        <div class="card" style="padding: 0;">
+            <div class="table-container">
+                <table style="font-size: 0.875rem;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 0.75rem;">#</th>
+                            <th style="padding: 0.75rem;">Team</th>
+                            <th style="padding: 0.75rem; text-align: center;">P</th>
+                            <th style="padding: 0.75rem; text-align: center;">Pts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 0.75rem; font-weight: 600;">1</td>
+                            <td style="padding: 0.75rem;">Arsenal</td>
+                            <td style="padding: 0.75rem; text-align: center; color: var(--text-muted);">9</td>
+                            <td style="padding: 0.75rem; text-align: center; font-weight: 700;">24</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; font-weight: 600;">2</td>
+                            <td style="padding: 0.75rem;">Man City</td>
+                            <td style="padding: 0.75rem; text-align: center; color: var(--text-muted);">9</td>
+                            <td style="padding: 0.75rem; text-align: center; font-weight: 700;">22</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; font-weight: 600;">3</td>
+                            <td style="padding: 0.75rem;">Liverpool</td>
+                            <td style="padding: 0.75rem; text-align: center; color: var(--text-muted);">8</td>
+                            <td style="padding: 0.75rem; text-align: center; font-weight: 700;">20</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

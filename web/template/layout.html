@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} - Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div style="background: var(--primary); width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">H</div>
+                HeeloAdmin
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/dashboard" class="nav-link {{if eq .ActiveMenu "dashboard"}}active{{end}}">
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/dashboard/users" class="nav-link {{if eq .ActiveMenu "users"}}active{{end}}">
+                        Users Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/dashboard/grades" class="nav-link {{if eq .ActiveMenu "grades"}}active{{end}}">
+                        My Grades
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/dashboard/profile" class="nav-link {{if eq .ActiveMenu "profile"}}active{{end}}">
+                        Student Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/dashboard/analytics" class="nav-link {{if eq .ActiveMenu "analytics"}}active{{end}}">
+                        Analytics
+                    </a>
+                </li>
+                <li class="nav-item" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <a href="/dashboard/sports" class="nav-link {{if eq .ActiveMenu "sports"}}active{{end}}">
+                        ⚽ Sports Hub
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/news" class="nav-link">
+
+                        Back to Site
+                    </a>
+                </li>
+            </ul>
+
+            <div style="margin-top: auto;">
+                <a href="/login" class="nav-link" style="color: #ef4444;">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Content -->
+        <main class="main-content">
+            {{template "content" .}}
+        </main>
+    </div>
+
+    {{block "scripts" .}}{{end}}
+</body>
+</html>

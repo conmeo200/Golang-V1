@@ -1,0 +1,47 @@
+{{define "content"}}
+<header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <div>
+        <h1 style="margin-bottom: 0.25rem;">Users Management</h1>
+        <p style="color: var(--text-muted);">Manage your application members and their roles.</p>
+    </div>
+    <a href="/dashboard/users/new" class="btn btn-primary">+ Add New User</a>
+</header>
+
+<div class="card">
+    <div style="margin-bottom: 1.5rem; display: flex; gap: 1rem;">
+        <input type="text" class="form-control" placeholder="Search by name, email or role..." style="max-width: 300px;">
+        <button class="btn btn-outline" style="padding: 0.5rem 1rem;">Filter</button>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Joined Date</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Users}}
+                <tr>
+                    <td>
+                        <div style="font-weight: 600;">{{.Name}}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{.Email}}</div>
+                    </td>
+                    <td>{{.Role}}</td>
+                    <td>{{.JoinedAt}}</td>
+                    <td><span class="badge {{if eq .Status "Active"}}badge-success{{else}}badge-warning{{end}}">{{.Status}}</span></td>
+                    <td style="text-align: right;">
+                        <a href="/dashboard/users/edit/{{.ID}}" style="color: var(--primary); margin-right: 1rem; text-decoration: none; font-size: 0.875rem;">Edit</a>
+                        <a href="#" style="color: #ef4444; text-decoration: none; font-size: 0.875rem;">Delete</a>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{end}}

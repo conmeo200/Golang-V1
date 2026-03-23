@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports</title>
+    <style>
+        :root {
+            --bg-base: #121212;
+            --bg-surface: #1e1e1e;
+            --bg-surface-hover: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent-blue: #3b82f6;
+            --accent-yellow: #facc15;
+            --accent-red: #ef4444;
+            --border-color: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Top Navbar */
+        .navbar {
+            height: 60px;
+            background-color: var(--bg-surface);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            color: var(--accent-yellow);
+        }
+
+        .search-bar {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            color: var(--text-primary);
+            width: 300px;
+            outline: none;
+        }
+
+        .nav-links {
+            margin-left: auto;
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .nav-links a {
+            color: inherit;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Main Container: 3 Columns */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Column 1: Left Sidebar */
+        .col-left {
+            width: 250px;
+            background-color: var(--bg-surface);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+        }
+
+        .sport-icons {
+            width: 60px;
+            background-color: #1a1a1a;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 1rem;
+            gap: 1rem;
+        }
+
+        .sport-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+        }
+
+        .sport-icon.active {
+            background: var(--bg-surface-hover);
+            color: var(--accent-blue);
+        }
+
+        .sport-icon:hover {
+            color: var(--text-primary);
+        }
+
+        .league-list {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .league-list h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .league-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 0.75rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.825rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.35rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+        }
+
+        .league-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-primary);
+            border-color: rgba(255, 255, 255, 0.05);
+            transform: translateX(4px);
+        }
+
+        .league-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-blue);
+            border-color: rgba(59, 130, 246, 0.2);
+            font-weight: 600;
+        }
+
+        .league-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .league-flag {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: #000;
+            flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .league-count {
+            font-size: 0.7rem;
+            background: #262626;
+            padding: 2px 6px;
+            border-radius: 10px;
+            color: var(--text-secondary);
+        }
+
+        .league-item:hover .league-count {
+            background: #333;
+            color: var(--text-primary);
+        }
+
+        .league-item.active .league-count {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+
+        /* Column 2: Center Feed */
+        .col-center {
+            flex: 1;
+            background-color: var(--bg-base);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Date Navigation */
+        .date-nav {
+            display: flex;
+            background: var(--bg-surface);
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            overflow-x: auto;
+        }
+
+        .date-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .date-item:hover {
+            background: var(--bg-surface-hover);
+            color: var(--text-primary);
+        }
+
+        .date-item.active {
+            color: var(--accent-yellow);
+            font-weight: 700;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            padding: 1rem;
+            gap: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filter-tab {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: var(--bg-surface);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+        }
+
+        .filter-tab.active {
+            border-color: var(--accent-yellow);
+            color: var(--accent-yellow);
+        }
+
+        .filter-tab.live {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-red);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Match Feed */
+        .match-feed {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .league-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-surface);
+            border-radius: 8px 8px 0 0;
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+
+        .match-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 80px 1fr 40px;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .match-row:hover {
+            background: var(--bg-surface-hover);
+        }
+
+        .match-row:last-child {
+            border-radius: 0 0 8px 8px;
+            border-bottom: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .time-status {
+            color: var(--text-secondary);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .time-status.live {
+            color: var(--accent-red);
+            font-weight: 700;
+        }
+
+        .team-name {
+            text-align: left;
+        }
+
+        .team-name.home {
+            text-align: right;
+        }
+
+        .score-box {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 800;
+            font-size: 1rem;
+            background: #111;
+            padding: 0.25rem;
+            border-radius: 4px;
+            margin: 0 1rem;
+        }
+
+        .score-box.live {
+            color: var(--accent-yellow);
+        }
+
+
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+            }
+
+            70% {
+                opacity: 0.5;
+                box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">UNI<span>SCORE</span></div>
+        <input type="text" class="search-bar" placeholder="🔍 Tìm kiếm">
+        <div class="nav-links">
+            <a href="/dashboard">← Back to Admin</a>
+            <a href="#">CHUYỂN NHƯỢNG</a>
+            <a href="/dashboard/sports/standings">XẾP HẠNG</a>
+            <a href="#" style="font-size: 1.2rem;">⭐</a>
+            <a href="#" style="font-size: 1.2rem;">👤</a>
+        </div>
+    </nav>
+
+    <!-- Main 3-Column Container -->
+    <div class="main-container">
+
+        <!-- Column 2: Center Match Feed -->
+        <main class="col-center">
+
+            <!-- Dates Navigation -->
+            <div class="date-nav">
+                <div class="date-item">T7<br>21/03</div>
+                <div class="date-item">CN<br>22/03</div>
+                <div class="date-item active">NAY<br>23/03</div>
+                <div class="date-item">T3<br>24/03</div>
+                <div class="date-item">T4<br>25/03</div>
+                <div class="date-item">T5<br>26/03</div>
+            </div>
+
+            <!-- Match Filters -->
+            <div class="filter-tabs">
+                <div class="filter-tab active" onclick="filterMatches('all')">Tất cả</div>
+                <div class="filter-tab live" onclick="filterMatches('live')">
+                    <div class="live-dot"></div> Live
+                </div>
+                <div class="filter-tab" onclick="filterMatches('upcoming')">Sắp tới</div>
+                <div class="filter-tab" onclick="filterMatches('finished')">Kết thúc</div>
+            </div>
+
+            <!-- Matches List -->
+            <div class="match-feed">
+                <!-- Group: La Liga -->
+                <div class="league-header">
+                    <div class="league-flag" style="background:#ef4444;"></div> La Liga
+                    <span style="color: var(--text-secondary); font-weight: 400; font-size: 0.75rem;">🇪🇸 Tây Ban
+                        Nha</span>
+                </div>
+                <div class="match-row" data-status="finished" onclick="window.location.href='/dashboard/sports/match/1'">
+                    <div class="time-status">FT</div>
+                    <div class="team-name home">Athletic Bilbao</div>
+                    <div class="score-box"><span>2</span>-<span>1</span></div>
+                    <div class="team-name away">Real Betis</div>
+                    <div style="color:var(--text-secondary);">⭐</div>
+                </div>
+                <div class="match-row" data-status="live" style="background: rgba(250, 204, 21, 0.05);"
+                    onclick="window.location.href='/dashboard/sports/match/1'">
+                    <div class="time-status live">68'</div>
+                    <div class="team-name home">Real Madrid</div>
+                    <div class="score-box live"><span>3</span>-<span>2</span></div>
+                    <div class="team-name away">Atletico Madrid</div>
+                    <div style="color:var(--text-secondary);">⭐</div>
+                </div>
+                <div class="match-row" data-status="upcoming">
+                    <div class="time-status">21:00</div>
+                    <div class="team-name home">Barcelona</div>
+                    <div class="score-box"><span>-</span>-<span>-</span></div>
+                    <div class="team-name away">Girona</div>
+                    <div style="color:var(--text-secondary);">⭐</div>
+                </div>
+
+                <!-- Group: Bundesliga -->
+                <div class="league-header">
+                    <div class="league-flag" style="background:#dc2626;"></div> Bundesliga
+                    <span style="color: var(--text-secondary); font-weight: 400; font-size: 0.75rem;">🇩🇪 Đức</span>
+                </div>
+                <div class="match-row" data-status="finished" onclick="window.location.href='/dashboard/sports/match/1'">
+                    <div class="time-status">FT</div>
+                    <div class="team-name home">FC Augsburg</div>
+                    <div class="score-box"><span>2</span>-<span>5</span></div>
+                    <div class="team-name away">VfB Stuttgart</div>
+                    <div style="color:var(--text-secondary);">⭐</div>
+                </div>
+
+                <!-- Group: Serie A -->
+                <div class="league-header">
+                    <div class="league-flag" style="background:#3b82f6;"></div> Serie A
+                    <span style="color: var(--text-secondary); font-weight: 400; font-size: 0.75rem;">🇮🇹 Ý</span>
+                </div>
+                <div class="match-row" data-status="live" onclick="window.location.href='/dashboard/sports/match/1'">
+                    <div class="time-status live">12'</div>
+                    <div class="team-name home">AS Roma</div>
+                    <div class="score-box live"><span>1</span>-<span>0</span></div>
+                    <div class="team-name away">Lecce</div>
+                    <div style="color:var(--text-secondary);">⭐</div>
+                </div>
+                <div class="match-row" data-status="finished" onclick="window.location.href='/dashboard/sports/match/1'">
+                    <div class="time-status">FT</div>
+                    <div class="team-name home">Fiorentina</div>
+                    <div class="score-box"><span>1</span>-<span>1</span></div>
+                    <div class="team-name away">Inter Milan</div>
+                    <div style="color:var(--text-secondary);">⭐</div>
+                </div>
+                <div class="match-row" data-status="upcoming">
+                    <div class="time-status">23:45</div>
+                    <div class="team-name home">Napoli</div>
+                    <div class="score-box"><span>-</span>-<span>-</span></div>
+                    <div class="team-name away">AC Milan</div>
+                    <div style="color:var(--text-secondary);">⭐</div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Column 3 removed for dedicated page navigation -->
+
+    </div>
+
+    <script>
+        function filterMatches(status) {
+            // Update active tab
+            const tabs = document.querySelectorAll('.filter-tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.innerText.toLowerCase().includes(status === 'finished' ? 'kết thúc' : status === 'all' ? 'tất cả' : status === 'live' ? 'live' : 'sắp tới')) {
+                    tab.classList.add('active');
+                }
+            });
+
+            // Special case for manual "active" class assignment if text matching is tricky
+            if (status === 'all') tabs[0].classList.add('active');
+            if (status === 'live') tabs[1].classList.add('active');
+            if (status === 'upcoming') tabs[2].classList.add('active');
+            if (status === 'finished') tabs[3].classList.add('active');
+
+            // Filter rows
+            const rows = document.querySelectorAll('.match-row');
+            rows.forEach(row => {
+                if (status === 'all' || row.getAttribute('data-status') === status) {
+                    row.style.display = 'grid';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Hide league headers if no visible matches in them (optional enhancement)
+            const groups = document.querySelectorAll('.match-feed .league-header');
+            groups.forEach(header => {
+                let next = header.nextElementSibling;
+                let hasVisible = false;
+                while (next && next.classList.contains('match-row')) {
+                    if (next.style.display !== 'none') hasVisible = true;
+                    next = next.nextElementSibling;
+                }
+                header.style.display = hasVisible ? 'flex' : 'none';
+            });
+        }
+    </script>
+</body>
+
+</html>

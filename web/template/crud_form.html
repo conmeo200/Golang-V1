@@ -1,0 +1,43 @@
+{{define "content"}}
+<header style="margin-bottom: 2rem;">
+    <a href="/dashboard/users" style="color: var(--primary); text-decoration: none; font-size: 0.875rem; font-weight: 600; display: block; margin-bottom: 1rem;">← Back to Users</a>
+    <h1>{{if .IsEdit}}Edit User{{else}}Add New User{{end}}</h1>
+</header>
+
+<div class="card" style="max-width: 600px;">
+    <form action="/dashboard/users" method="GET">
+        <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" name="name" value="{{.User.Name}}" placeholder="e.g. John Doe">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-control" name="email" value="{{.User.Email}}" placeholder="e.g. john@example.com">
+        </div>
+        <div class="form-group">
+            <label class="form-label">User Role</label>
+            <select class="form-control" name="role">
+                <option value="Admin" {{if eq .User.Role "Admin"}}selected{{end}}>Administrator</option>
+                <option value="Editor" {{if eq .User.Role "Editor"}}selected{{end}}>Content Editor</option>
+                <option value="User" {{if eq .User.Role "User"}}selected{{end}}>Standard User</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Account Status</label>
+            <div style="display: flex; gap: 1.5rem; margin-top: 0.5rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                    <input type="radio" name="status" value="Active" {{if or (not .IsEdit) (eq .User.Status "Active")}}checked{{end}}> Active
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                    <input type="radio" name="status" value="Pending" {{if eq .User.Status "Pending"}}checked{{end}}> Pending
+                </label>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+            <button type="submit" class="btn btn-primary">{{if .IsEdit}}Save Changes{{else}}Create User{{end}}</button>
+            <a href="/dashboard/users" class="btn btn-outline">Cancel</a>
+        </div>
+    </form>
+</div>
+{{end}}
