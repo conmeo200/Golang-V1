@@ -10,6 +10,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type UserServiceInterface interface {
+	FindFirstByEmail(ctx context.Context, email string) (*model.User, error)
+	CreateUser(ctx context.Context, email string, balance float64, password string) (*model.User, error)
+	GetUser(ctx context.Context, id string) (*model.User, error)
+	ListUser(ctx context.Context) ([]model.User, error)
+	UpdateBalance(ctx context.Context, id uint, newBalance float64) error
+	DeleteUser(ctx context.Context, id uint) error
+}
+
 type UserService struct {
 	repo repository.UserRepo
 }

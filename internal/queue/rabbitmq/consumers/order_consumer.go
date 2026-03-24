@@ -13,10 +13,10 @@ import (
 
 type OrderConsumer struct {
 	consumer     *rabbitmq.Consumer
-	orderService *service.OrderService
+	orderService service.OrderServiceInterface
 }
 
-func NewOrderConsumer(rabbitMQ *rabbitmq.RabbitMQ, orderService *service.OrderService) *OrderConsumer {
+func NewOrderConsumer(rabbitMQ *rabbitmq.RabbitMQ, orderService service.OrderServiceInterface) *OrderConsumer {
 	return &OrderConsumer{
 		consumer:     rabbitmq.NewConsumer(rabbitMQ),
 		orderService: orderService,

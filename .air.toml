@@ -2,10 +2,11 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-cmd = "go build -o tmp/app ./cmd"
-bin = "tmp/app"
-full_bin = "tmp/app"
-include_ext = ["go"]
+# Build cho server chính
+cmd = "go build -o tmp/server ./cmd/server"
+bin = "tmp/server"
+full_bin = "tmp/server"
+include_ext = ["go", "html", "css", "js"]
 exclude_dir = ["tmp", "vendor"]
 delay = 1000
 

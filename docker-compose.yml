@@ -1,29 +1,53 @@
 version: "3.9"
 
 services:
+  # 1. Main API Server
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: app
+    container_name: app_server
     ports:
       - "${HOST_APP}:${PORT_APP}"
     volumes:
       - .:/app
     depends_on:
       - db
+      - rabbitmq
     environment:
       DB_HOST: db
       DB_PORT: 5432
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       ALLOWED_API_KEYS: ${ALLOWED_API_KEYS}
-      DB_REPLICA_HOSTS: ${DB_REPLICA_HOSTS}
 
+  # 2. Background Worker (RabbitMQ Consumer)
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app_worker
+    # Đè lệnh mặc định (là 'air' cho server) để chạy riêng file main của worker
+    command: go run cmd/worker/main.go 
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/
+
+  # 3. Database (PostgreSQL)
   db:
-    image: postgres:16
+    image: postgres:16-alpine
     container_name: primary_db
     ports:
       - "5432:5432"
@@ -34,8 +58,9 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  # 4. Message Queue (RabbitMQ)
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:3-management-alpine
     container_name: rabbitmq
     ports:
       - "5672:5672"
@@ -46,21 +71,6 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
-  # replica:
-  #   image: postgres:16
-  #   container_name: replica_db
-  #   ports:
-  #     - "5433:5432"
-  #   environment:
-  #     POSTGRES_USER: ${DB_USER_REP}
-  #     POSTGRES_PASSWORD: ${DB_PASSWORD_REP}
-  #     POSTGRES_DB: ${DB_NAME_REP}
-  #   depends_on:
-  #     - db
-  #   volumes:
-  #     - replica_data:/var/lib/postgresql/data
-
 volumes:
   pgdata:
   rabbitmq_data:
-  #replica_data:

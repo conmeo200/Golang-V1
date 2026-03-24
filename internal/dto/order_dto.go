@@ -17,13 +17,13 @@ type OrderResponse struct {
 }
 
 type CreateOrderRequest struct {
-	Amount         float64 `json:"amount"`
-	IdempotencyKey string  `json:"idempotency_key"`
+	Amount         float64 `json:"amount" validate:"required,gt=0"`
+	IdempotencyKey string  `json:"idempotency_key" validate:"required"`
 }
 
 type UpdateOrderRequest struct {
-	Status        string `json:"status"`
-	PaymentStatus string `json:"payment_status"`
+	Status        string `json:"status" validate:"required,oneof=pending completed cancelled"`
+	PaymentStatus string `json:"payment_status" validate:"required,oneof=unpaid paid failed"`
 }
 
 func ToOrderResponse(order *model.Order) OrderResponse {

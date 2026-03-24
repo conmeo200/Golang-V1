@@ -1,4 +1,4 @@
-package handler
+package api
 
 import (
 	"encoding/json"
@@ -8,28 +8,38 @@ import (
 	"github.com/conmeo200/Golang-V1/internal/dto"
 	"github.com/conmeo200/Golang-V1/internal/logger"
 	"github.com/conmeo200/Golang-V1/internal/service"
+	"github.com/go-playground/validator/v10"
 )
 
 type UserHandler struct {
-	service *service.UserService
+	service  service.UserServiceInterface
+	validate *validator.Validate
 }
 
-func NewUserHandler(s *service.UserService) *UserHandler {
-	return &UserHandler{service: s}
+func NewUserHandler(s service.UserServiceInterface) *UserHandler {
+	return &UserHandler{
+		service:  s,
+		validate: validator.New(),
+	}
 }
 
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	type request struct {
-		Email   string  `json:"email"`
-		Balance float64 `json:"balance"`
-		PasswordHash string `json:"password"`
+		Email        string  `json:"email" validate:"required,email"`
+		Balance      float64 `json:"balance" validate:"min=0"`
+		PasswordHash string  `json:"password" validate:"required,min=6"`
 	}
 
 	var req request
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logger.ErrorLogger.Printf("CreateUser decode error: %v", err)
 		dto.RespondWithError(w, dto.ErrInvalidRequest)
+		return
+	}
+
+	if err := h.validate.Struct(req); err != nil {
+		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, err.Error(), "VALIDATION_FAILED"))
 		return
 	}
 
@@ -106,7 +116,7 @@ func (h *UserHandler) ListUser(w http.ResponseWriter, r *http.Request) {
 }
 
 type UpdateUserRequest struct {
-	Balance float64 `json:"balance"`
+	Balance float64 `json:"balance" validate:"min=0"`
 }
 
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
@@ -128,6 +138,11 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		dto.RespondWithError(w, dto.ErrInvalidRequest)
+		return
+	}
+
+	if err := h.validate.Struct(req); err != nil {
+		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, err.Error(), "VALIDATION_FAILED"))
 		return
 	}
 

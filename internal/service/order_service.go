@@ -14,6 +14,15 @@ import (
 	"github.com/google/uuid"
 )
 
+type OrderServiceInterface interface {
+	CreateOrder(ctx context.Context, userID uuid.UUID, amount float64, idempotencyKey string) (*model.Order, error)
+	GetOrder(ctx context.Context, orderUUID uuid.UUID) (*model.Order, error)
+	ListOrdersByUserID(ctx context.Context, userID uuid.UUID) ([]model.Order, error)
+	UpdateOrderStatus(ctx context.Context, orderUUID uuid.UUID, status string, paymentStatus string) error
+	DeleteOrder(ctx context.Context, orderUUID uuid.UUID) error
+	ProcessOrder(event dto.OrderMessage) error
+}
+
 type OrderService struct {
 	repo     repository.OrderRepo
 	producer *rabbitmq.Producer

@@ -1,4 +1,4 @@
-package handler
+package api
 
 import (
 	"encoding/json"
@@ -8,28 +8,38 @@ import (
 	"github.com/conmeo200/Golang-V1/internal/dto"
 	"github.com/conmeo200/Golang-V1/internal/logger"
 	"github.com/conmeo200/Golang-V1/internal/service"
+	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type AuthHandler struct {
-	service *service.AuthService
+	service  service.AuthServiceInterface
+	validate *validator.Validate
 }
 
 type Request struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=6"`
 }
 
-func NewAuthHandler(s *service.AuthService) *AuthHandler {
-	return &AuthHandler{service: s}
+func NewAuthHandler(s service.AuthServiceInterface) *AuthHandler {
+	return &AuthHandler{
+		service:  s,
+		validate: validator.New(),
+	}
 }
 
-func (h *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 
 	var req Request
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		dto.RespondWithError(w, dto.ErrInvalidRequest)
-		logger.ErrorLogger.Printf("RegisterHandler: invalid request format")
+		logger.ErrorLogger.Printf("Register: invalid request format")
+		return
+	}
+
+	if err := h.validate.Struct(req); err != nil {
+		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, err.Error(), "VALIDATION_FAILED"))
 		return
 	}
 
@@ -54,12 +64,18 @@ func (h *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		"refresh_token": refreshToken,
 	}, "success")
 }
-func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
+
+func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	var req Request
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		dto.RespondWithError(w, dto.ErrInvalidRequest)
-		logger.ErrorLogger.Printf("LoginHandler: invalid request format")
+		logger.ErrorLogger.Printf("Login: invalid request format")
+		return
+	}
+
+	if err := h.validate.Struct(req); err != nil {
+		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, err.Error(), "VALIDATION_FAILED"))
 		return
 	}
 
@@ -83,7 +99,7 @@ func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}, "success")
 }
 
-func (h *AuthHandler) LogoutHandler(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 
 	// Typically we require the refresh token to revoke it in logout
 	var req struct {
@@ -107,7 +123,7 @@ func (h *AuthHandler) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	dto.RespondWithSuccess(w, http.StatusOK, nil, "logged out successfuly")
 }
 
-func (h *AuthHandler) ForgotPasswordHandler(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) ForgotPassword(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		Email string `json:"email"`
 	}
@@ -131,7 +147,7 @@ func (h *AuthHandler) ForgotPasswordHandler(w http.ResponseWriter, r *http.Reque
 	}, "reset token generated (mock email sent)")
 }
 
-func (h *AuthHandler) ChangePasswordHandler(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value("user_id").(string)
 	if !ok || userID == "" {
 		dto.RespondWithError(w, dto.ErrUnauthorized)
@@ -156,7 +172,7 @@ func (h *AuthHandler) ChangePasswordHandler(w http.ResponseWriter, r *http.Reque
 	dto.RespondWithSuccess(w, http.StatusOK, nil, "password changed successfully")
 }
 
-func (h *AuthHandler) RefreshTokenHandler(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) RefreshToken(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		RefreshToken string `json:"refresh_token"`
 	}
@@ -183,7 +199,7 @@ func (h *AuthHandler) RefreshTokenHandler(w http.ResponseWriter, r *http.Request
 	}, "token refreshed")
 }
 
-func (h *AuthHandler) RevokeTokenHandler(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) RevokeToken(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		RefreshToken string `json:"refresh_token"`
 	}

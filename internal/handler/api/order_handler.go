@@ -1,4 +1,4 @@
-package handler
+package api
 
 import (
 	"encoding/json"
@@ -7,15 +7,20 @@ import (
 	"github.com/conmeo200/Golang-V1/internal/dto"
 	"github.com/conmeo200/Golang-V1/internal/logger"
 	"github.com/conmeo200/Golang-V1/internal/service"
+	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 )
 
 type OrderHandler struct {
-	service *service.OrderService
+	service  service.OrderServiceInterface
+	validate *validator.Validate
 }
 
-func NewOrderHandler(s *service.OrderService) *OrderHandler {
-	return &OrderHandler{service: s}
+func NewOrderHandler(s service.OrderServiceInterface) *OrderHandler {
+	return &OrderHandler{
+		service:  s,
+		validate: validator.New(),
+	}
 }
 
 func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
@@ -23,6 +28,11 @@ func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		logger.ErrorLogger.Printf("CreateOrder decode error: %v", err)
 		dto.RespondWithError(w, dto.ErrInvalidRequest)
+		return
+	}
+
+	if err := h.validate.Struct(req); err != nil {
+		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, err.Error(), "VALIDATION_FAILED"))
 		return
 	}
 
@@ -116,6 +126,11 @@ func (h *OrderHandler) UpdateOrder(w http.ResponseWriter, r *http.Request) {
 	var req dto.UpdateOrderRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		dto.RespondWithError(w, dto.ErrInvalidRequest)
+		return
+	}
+
+	if err := h.validate.Struct(req); err != nil {
+		dto.RespondWithError(w, dto.NewAppError(http.StatusBadRequest, err.Error(), "VALIDATION_FAILED"))
 		return
 	}
 

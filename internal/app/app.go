@@ -5,15 +5,16 @@ import (
 
 	"github.com/conmeo200/Golang-V1/internal/repository"
 	"github.com/conmeo200/Golang-V1/internal/service"
-	"github.com/conmeo200/Golang-V1/internal/handler"
+	api_handler "github.com/conmeo200/Golang-V1/internal/handler/api"
+	web_handler "github.com/conmeo200/Golang-V1/internal/handler/web"
 	"github.com/conmeo200/Golang-V1/internal/queue/rabbitmq"
 )
 
 type App struct {
-	UserHandler  *handler.UserHandler
-	AuthHandler  *handler.AuthHandler
-	OrderHandler *handler.OrderHandler
-	WebHandler   *handler.WebHandler
+	UserHandler  *api_handler.UserHandler
+	AuthHandler  *api_handler.AuthHandler
+	OrderHandler *api_handler.OrderHandler
+	WebHandler   *web_handler.WebHandler
 	OrderService *service.OrderService
 }
 
@@ -32,10 +33,10 @@ func NewApp(db *gorm.DB, rabbitMQ *rabbitmq.RabbitMQ) *App {
 	orderService := service.NewOrderService(orderRepo, producer)
 
 	// handlers
-	userHandler := handler.NewUserHandler(userService)
-	authHandler := handler.NewAuthHandler(authService)
-	orderHandler := handler.NewOrderHandler(orderService)
-	webHandler  := handler.NewWebHandler()
+	userHandler := api_handler.NewUserHandler(userService)
+	authHandler := api_handler.NewAuthHandler(authService)
+	orderHandler := api_handler.NewOrderHandler(orderService)
+	webHandler  := web_handler.NewWebHandler()
 
 	return &App{
 		UserHandler:  userHandler,
