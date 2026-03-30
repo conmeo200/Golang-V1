@@ -14,6 +14,6 @@ func RegisterRoutes(mux *http.ServeMux, app *app.App) {
 	api_router.RegisterAPIRoutes(mux, app.UserHandler, app.AuthHandler, app.OrderHandler)
 
 	// Route Web
-	web_router.RegisterWebRoutes(mux, app.WebHandler)
+	web_router.RegisterWebRoutes(mux, app.ClientHandler, app.DashboardHandler)
 
 }

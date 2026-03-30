@@ -20,6 +20,7 @@ type AuthServiceInterface interface {
 	ChangePassword(ctx context.Context, userID string, oldPassword string, newPassword string) error
 	ForgotPassword(ctx context.Context, email string) (string, error)
 	RefreshToken(ctx context.Context, tokenString string) (string, string, error)
+	GetUserByID(ctx context.Context, id string) (*model.User, error)
 }
 
 type AuthService struct {
@@ -189,4 +190,8 @@ func (s *AuthService) RefreshToken(ctx context.Context, tokenString string) (str
 	s.RevokeToken(ctx, tokenString, int64(exp))
 
 	return auth.GenerateTokens(userID)
+}
+
+func (s *AuthService) GetUserByID(ctx context.Context, id string) (*model.User, error) {
+	return s.userRepo.GetUser(ctx, id)
 }

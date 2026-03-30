@@ -7,14 +7,9 @@
     <a href="/dashboard/users/new" class="btn btn-primary">+ Add New User</a>
 </header>
 
-<div class="card">
-    <div style="margin-bottom: 1.5rem; display: flex; gap: 1rem;">
-        <input type="text" class="form-control" placeholder="Search by name, email or role..." style="max-width: 300px;">
-        <button class="btn btn-outline" style="padding: 0.5rem 1rem;">Filter</button>
-    </div>
-
+<div class="card" style="padding: 0;">
     <div class="table-container">
-        <table>
+        <table id="usersTable" style="width: 100%;">
             <thead>
                 <tr>
                     <th>User</th>
@@ -44,4 +39,17 @@
         </table>
     </div>
 </div>
+{{end}}
+
+{{define "scripts"}}
+<script>
+    $(document).ready(function() {
+        $('#usersTable').DataTable({
+            "pageLength": 10,
+            "language": {
+                "search": "Search users:"
+            }
+        });
+    });
+</script>
 {{end}}

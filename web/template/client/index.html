@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #ec4899;
+            --bg-color: #0f172a;
+            --surface: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Abstract Background Elements */
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.5;
+            animation: float 10s ease-in-out infinite alternate;
+        }
+        .shape-1 {
+            width: 500px;
+            height: 500px;
+            background: rgba(79, 70, 229, 0.4);
+            top: -100px;
+            left: -100px;
+        }
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background: rgba(236, 72, 153, 0.3);
+            bottom: 10%;
+            right: -50px;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) scale(1); }
+            100% { transform: translateY(50px) scale(1.1); }
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 6%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            background: rgba(15, 23, 42, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: white;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-outline {
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5);
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .auth-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-badge {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 24px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            max-width: 900px;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(to right, #60a5fa, #c084fc, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.25rem);
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 40px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 6%;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 40px 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255,255,255,0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+            background: rgba(79, 70, 229, 0.1);
+            color: #818cf8;
+        }
+
+        .feature-card:nth-child(2) .feature-icon {
+            background: rgba(236, 72, 153, 0.1);
+            color: #f472b6;
+        }
+
+        .feature-card:nth-child(3) .feature-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+        }
+
+        .feature-card h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: white;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .auth-actions .btn-outline { display: none; }
+            .header { padding: 20px 5%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Shapes -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <!-- Navigation -->
+    <header class="header">
+        <a href="/" class="logo">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 17L12 22L22 17" stroke="url(#paint1_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 12L12 17L22 12" stroke="url(#paint2_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <defs>
+                    <linearGradient id="paint0_linear" x1="2" y1="7" x2="22" y2="7" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#4F46E5"/>
+                        <stop offset="1" stop-color="#EC4899"/>
+                    </linearGradient>
+                    <linearGradient id="paint1_linear" x1="2" y1="19.5" x2="22" y2="19.5" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#4F46E5"/>
+                        <stop offset="1" stop-color="#EC4899"/>
+                    </linearGradient>
+                    <linearGradient id="paint2_linear" x1="2" y1="14.5" x2="22" y2="14.5" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#4F46E5"/>
+                        <stop offset="1" stop-color="#EC4899"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <span>HeeloApp</span>
+        </a>
+        
+        <ul class="nav-links">
+            <li><a href="/" class="active">Trang chủ</a></li>
+            <li><a href="/dashboard/sports">Thể thao</a></li>
+            <li><a href="#features">Tính năng</a></li>
+            <li><a href="#about">Giới thiệu</a></li>
+        </ul>
+
+        <div class="auth-actions">
+            <a href="/login" class="btn btn-outline">Đăng nhập</a>
+            <a href="/register" class="btn btn-primary">Bắt đầu ngay</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-badge">🚀 Phiên bản 2.0 đã ra mắt</div>
+        <h1>
+            Quản trị không giới hạn với <br>
+            <span class="highlight">Heelo Dashboard</span>
+        </h1>
+        <p>Hệ thống quản lý điểm số, thể thao và dữ liệu người dùng toàn diện, được thiết kế tối ưu với giao diện hiện đại, trực quan, bảo mật cao cấp.</p>
+        
+        <div class="hero-actions">
+            <a href="/login" class="btn btn-primary">Truy cập Dashboard</a>
+            <a href="#features" class="btn btn-outline">Tìm hiểu thêm</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <h2 style="font-family: 'Outfit'; font-size: 2.5rem; text-align: center; margin-bottom: 20px;">Làm chủ dữ liệu của bạn</h2>
+        <p style="text-align: center; color: var(--text-muted); max-width: 600px; margin: 0 auto;">Cung cấp cho bạn mọi công cụ cần thiết để quản lý, theo dõi và tối ưu quy trình làm việc tổ chức một cách mượt mà nhất.</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Quản lý Điểm số</h3>
+                <p>Theo dõi và cập nhật điểm số sinh viên theo thời gian thực. Hỗ trợ xuất dữ liệu, tổng hợp học lực và đánh giá kết quả qua biểu đồ hiện đại.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Trực tiếp Thể thao</h3>
+                <p>Cập nhật tỷ số các trận đấu thể thao, bảng xếp hạng các giải đấu nội bộ ngay trên dashboard. Tin cậy, siêu tốc độ không độ trễ.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Bảo mật Toàn diện</h3>
+                <p>Hệ thống phân quyền chuẩn xác (RBAC). Sẵn sàng tích hợp Single Sign-On (SSO) theo các tiêu chuẩn mới nhất: OpenID Connect & OAuth2.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer style="text-align: center; padding: 60px 0; border-top: 1px solid rgba(255,255,255,0.05); color: var(--text-muted); margin-top: 50px;">
+        <p>© 2026 HeeloApp. Nền tảng quản trị đỉnh cao.</p>
+    </footer>
+
+</body>
+</html>

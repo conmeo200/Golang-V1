@@ -10,5 +10,7 @@ func Migrate(db *gorm.DB) error {
 		&model.User{},
 		&model.TokenBlacklist{},
 		&model.Order{},
+		&model.Role{},
+		&model.Permission{},
 	)
 }

@@ -13,8 +13,8 @@ type Manager struct {
 
 func NewManager(rabbitMQ *rabbitmq.RabbitMQ, orderService service.OrderServiceInterface) *Manager {
 	return &Manager{
-		rabbitMQ:      rabbitMQ,
-		orderService: orderService,
+		rabbitMQ	 : rabbitMQ,
+		orderService : orderService,
 	}
 }
 
@@ -22,6 +22,7 @@ func (m *Manager) Start() {
 	// 1. Start Order Consumer
 	// Note: We use the alias 'consumer' because the package name in that folder is 'consumer'
 	orderConsumer := consumer.NewOrderConsumer(m.rabbitMQ, m.orderService)
+	
 	go orderConsumer.StartOrder()
 
 	// 2. Add more workers here easily in the future...

@@ -1,0 +1,81 @@
+{{define "content"}}
+<div class="role-detail-container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <a href="/dashboard/roles" style="color: #64748b; text-decoration: none; font-size: 1.5rem;">&larr;</a>
+            <div>
+                <h2 style="margin: 0; color: #0f172a;">{{.Role.Name}} Permissions</h2>
+                <p style="margin: 5px 0 0 0; color: #64748b; font-size: 0.9rem;">{{.Role.Description}}</p>
+            </div>
+        </div>
+        <button form="permissionsForm" type="submit" class="btn btn-primary" style="background: #10b981; color: white; padding: 10px 24px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            Save Changes
+        </button>
+    </div>
+
+    <!-- Alert Message for simulation -->
+    {{if .Message}}
+    <div style="background: #d1fae5; color: #065f46; border: 1px solid #10b981; padding: 12px 20px; border-radius: 8px; margin-bottom: 24px; font-weight: 500;">
+        {{.Message}}
+    </div>
+    {{end}}
+
+    <div class="card" style="background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden;">
+        
+        <form id="permissionsForm" action="/dashboard/roles/detail/{{.Role.ID}}" method="POST">
+            <div style="padding: 24px; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+                <h3 style="margin: 0; color: #334155; font-size: 1.1rem;">Manage Access Control</h3>
+                <p style="margin: 5px 0 0 0; color: #64748b; font-size: 0.9rem;">Check the boxes to toggle permissions for this role.</p>
+            </div>
+
+            <style>
+                .perm-checkbox { padding: 8px 12px; border-radius: 6px; transition: background 0.2s, border-color 0.2s; border: 1px solid #e2e8f0; }
+                .perm-checkbox:hover { background: #f1f5f9; }
+                .perm-checkbox.granted { background: #eff6ff; border-color: #bfdbfe; }
+                .perm-label { font-weight: 500; font-size: 0.95rem; color: #475569; }
+                .perm-checkbox.granted .perm-label { color: #312e81; }
+            </style>
+            
+            <div class="permissions-list" style="display: flex; flex-direction: column; gap: 24px; padding: 30px;">
+                {{range .PermissionGroups}}
+                <div class="module-group" style="border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; background: white;">
+                    <div style="background: #f8fafc; padding: 15px 20px; border-bottom: 1px solid #e2e8f0;">
+                        <h4 style="margin: 0; color: #0f172a; font-size: 1.05rem;">{{.Module}}</h4>
+                        <p style="margin: 4px 0 0 0; color: #64748b; font-size: 0.85rem;">{{.Description}}</p>
+                    </div>
+                    <div style="padding: 20px; display: flex; flex-wrap: wrap; gap: 20px;">
+                        {{range .Permissions}}
+                        <label class="perm-checkbox {{if .Granted}}granted{{end}}" style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" name="permissions" value="{{.ID}}" {{if .Granted}}checked{{end}} style="width: 18px; height: 18px; cursor: pointer; accent-color: #4f46e5;">
+                            <span class="perm-label">{{.Action}}</span>
+                        </label>
+                        {{end}}
+                    </div>
+                </div>
+                {{end}}
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const label = this.closest('label');
+            const span = label.querySelector('.perm-label');
+            
+            if (this.checked) {
+                label.classList.add('granted');
+                label.style.borderColor = '#bfdbfe';
+                span.style.color = '#312e81';
+            } else {
+                label.classList.remove('granted');
+                label.style.borderColor = '#e2e8f0';
+                span.style.color = '#475569';
+                label.style.backgroundColor = 'transparent';
+            }
+        });
+    });
+</script>
+{{end}}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Login - HeeloAdmin</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body class="auth-wrapper" style="background-color: #f1f5f9;">
+    <div class="auth-card" style="box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
+        <div class="auth-header" style="text-align: center;">
+            <div class="auth-title" style="color: #0f172a; font-weight: 700; font-size: 1.5rem;">HeeloAdmin Dashboard</div>
+            <p style="color: #64748b; font-size: 0.875rem; margin-top: 0.5rem;">Restricted area. Please sign in to continue.</p>
+        </div>
+
+        {{if .Error}}
+        <div style="background: #fee2e2; color: #b91c1c; padding: 10px; border-radius: 6px; margin-top: 15px; text-align: center; font-size: 0.9rem; font-weight: 500;">
+            {{.Error}}
+        </div>
+        {{end}}
+
+        <form action="/dashboard/login" method="POST" style="margin-top: 1.5rem;">
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label class="form-label" style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #334155;">Admin Email</label>
+                <input type="email" name="email" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px;" placeholder="admin@heelo.com" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label class="form-label" style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #334155;">Password</label>
+                <input type="password" name="password" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px;" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; background: #0f172a; color: white; padding: 0.75rem; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">Sign In to Dashboard</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: #64748b;">
+            <a href="/" style="color: #3b82f6; text-decoration: none;">&larr; Back to Client Home</a>
+        </div>
+    </div>
+</body>
+</html>

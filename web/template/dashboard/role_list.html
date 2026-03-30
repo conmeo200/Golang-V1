@@ -1,0 +1,56 @@
+{{define "content"}}
+<div class="roles-container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h2>{{.Title}}</h2>
+        <a href="#" class="btn btn-primary" style="background: #0f172a; padding: 10px 20px; border-radius: 6px; text-decoration: none; color: white;">+ Add New Role</a>
+    </div>
+
+    <div class="card" style="background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; padding: 0;">
+        <table id="rolesTable" style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                <tr>
+                    <th style="padding: 16px; font-weight: 600; color: #475569;">Role ID</th>
+                    <th style="padding: 16px; font-weight: 600; color: #475569;">Role Name</th>
+                    <th style="padding: 16px; font-weight: 600; color: #475569;">Description</th>
+                    <th style="padding: 16px; font-weight: 600; color: #475569;">Users Count</th>
+                    <th style="padding: 16px; font-weight: 600; color: #475569; text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Roles}}
+                <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.3s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                    <td style="padding: 16px; color: #64748b;">#{{.ID}}</td>
+                    <td style="padding: 16px; font-weight: 500; color: #0f172a;">{{.Name}}</td>
+                    <td style="padding: 16px; color: #64748b;">{{.Description}}</td>
+                    <td style="padding: 16px;">
+                        <span style="background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">{{.UsersCount}} Users</span>
+                    </td>
+                    <td style="padding: 16px; text-align: right;">
+                        <a href="/dashboard/roles/detail/{{.ID}}" style="color: #3b82f6; text-decoration: none; font-weight: 500; margin-right: 15px;">Permissions</a>
+                        <a href="#" style="color: #64748b; text-decoration: none; font-weight: 500;">Edit</a>
+                    </td>
+                </tr>
+                {{end}}
+                {{if len .Roles | eq 0}}
+                <tr>
+                    <td colspan="5" style="padding: 30px; text-align: center; color: #94a3b8;">No roles found.</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{end}}
+
+{{define "scripts"}}
+<script>
+    $(document).ready(function() {
+        $('#rolesTable').DataTable({
+            "pageLength": 10,
+            "language": {
+                "search": "Search roles:"
+            }
+        });
+    });
+</script>
+{{end}}
