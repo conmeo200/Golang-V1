@@ -3,24 +3,25 @@ package auth
 import (
 	"os"
 	"testing"
-	"github.com/stretchr/testify/assert"
+
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMain(m *testing.M) {
 	// Thiết lập môi trường cần thiết cho test
 	os.Setenv("JWT_SECRET_KEY", "your-super-secret-key-for-testing")
-	secretKey = []byte(os.Getenv("JWT_SECRET_KEY")) // Gán lại secretKey vì nó được khởi tạo ở cấp package
-	
+	//secretKey = []byte(os.Getenv("JWT_SECRET_KEY")) // Gán lại secretKey vì nó được khởi tạo ở cấp package
+
 	code := m.Run()
 	os.Exit(code)
 }
 
 func TestGenerateTokens(t *testing.T) {
 	userID := "test-user-123"
-	
+
 	accessToken, refreshToken, err := GenerateTokens(userID)
-	
+
 	assert.NoError(t, err)
 	assert.NotEmpty(t, accessToken)
 	assert.NotEmpty(t, refreshToken)
@@ -28,15 +29,15 @@ func TestGenerateTokens(t *testing.T) {
 
 func TestValidateToken(t *testing.T) {
 	userID := "test-user-123"
-	
+
 	accessToken, _, _ := GenerateTokens(userID)
-	
+
 	// Test hợp lệ
 	token, err := ValidateToken(accessToken)
 	assert.NoError(t, err)
 	assert.NotNil(t, token)
 	assert.True(t, token.Valid)
-	
+
 	// Kiểm tra claims
 	claims, ok := token.Claims.(jwt.MapClaims)
 	assert.True(t, ok)
