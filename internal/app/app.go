@@ -23,25 +23,28 @@ type App struct {
 func NewApp(db *gorm.DB, rabbitMQ *rabbitmq.RabbitMQ) *App {
 
 	// repositories
-	userRepo  := repository.NewUserRepository(db)
-	authRepo  := repository.NewAuthRepository(db)
-	tokenRepo := repository.NewTokenRepository(db)
-	orderRepo := repository.NewOrderRepository(db)
-	roleRepo  := repository.NewRoleRepository(db)
+	userRepo     := repository.NewUserRepository(db)
+	authRepo     := repository.NewAuthRepository(db)
+	tokenRepo    := repository.NewTokenRepository(db)
+	orderRepo    := repository.NewOrderRepository(db)
+	roleRepo     := repository.NewRoleRepository(db)
+	taxRepo      := repository.NewTaxRepository(db)
 
 	// services
-	producer 	 := rabbitmq.NewProducer(rabbitMQ)
+	producer     := rabbitmq.NewProducer(rabbitMQ)
 	userService  := service.NewUserService(userRepo)
 	authService  := service.NewAuthService(authRepo, userRepo, tokenRepo)
 	orderService := service.NewOrderService(orderRepo, producer)
 	roleService  := service.NewRoleService(roleRepo)
+	logService   := service.NewFileLogService("log")
+	taxService   := service.NewTaxService(taxRepo)
 
 	// handlers
-	userHandler  := api_handler.NewUserHandler(userService)
-	authHandler  := api_handler.NewAuthHandler(authService)
-	orderHandler := api_handler.NewOrderHandler(orderService)
-	clientHandler := client.NewClientHandler(authService)
-	dashboardHandler := dashboard.NewDashboardHandler(authService, roleService)
+	userHandler     := api_handler.NewUserHandler(userService)
+	authHandler     := api_handler.NewAuthHandler(authService)
+	orderHandler    := api_handler.NewOrderHandler(orderService)
+	clientHandler   := client.NewClientHandler(authService)
+	dashboardHandler := dashboard.NewDashboardHandler(authService, roleService, logService, taxService, orderService)
 
 	return &App{
 		UserHandler:      userHandler,

@@ -36,6 +36,11 @@ func (m *MockOrderRepository) ListByUserID(ctx context.Context, userID uuid.UUID
 	return args.Get(0).([]model.Order), args.Error(1)
 }
 
+func (m *MockOrderRepository) ListAll(ctx context.Context) ([]model.Order, error) {
+	args := m.Called(ctx)
+	return args.Get(0).([]model.Order), args.Error(1)
+}
+
 func (m *MockOrderRepository) Update(ctx context.Context, order *model.Order) error {
 	args := m.Called(ctx, order)
 	return args.Error(0)

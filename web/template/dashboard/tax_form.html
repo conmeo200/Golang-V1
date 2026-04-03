@@ -1,0 +1,44 @@
+{{define "content"}}
+<header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <div>
+        <h1 style="margin-bottom: 0.25rem;">{{.Title}}</h1>
+        <p style="color: var(--text-muted);">Fill in your income details to calculate and submit your tax.</p>
+    </div>
+    <a href="/dashboard/taxes" class="btn" style="background: #eee;">Back to List</a>
+</header>
+
+<div class="card">
+    <form action="/dashboard/taxes/create" method="POST">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Declaration Type</label>
+                <select name="type" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px;">
+                    <option value="PIT">Personal Income Tax (Individual)</option>
+                    <option value="HOUSEHOLD">Household Business Tax</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Tax Period</label>
+                <input type="month" name="period" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px;" required>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Total Income Amount (VND)</label>
+            <div id="income-rows">
+                <div style="display: flex; gap: 1rem; margin-bottom: 0.75rem;">
+                    <input type="number" name="income_amount" placeholder="Amount (VND)" style="flex: 1; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px;" required>
+                </div>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Enter your total gross income for the selected period.</p>
+        </div>
+
+        <div style="padding-top: 1.5rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end;">
+            <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">Save & Calculate</button>
+        </div>
+    </form>
+</div>
+{{end}}
+
+{{define "scripts"}}
+{{end}}

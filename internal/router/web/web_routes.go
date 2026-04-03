@@ -60,6 +60,25 @@ func RegisterWebRoutes(mux *http.ServeMux, clientHandler *client.ClientHandler, 
 		}
 	})))
 
+	// Logs Management
+	mux.Handle("/dashboard/logs", dashboardHandler.DashboardMiddleware(help.Method(http.MethodGet, dashboardHandler.LogListPage)))
+	mux.Handle("/dashboard/logs/detail/", dashboardHandler.DashboardMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			dashboardHandler.LogDetailPage(w, r)
+		} else {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})))
+
+	// Taxes Management
+	mux.Handle("/dashboard/taxes", dashboardHandler.DashboardMiddleware(help.Method(http.MethodGet, dashboardHandler.TaxListPage)))
+	mux.Handle("/dashboard/taxes/new", dashboardHandler.DashboardMiddleware(help.Method(http.MethodGet, dashboardHandler.TaxNewPage)))
+	mux.Handle("/dashboard/taxes/create", dashboardHandler.DashboardMiddleware(help.Method(http.MethodPost, dashboardHandler.ProcessTaxDeclaration)))
+
+	// Order Management
+	mux.Handle("/dashboard/orders", dashboardHandler.DashboardMiddleware(help.Method(http.MethodGet, dashboardHandler.OrderListPage)))
+	mux.Handle("/dashboard/orders/update-status", dashboardHandler.DashboardMiddleware(help.Method(http.MethodPost, dashboardHandler.UpdateOrderStatus)))
+
 	// 4. Presentation Routes (HTML templates)
 	mux.HandleFunc("/", help.Method(http.MethodGet, func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {

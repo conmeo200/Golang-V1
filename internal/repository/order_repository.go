@@ -13,6 +13,7 @@ type OrderRepo interface {
 	Create(ctx context.Context, order *model.Order) (*model.Order, error)
 	GetByUUID(ctx context.Context, uuid uuid.UUID) (*model.Order, error)
 	ListByUserID(ctx context.Context, userID uuid.UUID) ([]model.Order, error)
+	ListAll(ctx context.Context) ([]model.Order, error)
 	Update(ctx context.Context, order *model.Order) error
 	Delete(ctx context.Context, uuid uuid.UUID) error
 }
@@ -48,6 +49,12 @@ func (r *OrderRepository) GetByUUID(ctx context.Context, uuid uuid.UUID) (*model
 func (r *OrderRepository) ListByUserID(ctx context.Context, userID uuid.UUID) ([]model.Order, error) {
 	var orders []model.Order
 	err := r.db.WithContext(ctx).Where("user_id = ?", userID).Find(&orders).Error
+	return orders, err
+}
+
+func (r *OrderRepository) ListAll(ctx context.Context) ([]model.Order, error) {
+	var orders []model.Order
+	err := r.db.WithContext(ctx).Preload("User").Order("created_at desc").Find(&orders).Error
 	return orders, err
 }
 

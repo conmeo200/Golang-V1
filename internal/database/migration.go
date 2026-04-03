@@ -12,5 +12,8 @@ func Migrate(db *gorm.DB) error {
 		&model.Order{},
 		&model.Role{},
 		&model.Permission{},
+		&model.TaxDeclaration{},
+		&model.IncomeRecord{},
+		&model.Dependent{},
 	)
 }

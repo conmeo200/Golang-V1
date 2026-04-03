@@ -1,0 +1,69 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: app_api_service
+    url: http://app_server:8080
+    routes:
+      - name: app_api_public_route
+        paths:
+          - ~/api/v1/login
+          - ~/api/v1/register
+          - ~/api/v1/health
+        strip_path: false
+        plugins:
+          - name: rate-limiting
+            config:
+              minute: 100
+              policy: local
+
+
+      - name: app_api_protected_route
+        paths:
+          - /api
+        strip_path: false
+        plugins:
+          - name: jwt
+            config:
+              claims_to_verify:
+                - exp
+          - name: post-function
+            config:
+              access:
+                - |
+                  local jwt = require("resty.jwt")
+                  local auth_header = ngx.var.http_authorization
+                  if auth_header then
+                    local token = string.sub(auth_header, 8)
+                    local jwt_obj = jwt:load_jwt(token)
+                    if jwt_obj.valid and jwt_obj.payload and jwt_obj.payload.user_id then
+                      ngx.req.set_header("X-User-ID", jwt_obj.payload.user_id)
+                    end
+                  end
+
+          - name: rate-limiting
+            config:
+              minute: 100
+              policy: local
+          - name: file-log
+            config:
+              path: /dev/stdout
+
+consumers:
+  - username: app-consumer
+    jwt_secrets:
+      - key: app-issuer
+        algorithm: RS256
+        rsa_public_key: |
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAl7zNrlJMr7WgjRj/kVwa
+          7z+Evj3XEDTRMLe806oONxCF7zClPbvLw1HrEiZMZRvk7PyKDyTOBKZ2rAlZr76L
+          q1g401OL2gwPxhslXmIb2s+LO/54RMTHGTkTBe5gpZ8uPasurPKiv8ypC6mALVV3
+          ARisKhvyep6gOKpwuovOl8DbdIVxU/bzoNKQdf7hA7VnjnR/MiLLfTG6n4EVkBMX
+          iU+SrgP275R/hxIebFGAOpjunFQ4gVvw6at0TDFkeRlQJP18J5xm/vhZ7rRuaFkB
+          eX9UKAK2FS2PRf8w2c+2LcNii6mJn0rbaw08R3JpkrhegI1rysaNSfQFgBSJHyKk
+          xwIDAQAB
+          -----END PUBLIC KEY-----
+
+
+

@@ -89,8 +89,8 @@ func (h *ClientHandler) RegisterPage(w http.ResponseWriter, r *http.Request) {
 }
 
 type HomePageData struct {
-	Title    string
-	Heading  string
+	Title   string
+	Heading string
 }
 
 func (h *ClientHandler) HomePage(w http.ResponseWriter, r *http.Request) {

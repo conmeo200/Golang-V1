@@ -1,0 +1,26 @@
+{{define "content"}}
+<div class="log-detail-container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+            <h2>{{.Title}}</h2>
+            <p style="color: var(--text-muted);">Viewing <strong style="font-family: monospace;">{{.Filename}}</strong></p>
+        </div>
+        <a href="/dashboard/logs" class="btn" style="background: #eee; padding: 8px 16px; border-radius: 4px; text-decoration: none; color: #333;">&larr; Back to Logs</a>
+    </div>
+
+    {{if .Error}}
+    <div class="alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 1rem; border-radius: 0.25rem; margin-bottom: 1rem;">
+        {{.Error}}
+    </div>
+    {{end}}
+
+    {{if not .Error}}
+    <div class="card log-viewer" style="background: #1e1e1e; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow-x: auto;">
+        <pre style="margin: 0; padding: 0; color: #d4d4d4; font-family: 'Courier New', Courier, monospace; font-size: 0.875rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word;">{{.Content}}</pre>
+    </div>
+    {{end}}
+</div>
+{{end}}
+
+{{define "scripts"}}
+{{end}}

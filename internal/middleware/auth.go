@@ -13,15 +13,22 @@ func JWTMiddleware(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		authHeader := r.Header.Get("Authorization")
+		// 1. Check if Kong already verified and passed User ID
+		kongUserID := r.Header.Get("X-User-ID")
+		if kongUserID != "" {
+			ctx := context.WithValue(r.Context(), "user_id", kongUserID)
+			next.ServeHTTP(w, r.WithContext(ctx))
+			return
+		}
 
+		// 2. Fallback to manual JWT verification (Double check or local dev)
+		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
 			http.Error(w, "missing token", http.StatusUnauthorized)
 			return
 		}
 
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
-
 		token, err := auth.ValidateToken(tokenString)
 		if err != nil || !token.Valid {
 			http.Error(w, "invalid token", http.StatusUnauthorized)

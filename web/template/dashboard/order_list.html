@@ -1,0 +1,360 @@
+{{define "content"}}
+<style>
+    .order-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+    
+    .order-stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+    }
+    
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+    
+    .stat-content {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .stat-label {
+        font-size: 0.875rem;
+        color: #64748b;
+        font-weight: 500;
+    }
+    
+    .stat-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    
+    .order-table-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .table-container {
+        padding: 0;
+    }
+    
+    table.dataTable {
+        border-collapse: collapse !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+    
+    table.dataTable thead th {
+        background: #f8fafc;
+        padding: 12px 16px !important;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        border-bottom: 1px solid #e2e8f0 !important;
+    }
+    
+    table.dataTable td {
+        padding: 16px !important;
+        vertical-align: middle !important;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 0.875rem;
+    }
+    
+    .custom-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .badge-pending { background: #fef3c7; color: #92400e; }
+    .badge-completed { background: #dcfce7; color: #166534; }
+    .badge-failed { background: #fee2e2; color: #991b1c; }
+    .badge-paid { background: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
+    .badge-unpaid { background: #f1f5f9; color: #475569; }
+    
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        background: #3b82f6;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.813rem;
+        flex-shrink: 0;
+    }
+    
+    /* Dropdown Reset */
+    .dropdown {
+        position: relative;
+    }
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        z-index: 1000;
+        min-width: 160px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        list-style: none;
+        margin: 4px 0 0;
+        padding: 8px 0;
+    }
+    .dropdown-menu.show {
+        display: block;
+    }
+    .dropdown-item {
+        display: block;
+        width: 100%;
+        padding: 8px 16px;
+        clear: both;
+        font-weight: 400;
+        color: #1e293b;
+        text-align: inherit;
+        white-space: nowrap;
+        background-color: transparent;
+        border: 0;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.875rem;
+    }
+    .dropdown-item:hover {
+        background-color: #f8fafc;
+        color: #0f172a;
+    }
+    
+    .btn-action {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #e2e8f0;
+        background: white;
+        border-radius: 6px;
+        color: #64748b;
+        cursor: pointer;
+    }
+    .btn-action:hover {
+        background: #f8fafc;
+        border-color: #cbd5e0;
+    }
+    
+    /* Search Bar Tweaks */
+    .dataTables_filter {
+        margin-bottom: 1.5rem !important;
+        padding: 0 1.5rem !important;
+    }
+    .dataTables_filter input {
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 6px !important;
+        padding: 6px 12px !important;
+        outline: none !important;
+    }
+    .dataTables_length {
+        padding: 0 1.5rem !important;
+        font-size: 0.875rem !important;
+        color: #64748b !important;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="mb-4">
+        <h1 style="margin-bottom: 0.5rem;">Order Management</h1>
+        <p style="color: #64748b; font-size: 0.875rem;">Monitor and manage customer transactions.</p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="order-stats-grid">
+        <div class="order-stat-card">
+            <div class="stat-icon" style="background: #eff6ff; color: #2563eb;">
+                <i class="fa fa-shopping-cart"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Total Orders</span>
+                <span class="stat-value">{{.Stats.TotalOrders}}</span>
+            </div>
+        </div>
+        <div class="order-stat-card">
+            <div class="stat-icon" style="background: #fffbeb; color: #d97706;">
+                <i class="fa fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Pending</span>
+                <span class="stat-value">{{.Stats.PendingOrders}}</span>
+            </div>
+        </div>
+        <div class="order-stat-card">
+            <div class="stat-icon" style="background: #f0fdf4; color: #16a34a;">
+                <i class="fa fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Completed</span>
+                <span class="stat-value">{{.Stats.CompletedOrders}}</span>
+            </div>
+        </div>
+        <div class="order-stat-card">
+            <div class="stat-icon" style="background: #f5f3ff; color: #7c3aed;">
+                <i class="fa fa-dollar-sign"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Revenue</span>
+                <span class="stat-value">${{printf "%.2f" .Stats.TotalRevenue}}</span>
+            </div>
+        </div>
+    </div>
+
+    {{if .Success}}
+    <div style="background: #dcfce7; color: #166534; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #bbf7d0;">
+        {{.Success}}
+    </div>
+    {{end}}
+
+    <div class="order-table-card">
+        <div class="table-container">
+            <table id="ordersTable" class="table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th style="text-align: right;">Amount</th>
+                        <th style="text-align: center;">Status</th>
+                        <th style="text-align: center;">Payment</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Orders}}
+                    <tr>
+                        <td style="font-family: monospace; font-weight: 600; color: #3b82f6;">
+                            #{{slice .UUID.String 0 8}}
+                        </td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div class="user-avatar">
+                                    {{slice .User.Email 0 1 | printf "%s" | printf "%s"}}
+                                </div>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="font-weight: 600; color: #1e293b;">{{.User.Email}}</span>
+                                    <span style="font-size: 0.75rem; color: #64748b;">{{.UserID}}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="text-align: right; font-weight: 700; color: #0f172a;">
+                            ${{printf "%.2f" .Amount}}
+                        </td>
+                        <td style="text-align: center;">
+                            {{if eq .Status "completed"}}
+                            <span class="custom-badge badge-completed">Completed</span>
+                            {{else if eq .Status "pending"}}
+                            <span class="custom-badge badge-pending">Pending</span>
+                            {{else}}
+                            <span class="custom-badge badge-failed">{{.Status}}</span>
+                            {{end}}
+                        </td>
+                        <td style="text-align: center;">
+                            {{if eq .PaymentStatus "paid"}}
+                            <span class="custom-badge badge-paid">Paid</span>
+                            {{else}}
+                            <span class="custom-badge badge-unpaid">Unpaid</span>
+                            {{end}}
+                        </td>
+                        <td style="color: #64748b; font-size: 0.813rem;">
+                            {{.CreatedAt}}
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn-action toggle-dropdown">
+                                    <i class="fa fa-ellipsis-v"></i>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <h6 style="padding: 8px 16px; margin: 0; font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Update Status</h6>
+                                    <form action="/dashboard/orders/update-status" method="POST">
+                                        <input type="hidden" name="uuid" value="{{.UUID}}">
+                                        <input type="hidden" name="status" value="completed">
+                                        <input type="hidden" name="payment_status" value="paid">
+                                        <button type="submit" class="dropdown-item">Mark Completed</button>
+                                    </form>
+                                    <form action="/dashboard/orders/update-status" method="POST">
+                                        <input type="hidden" name="uuid" value="{{.UUID}}">
+                                        <input type="hidden" name="status" value="failed">
+                                        <input type="hidden" name="payment_status" value="unpaid">
+                                        <button type="submit" class="dropdown-item" style="color: #ef4444;">Mark Failed</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Dropdown toggle logic
+        document.querySelectorAll('.toggle-dropdown').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const menu = this.nextElementSibling;
+                // Close all other menus first
+                document.querySelectorAll('.dropdown-menu').forEach(m => {
+                    if (m !== menu) m.classList.remove('show');
+                });
+                menu.classList.toggle('show');
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                menu.classList.remove('show');
+            });
+        });
+
+        // Initialize DataTable
+        if ($.fn.DataTable) {
+            $('#ordersTable').DataTable({
+                "order": [[ 5, "desc" ]],
+                "pageLength": 10,
+                "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+                "language": {
+                    "search": "",
+                    "searchPlaceholder": "Search orders..."
+                }
+            });
+        }
+    });
+</script>
+{{end}}

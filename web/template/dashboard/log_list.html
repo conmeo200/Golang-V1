@@ -1,0 +1,57 @@
+{{define "content"}}
+<header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <div>
+        <h1 style="margin-bottom: 0.25rem;">System Logs</h1>
+        <p style="color: var(--text-muted);">View and monitor application execution logs.</p>
+    </div>
+</header>
+
+{{if .Error}}
+<div class="alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 1rem; border-radius: 0.25rem; margin-bottom: 1rem;">
+    {{.Error}}
+</div>
+{{end}}
+
+<div class="card" style="padding: 0;">
+    <div class="table-container">
+        <table id="logsTable" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>Filename</th>
+                    <th>Size (Bytes)</th>
+                    <th>Last Modified</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Logs}}
+                <tr>
+                    <td>
+                        <div style="font-weight: 600; font-family: monospace;">{{.Filename}}</div>
+                    </td>
+                    <td>{{.Size}}</td>
+                    <td>{{.UpdatedAt.Format "2006-01-02 15:04:05"}}</td>
+                    <td style="text-align: right;">
+                        <a href="/dashboard/logs/detail/{{.Filename}}" style="color: var(--primary); margin-right: 1rem; text-decoration: none; font-size: 0.875rem;">View Contents</a>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{end}}
+
+{{define "scripts"}}
+<script>
+    $(document).ready(function() {
+        $('#logsTable').DataTable({
+            "pageLength": 10,
+            "language": {
+                "search": "Search logs:"
+            },
+            "order": [[2, "desc"]] // Sort by Last Modified descending defaults
+        });
+    });
+</script>
+{{end}}

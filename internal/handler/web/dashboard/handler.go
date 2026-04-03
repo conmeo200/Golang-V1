@@ -11,14 +11,26 @@ import (
 )
 
 type DashboardHandler struct {
-	authService service.AuthServiceInterface
-	roleService service.RoleServiceInterface
+	authService  service.AuthServiceInterface
+	roleService  service.RoleServiceInterface
+	logService   service.LogServiceInterface
+	taxService   service.TaxServiceInterface
+	orderService service.OrderServiceInterface
 }
 
-func NewDashboardHandler(authService service.AuthServiceInterface, roleService service.RoleServiceInterface) *DashboardHandler {
+func NewDashboardHandler(
+	authService service.AuthServiceInterface,
+	roleService service.RoleServiceInterface,
+	logService service.LogServiceInterface,
+	taxService service.TaxServiceInterface,
+	orderService service.OrderServiceInterface,
+) *DashboardHandler {
 	return &DashboardHandler{
-		authService: authService,
-		roleService: roleService,
+		authService:  authService,
+		roleService:  roleService,
+		logService:   logService,
+		taxService:   taxService,
+		orderService: orderService,
 	}
 }
 
