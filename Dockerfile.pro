@@ -47,7 +47,7 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 # Điều này giúp image Production cực kỳ nhỏ gọn (~20-30MB)
 COPY --from=builder /app/bin /app/bin
 COPY --from=builder /app/web /app/web
-COPY --from=builder /app/.env /app/.env
+
 
 # Đổi quyền sở hữu cho appuser
 RUN chown -R appuser:appgroup /app

@@ -10,7 +10,9 @@ services:
           - ~/api/v1/login
           - ~/api/v1/register
           - ~/api/v1/health
+          - ~/api/v1/refresh-token
         strip_path: false
+
         plugins:
           - name: rate-limiting
             config:
