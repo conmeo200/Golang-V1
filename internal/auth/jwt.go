@@ -13,30 +13,41 @@ var privateKey *rsa.PrivateKey
 var publicKey *rsa.PublicKey
 
 func init() {
-	// Parse Private Key
-	privData, err := os.ReadFile("certs/private.pem")
-	if err != nil {
-		fmt.Printf("Error reading private key: %v\n", err)
-		return
-	}
-	privateKey, err = jwt.ParseRSAPrivateKeyFromPEM(privData)
-	if err != nil {
-		fmt.Printf("Error parsing private key: %v\n", err)
-		return
+	// 1. Try to load from Environment Variables (useful for CI/CD)
+	privPEM := os.Getenv("JWT_PRIVATE_KEY")
+	pubPEM := os.Getenv("JWT_PUBLIC_KEY")
+
+	if privPEM != "" && pubPEM != "" {
+		var err error
+		privateKey, err = jwt.ParseRSAPrivateKeyFromPEM([]byte(privPEM))
+		if err != nil {
+			fmt.Printf("Error parsing private key from env: %v\n", err)
+		}
+		publicKey, err = jwt.ParseRSAPublicKeyFromPEM([]byte(pubPEM))
+		if err != nil {
+			fmt.Printf("Error parsing public key from env: %v\n", err)
+		}
+		if privateKey != nil && publicKey != nil {
+			return
+		}
 	}
 
-	// Parse Public Key
-	pubData, err := os.ReadFile("certs/public.pem")
-	if err != nil {
-		fmt.Printf("Error reading public key: %v\n", err)
-		return
+	// 2. Fallback to Files
+	privData, err := os.ReadFile("certs/private.pem")
+	if err == nil {
+		privateKey, _ = jwt.ParseRSAPrivateKeyFromPEM(privData)
 	}
-	publicKey, err = jwt.ParseRSAPublicKeyFromPEM(pubData)
-	if err != nil {
-		fmt.Printf("Error parsing public key: %v\n", err)
-		return
+
+	pubData, err := os.ReadFile("certs/public.pem")
+	if err == nil {
+		publicKey, _ = jwt.ParseRSAPublicKeyFromPEM(pubData)
 	}
 }
+
+func IsConfigured() bool {
+	return privateKey != nil && publicKey != nil
+}
+
 
 type AccessClaims struct {
 	UserID string `json:"user_id"`

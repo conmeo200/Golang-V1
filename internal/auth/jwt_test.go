@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
 	"os"
 	"testing"
 
@@ -9,13 +11,23 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	// Thiết lập môi trường cần thiết cho test
-	os.Setenv("JWT_SECRET_KEY", "your-super-secret-key-for-testing")
-	//secretKey = []byte(os.Getenv("JWT_SECRET_KEY")) // Gán lại secretKey vì nó được khởi tạo ở cấp package
+	// 1. Kiểm tra xem đã có key chưa (từ env hoặc file)
+	if !IsConfigured() {
+		// 2. Nếu chưa có, tạo key tạm thời để chạy test
+		reader := rand.Reader
+		bitSize := 2048
+
+		key, err := rsa.GenerateKey(reader, bitSize)
+		if err == nil {
+			privateKey = key
+			publicKey = &key.PublicKey
+		}
+	}
 
 	code := m.Run()
 	os.Exit(code)
 }
+
 
 func TestGenerateTokens(t *testing.T) {
 	userID := "test-user-123"
