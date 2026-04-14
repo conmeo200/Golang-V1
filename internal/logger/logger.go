@@ -7,8 +7,9 @@ import (
 )
 
 var (
-	AppLogger   *log.Logger
-	ErrorLogger *log.Logger
+	AppLogger    *log.Logger
+	ErrorLogger  *log.Logger
+	StripeLogger *log.Logger
 )
 
 func Init() {
@@ -30,7 +31,14 @@ func Init() {
 		log.Fatalf("Failed to open error.log: %v", err)
 	}
 
-	// 4. Initialize global loggers
+	// 4. Open stripe.log
+	stripeFile, err := os.OpenFile(filepath.Join("log", "stripe.log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("Failed to open stripe.log: %v", err)
+	}
+
+	// 5. Initialize global loggers
 	AppLogger = log.New(appFile, "APP: ", log.Ldate|log.Ltime|log.Lshortfile)
 	ErrorLogger = log.New(errorFile, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+	StripeLogger = log.New(stripeFile, "STRIPE: ", log.Ldate|log.Ltime|log.Lshortfile)
 }

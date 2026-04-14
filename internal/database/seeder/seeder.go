@@ -22,10 +22,15 @@ func Seed(db *gorm.DB) error {
 		return err
 	}
 
-	if err := seedTaxData(db); err != nil {
-		log.Printf("Error seeding tax data: %v", err)
-		return err
-	}
+	// if err := seedTaxData(db); err != nil {
+	// 	log.Printf("Error seeding tax data: %v", err)
+	// 	return err
+	// }
+
+	// if err := seedOrdersAndTransactions(db); err != nil {
+	// 	log.Printf("Error seeding orders and transactions: %v", err)
+	// 	return err
+	// }
 
 	log.Println("Database seeders completed.")
 	return nil

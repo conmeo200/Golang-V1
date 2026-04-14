@@ -18,8 +18,18 @@ type Config struct {
 	DBReplicaHosts   []string
 	RabbitMQHost     string
 	RabbitMQPort     string
-	RabbitMQUser     string
-	RabbitMQPassword string
+	RabbitMQUser        string
+	RabbitMQPassword    string
+
+	// Stripe Configuration
+	StripePublicKey     string
+	StripeSecretKey     string
+	StripeWebhookSecret string
+
+	// PayPal Configuration
+	PayPalClientID      string
+	PayPalSecret        string
+	PayPalEnvironment   string // "sandbox" or "live"
 }
 
 func Load() *Config {
@@ -56,9 +66,17 @@ func Load() *Config {
 			}
 			return strings.Split(hosts, ",")
 		}(),
-		RabbitMQHost:     v.GetString("RABBITMQ_HOST"),
-		RabbitMQPort:     v.GetString("RABBITMQ_PORT"),
-		RabbitMQUser:     v.GetString("RABBITMQ_USER"),
-		RabbitMQPassword: v.GetString("RABBITMQ_PASSWORD"),
+		RabbitMQHost:        v.GetString("RABBITMQ_HOST"),
+		RabbitMQPort:        v.GetString("RABBITMQ_PORT"),
+		RabbitMQUser:        v.GetString("RABBITMQ_USER"),
+		RabbitMQPassword:    v.GetString("RABBITMQ_PASSWORD"),
+		
+		StripePublicKey:     v.GetString("STRIPE_PUBLIC_KEY"),
+		StripeSecretKey:     v.GetString("STRIPE_SECRET_KEY"),
+		StripeWebhookSecret: v.GetString("STRIPE_WEBHOOK_SECRET"),
+		
+		PayPalClientID:      v.GetString("PAYPAL_CLIENT_ID"),
+		PayPalSecret:        v.GetString("PAYPAL_SECRET"),
+		PayPalEnvironment:   v.GetString("PAYPAL_ENVIRONMENT"),
 	}
 }

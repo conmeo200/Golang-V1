@@ -65,6 +65,7 @@ func (h *DashboardHandler) OrderListPage(w http.ResponseWriter, r *http.Request)
 
 // UpdateOrderStatus handles quick status updates from the dashboard
 func (h *DashboardHandler) UpdateOrderStatus(w http.ResponseWriter, r *http.Request) {
+	// ... (content omitted for brevity but keeping the function)
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -88,6 +89,50 @@ func (h *DashboardHandler) UpdateOrderStatus(w http.ResponseWriter, r *http.Requ
 	}
 
 	http.Redirect(w, r, "/dashboard/orders?success=Order+updated+successfully", http.StatusSeeOther)
+}
+
+// OrderDetailPage renders the detailed view of an order
+func (h *DashboardHandler) OrderDetailPage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("web/template/dashboard/layout.html", "web/template/dashboard/order_detail.html")
+	if err != nil {
+		log.Printf("Error parsing order detail template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	orderUUIDStr := r.URL.Query().Get("uuid")
+	if orderUUIDStr == "" {
+		// Try from path if using a custom router, but here using URL query for simplicity
+		// consistent with how RoleDetailPage/LogDetailPage might work
+	}
+
+	orderUUID, err := uuid.Parse(orderUUIDStr)
+	if err != nil {
+		http.Redirect(w, r, "/dashboard/orders?error=Invalid+Order+ID", http.StatusSeeOther)
+		return
+	}
+
+	order, err := h.orderService.GetOrder(r.Context(), orderUUID)
+	if err != nil || order == nil {
+		http.Redirect(w, r, "/dashboard/orders?error=Order+not+found", http.StatusSeeOther)
+		return
+	}
+
+	transactions, _ := h.transactionService.GetTransactionsByOrderID(r.Context(), order.UUID)
+
+	data := struct {
+		Title        string
+		ActiveMenu   string
+		Order        *model.Order
+		Transactions []model.Transaction
+	}{
+		Title:        "Order Detail #" + order.UUID.String()[:8],
+		ActiveMenu:   "orders",
+		Order:        order,
+		Transactions: transactions,
+	}
+
+	tmpl.ExecuteTemplate(w, "layout.html", data)
 }
 
 // Helper to check if a render method exists, if not I'll implement it or use standard template execution

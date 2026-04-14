@@ -15,5 +15,11 @@ func Migrate(db *gorm.DB) error {
 		&model.TaxDeclaration{},
 		&model.IncomeRecord{},
 		&model.Dependent{},
+		&model.Transaction{},
+		&model.Payment{},
+		&model.PaymentEvent{},
+		&model.OutboxEvents{},
+		&model.InboxEvent{},
+		&model.WebhookLog{},
 	)
 }

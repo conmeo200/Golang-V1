@@ -1,0 +1,57 @@
+{{define "content"}}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">{{.Title}}</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active">Payments</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-table me-1"></i>
+                Payment Records
+            </div>
+            <a href="/dashboard/payments/new" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus me-1"></i> Create Manual Payment
+            </a>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped" id="datatablesSimple">
+                <thead>
+                    <tr>
+                        <th>UUID</th>
+                        <th>Order ID</th>
+                        <th>Amount</th>
+                        <th>Currency</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th>Created At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Payments}}
+                    <tr>
+                        <td><small><code>{{.UUID}}</code></small></td>
+                        <td><small><code>{{.OrderID}}</code></small></td>
+                        <td>{{printf "%.2f" .Amount}}</td>
+                        <td>{{.Currency}}</td>
+                        <td><span class="badge bg-info text-dark">{{.PaymentMethod}}</span></td>
+                        <td>
+                            <span class="badge {{if eq .Status "SUCCESS"}}bg-success{{else if eq .Status "PENDING"}}bg-warning{{else}}bg-danger{{end}}">
+                                {{.Status}}
+                            </span>
+                        </td>
+                        <td>{{.CreatedAt}}</td>
+                    </tr>
+                    {{else}}
+                    <tr>
+                        <td colspan="7" class="text-center">No payments found.</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{{end}}

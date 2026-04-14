@@ -1,0 +1,241 @@
+/* ==========================================================================
+   DASHBOARD CUSTOM STYLES
+   Centralized high-premium UI components and DataTables overrides
+   ========================================================================== */
+
+/* Modern DataTables styling to match dashboard */
+.dataTables_wrapper {
+    padding: 20px;
+}
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-left: 8px;
+    outline: none;
+}
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+table.dataTable thead th {
+    border-bottom: 2px solid #e2e8f0;
+    color: #475569;
+}
+table.dataTable.no-footer {
+    border-bottom: 1px solid #e2e8f0;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, 
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    color: #0f172a !important;
+}
+
+/* Tabs Styling */
+.custom-tabs {
+    margin-bottom: 0;
+    border-bottom: 2px solid #f1f5f9;
+    width: 100%;
+    display: flex;
+}
+
+.custom-tab-btn {
+    background: none;
+    border: none;
+    padding: 14px 16px;
+    color: #94a3b8;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.custom-tab-btn i {
+    margin-right: 6px;
+}
+
+.custom-tab-btn:hover {
+    color: #475569;
+}
+
+.custom-tab-btn.active {
+    color: #2563eb;
+}
+
+.custom-tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #2563eb;
+    border-radius: 2px 2px 0 0;
+}
+
+.custom-pane {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.custom-pane.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Form Fields (Refactored) */
+.form-control-custom {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0f172a;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+}
+
+.form-control-custom:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.input-with-icon {
+    position: relative;
+    width: 100%;
+}
+
+.input-with-icon .icon {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    transform: translateY(-50%);
+    font-size: 1.1rem;
+    pointer-events: none;
+    color: #94a3b8;
+}
+
+.input-with-icon .form-control-custom {
+    padding-left: 44px;
+}
+
+/* Robust Flexbox Row */
+.form-row-custom {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+}
+
+.form-col-custom {
+    flex: 1;
+}
+
+/* Premium Button */
+.btn-premium-pay {
+    display: block;
+    width: 100%;
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    color: white !important;
+    border: none;
+    padding: 16px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+}
+
+.btn-premium-pay:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 20px -3px rgba(37, 99, 235, 0.4);
+}
+
+/* Tag Flow styles */
+.payment-flow-tags {
+    display: flex;
+    flex-direction: column;
+}
+
+.flow-entry {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.step-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.tag-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.tag-arrow {
+    color: #cbd5e1;
+    font-weight: 700;
+}
+
+.flow-time {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    margin-top: 0.5rem;
+}
+
+.border-bottom-dashed {
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.badge-lg {
+    padding: 0.6rem 1rem;
+    font-size: 0.813rem;
+    border-radius: 8px;
+}
+
+/* Tag Colors */
+.bg-primary-soft { background-color: #eff6ff; }
+.bg-indigo-soft { background-color: #eef2ff; }
+.bg-success-soft { background-color: #f0fdf4; }
+.bg-warning-soft { background-color: #fffbeb; }
+.bg-danger-soft { background-color: #fef2f2; }
+.bg-dark-soft { background-color: #f1f5f9; }
+.text-indigo { color: #4f46e5; }
+.bg-green { background-color: #22c55e; }
+
+/* Method Selector */
+.method-selector {
+    flex: 1; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 8px;
+    cursor: pointer; text-align: center; transition: all 0.2s; background: #fff;
+}
+.method-selector:hover { border-color: #cbd5e1; background: #f8fafc; }
+.method-selector.active {
+    border-color: #3b82f6; background: #eff6ff; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+.border-dashed { border: 1.5px dashed #cbd5e1 !important; }

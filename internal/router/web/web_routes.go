@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/conmeo200/Golang-V1/internal/handler/web/client"
@@ -77,11 +78,22 @@ func RegisterWebRoutes(mux *http.ServeMux, clientHandler *client.ClientHandler, 
 
 	// Order Management
 	mux.Handle("/dashboard/orders", dashboardHandler.DashboardMiddleware(help.Method(http.MethodGet, dashboardHandler.OrderListPage)))
+	mux.Handle("/dashboard/orders/detail", dashboardHandler.DashboardMiddleware(help.Method(http.MethodGet, dashboardHandler.OrderDetailPage)))
 	mux.Handle("/dashboard/orders/update-status", dashboardHandler.DashboardMiddleware(help.Method(http.MethodPost, dashboardHandler.UpdateOrderStatus)))
+
+	// Payment Management (Support both plural and singular)
+	mux.Handle("/dashboard/payments", dashboardHandler.DashboardMiddleware(help.Method(http.MethodGet, dashboardHandler.PaymentListPage)))
+	mux.Handle("/dashboard/payments/new", dashboardHandler.DashboardMiddleware(help.Method(http.MethodGet, dashboardHandler.PaymentNewPage)))
+	mux.Handle("/dashboard/payments/create", dashboardHandler.DashboardMiddleware(help.Method(http.MethodPost, dashboardHandler.ProcessPayment)))
+	
+	mux.Handle("/dashboard/payment", dashboardHandler.DashboardMiddleware(help.Method(http.MethodGet, dashboardHandler.PaymentListPage)))
+	mux.Handle("/dashboard/payment/new", dashboardHandler.DashboardMiddleware(help.Method(http.MethodGet, dashboardHandler.PaymentNewPage)))
+	mux.Handle("/dashboard/payment/create", dashboardHandler.DashboardMiddleware(help.Method(http.MethodPost, dashboardHandler.ProcessPayment)))
 
 	// 4. Presentation Routes (HTML templates)
 	mux.HandleFunc("/", help.Method(http.MethodGet, func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
+			fmt.Printf("🔍 [DEBUG] 404 Not Found at path: %s\n", r.URL.Path)
 			http.NotFound(w, r)
 			return
 		}

@@ -5,41 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Title}} - Admin Dashboard</title>
     <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/static/css/dashboard-custom.css">
     
     <!-- DataTables CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    
-    <style>
-        /* Modern DataTables styling to match dashboard */
-        .dataTables_wrapper {
-            padding: 20px;
-        }
-        .dataTables_wrapper .dataTables_filter input {
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 6px 10px;
-            margin-left: 8px;
-            outline: none;
-        }
-        .dataTables_wrapper .dataTables_filter input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        table.dataTable thead th {
-            border-bottom: 2px solid #e2e8f0;
-            color: #475569;
-        }
-        table.dataTable.no-footer {
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current, 
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            color: #0f172a !important;
-        }
-    </style>
 </head>
 <body>
     <div class="app-container">
@@ -94,6 +63,15 @@
                 <li class="nav-item">
                     <a href="/dashboard/orders" class="nav-link {{if eq .ActiveMenu "orders"}}active{{end}}">
                         📦 Order Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{if eq .ActiveMenu "payments"}}active{{end}}" href="/dashboard/payments">
+                        <div class="sb-nav-link-icon"><i class="fas fa-credit-card"></i></div>
+                        Payments
+                    </a>
+                    <a href="/dashboard/transactions" class="nav-link {{if eq .ActiveMenu "transactions"}}active{{end}}">
+                        💳 Transactions
                     </a>
                 </li>
                 <li class="nav-item">

@@ -14,8 +14,10 @@ type DashboardHandler struct {
 	authService  service.AuthServiceInterface
 	roleService  service.RoleServiceInterface
 	logService   service.LogServiceInterface
-	taxService   service.TaxServiceInterface
-	orderService service.OrderServiceInterface
+	taxService         service.TaxServiceInterface
+	orderService       service.OrderServiceInterface
+	transactionService service.TransactionServiceInterface
+	paymentService     service.PaymentServiceInterface
 }
 
 func NewDashboardHandler(
@@ -24,13 +26,17 @@ func NewDashboardHandler(
 	logService service.LogServiceInterface,
 	taxService service.TaxServiceInterface,
 	orderService service.OrderServiceInterface,
+	transactionService service.TransactionServiceInterface,
+	paymentService service.PaymentServiceInterface,
 ) *DashboardHandler {
 	return &DashboardHandler{
-		authService:  authService,
-		roleService:  roleService,
-		logService:   logService,
-		taxService:   taxService,
-		orderService: orderService,
+		authService:        authService,
+		roleService:        roleService,
+		logService:         logService,
+		taxService:         taxService,
+		orderService:       orderService,
+		transactionService: transactionService,
+		paymentService:     paymentService,
 	}
 }
 
@@ -38,32 +44,32 @@ func (h *DashboardHandler) DashboardMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("access_token")
 		if err != nil {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			http.Redirect(w, r, "/dashboard/login", http.StatusSeeOther)
 			return
 		}
 
 		tokenString := cookie.Value
 		token, err := auth.ValidateToken(tokenString)
 		if err != nil || !token.Valid {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			http.Redirect(w, r, "/dashboard/login", http.StatusSeeOther)
 			return
 		}
 
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			http.Redirect(w, r, "/dashboard/login", http.StatusSeeOther)
 			return
 		}
 
 		userID, ok := claims["user_id"].(string)
 		if !ok {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			http.Redirect(w, r, "/dashboard/login", http.StatusSeeOther)
 			return
 		}
 
 		user, err := h.authService.GetUserByID(r.Context(), userID)
 		if err != nil || user == nil {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			http.Redirect(w, r, "/dashboard/login", http.StatusSeeOther)
 			return
 		}
 

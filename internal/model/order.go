@@ -16,5 +16,6 @@ type Order struct {
 	UpdatedAt      int64
 
 	// Relationship
-	User User `gorm:"foreignKey:UserID;references:ID"`
+	User     User      `gorm:"foreignKey:UserID;references:ID"`
+	Payment []Payment `gorm:"foreignKey:OrderID;references:UUID"`
 }

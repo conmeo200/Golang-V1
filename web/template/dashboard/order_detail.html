@@ -1,0 +1,299 @@
+{{define "content"}}
+<div class="container-fluid">
+    <div class="mb-4">
+        <a href="/dashboard/orders" class="text-decoration-none mb-2 d-inline-block">← Back to Orders</a>
+        <h1>Order Detail #{{slice .Order.UUID.String 0 8}}</h1>
+    </div>
+
+    <div class="row">
+        <!-- Order Info -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card shadow-sm border-0 mb-4 text-white bg-dark">
+                <div class="card-body">
+                    <h5 class="card-title opacity-75">Order Summary</h5>
+                    <h2 class="mb-0">${{printf "%.2f" .Order.Amount}}</h2>
+                    <hr class="opacity-25">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Status:</span>
+                        <span class="badge bg-primary">{{.Order.Status}}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Payment:</span>
+                        <span class="badge bg-info text-dark">{{.Order.PaymentStatus}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase small fw-bold">Customer Information</h6>
+                    <p class="mb-1"><strong>{{.Order.User.Email}}</strong></p>
+                    <p class="text-muted small mb-0">ID: {{.Order.UserID}}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Module (Tabs) -->
+        <div class="payment-module-container mb-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white pt-4 pb-0 px-4 border-0">
+                    <div class="d-flex align-items-center custom-tabs" role="tablist">
+                        <button class="custom-tab-btn active pe-4" id="form-tab" data-target="#payment-form">
+                            <i class="fa fa-credit-card"></i> Pay Now
+                        </button>
+                        <button class="custom-tab-btn px-4" id="lifecycle-tab" data-target="#payment-lifecycle">
+                            <i class="fa fa-stream"></i> Lifecycle
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="custom-tab-content">
+
+                        <!-- TAB 1: Payment Form -->
+                        <div class="custom-pane active" id="payment-form">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div>
+                                    <h5 class="mb-1 text-dark fw-bold">Secure Checkout</h5>
+                                    <p class="text-muted small mb-0">Enter card details below. All transactions are
+                                        encrypted.</p>
+                                </div>
+                                <div class="payment-methods" style="display: flex; gap: 0.5rem;">
+                                    <i class="fa fa-cc-visa fa-2x" style="color: #1a1f71;"></i>
+                                    <i class="fa fa-cc-mastercard fa-2x" style="color: #eb001b;"></i>
+                                </div>
+                            </div>
+
+                            <hr class="opacity-10 mb-4">
+
+                            <form class="premium-form">
+                                <!-- Payment Method Selector -->
+                                <div style="margin-bottom: 24px;">
+                                    <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 12px; letter-spacing: 0.5px;">PAYMENT METHOD</label>
+                                    <div style="display: flex; gap: 16px; width: 100%;">
+                                        <label class="method-selector active" id="label-stripe">
+                                            <input type="radio" name="payment_method" value="stripe" checked style="display: none;" onchange="togglePaymentMethod('stripe')">
+                                            <i class="fa fa-cc-stripe fa-lg" style="color: #635bff;"></i> <span style="font-weight: bold; margin-left: 8px;">Stripe</span>
+                                        </label>
+                                        <label class="method-selector" id="label-paypal">
+                                            <input type="radio" name="payment_method" value="paypal" style="display: none;" onchange="togglePaymentMethod('paypal')">
+                                            <i class="fa fa-paypal fa-lg" style="color: #003087;"></i> <span style="font-weight: bold; margin-left: 8px;">PayPal</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- STRIPE FORM FIELDS -->
+                                <div id="stripe-fields">
+                                    <div style="margin-bottom: 20px;">
+                                        <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 8px;">CARDHOLDER NAME</label>
+                                        <input type="text" class="form-control-custom bg-light border-0" placeholder="JOHN DOE" required>
+                                    </div>
+    
+                                    <div style="margin-bottom: 20px;">
+                                        <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 8px;">CARD NUMBER</label>
+                                        <div class="input-with-icon">
+                                            <i class="fa fa-credit-card icon text-muted"></i>
+                                            <input type="text" class="form-control-custom bg-light border-0" placeholder="0000 0000 0000 0000" required>
+                                        </div>
+                                    </div>
+    
+                                    <div class="form-row-custom" style="margin-bottom: 24px;">
+                                        <div class="form-col-custom">
+                                            <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 8px;">EXPIRY DATE</label>
+                                            <input type="text" class="form-control-custom bg-light border-0" placeholder="MM/YY" required>
+                                        </div>
+                                        <div class="form-col-custom">
+                                            <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 8px;">CVC / CVV</label>
+                                            <input type="password" class="form-control-custom bg-light border-0" placeholder="•••" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- PAYPAL FORM FIELDS -->
+                                <div id="paypal-fields" style="display: none;">
+                                    <div class="text-center rounded-3 bg-light border-dashed" style="padding: 24px; margin-bottom: 24px;">
+                                        <i class="fa fa-paypal fa-3x mb-3" style="color: #003087;"></i>
+                                        <p class="text-dark fw-bold mb-1">Pay via PayPal</p>
+                                        <small class="text-muted d-block px-3">Enter the PayPal account email or the transaction reference ID if already processed.</small>
+                                    </div>
+                                    <div style="margin-bottom: 20px;">
+                                        <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 8px;">PAYPAL EMAIL (OPTIONAL)</label>
+                                        <div class="input-with-icon">
+                                            <i class="fa fa-envelope icon text-muted"></i>
+                                            <input type="email" class="form-control-custom bg-light border-0" placeholder="customer@example.com">
+                                        </div>
+                                    </div>
+                                    <div style="margin-bottom: 24px;">
+                                        <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 8px;">TRANSACTION ID (IF ALREADY PAID)</label>
+                                        <input type="text" class="form-control-custom bg-light border-0" placeholder="e.g. 5VR********">
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-premium-pay w-100 py-3 mt-2 rounded-3 text-center" style="margin-top: 8px;" id="btn-submit-payment">
+                                    <i class="fa fa-lock me-2"></i> AUTHORIZE ${{printf "%.2f" .Order.Amount}}
+                                </button>
+
+                                <div class="text-center mt-3">
+                                    <small class="text-muted"><i class="fa fa-shield-alt text-success me-1"></i>
+                                        Payments are secure and encrypted</small>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- TAB 2: Payment Lifecycle -->
+                        <div class="custom-pane" id="payment-lifecycle">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div>
+                                    <h5 class="mb-1 text-dark fw-bold">Lifecycle Tracking</h5>
+                                    <p class="text-muted small mb-0">Live status of all payment attempts and
+                                        fulfillment.</p>
+                                </div>
+                            </div>
+
+                            <hr class="opacity-10 mb-4">
+
+                            <div class="payment-flow-tags">
+                                <!-- Origin Tag -->
+                                <div class="flow-entry mb-4">
+                                    <span class="step-label">Origin</span>
+                                    <div class="tag-group">
+                                        <span class="badge bg-dark-soft text-dark">System</span>
+                                        <span class="tag-arrow">→</span>
+                                        <span class="badge bg-primary-soft text-primary">Order Created</span>
+                                    </div>
+                                    <span class="flow-time">{{.Order.CreatedAt}}</span>
+                                </div>
+
+                                {{range .Transactions}}
+                                <div class="flow-entry mb-4 pb-3 border-bottom-dashed">
+                                    <span class="step-label">Transaction Request</span>
+                                    <div class="tag-group mb-2">
+                                        <!-- Tag 1: Payment Method -->
+                                        <span class="badge badge-lg bg-indigo-soft text-indigo text-uppercase">
+                                            <i class="fa {{if eq .PaymentMethod " vnpay"}}fa-credit-card{{else if eq
+                                                .PaymentMethod "banking"
+                                                }}fa-university{{else}}fa-money-bill-wave{{end}} me-1"></i>
+                                            {{.PaymentMethod}}
+                                        </span>
+
+                                        <span class="tag-arrow">→</span>
+
+                                        <!-- Tag 2: Flow Status -->
+                                        <span class="badge badge-lg {{if eq .Status " success"}}bg-success-soft
+                                            text-success{{else if eq .Status "failed" }}bg-danger-soft
+                                            text-danger{{else}}bg-warning-soft text-warning{{end}} text-uppercase">
+                                            {{if eq .Status "success"}}✔ CAPTURED{{else if eq .Status "failed"}}✘
+                                            FAILED{{else}}⌚ {{.Status}}{{end}}
+                                        </span>
+                                    </div>
+                                    <div class="flow-details">
+                                        <p class="text-muted small mb-0">Ref: <code>{{.ReferenceID}}</code> • Amount:
+                                            <strong>${{printf "%.2f" .Amount}}</strong></p>
+                                    </div>
+                                    <span class="flow-time">{{.CreatedAt}}</span>
+                                </div>
+                                {{end}}
+
+                                <!-- Fulfillment Tag -->
+                                {{if eq .Order.Status "completed"}}
+                                <div class="flow-entry">
+                                    <span class="step-label">Closure</span>
+                                    <div class="tag-group">
+                                        <span class="badge bg-success-soft text-success">Fulfilled</span>
+                                        <span class="tag-arrow">→</span>
+                                        <span class="badge bg-green text-white">Closed</span>
+                                    </div>
+                                    <span class="flow-time">{{.Order.UpdatedAt}}</span>
+                                </div>
+                                {{end}}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tabs = document.querySelectorAll('.custom-tab-btn');
+        const panes = document.querySelectorAll('.custom-pane');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                panes.forEach(p => p.classList.remove('active'));
+
+                tab.classList.add('active');
+                const target = document.querySelector(tab.getAttribute('data-target'));
+                if (target) target.classList.add('active');
+            });
+        });
+    });
+
+    function togglePaymentMethod(method) {
+        document.querySelectorAll('.method-selector').forEach(el => el.classList.remove('active'));
+        if (method === 'stripe') {
+            document.getElementById('label-stripe').classList.add('active');
+            document.getElementById('stripe-fields').style.display = 'block';
+            document.getElementById('paypal-fields').style.display = 'none';
+        } else {
+            document.getElementById('label-paypal').classList.add('active');
+            document.getElementById('stripe-fields').style.display = 'none';
+            document.getElementById('paypal-fields').style.display = 'block';
+        }
+    }
+
+    // Payment Processing via REST API
+    document.addEventListener("DOMContentLoaded", function () {
+        const btnSubmit = document.getElementById('btn-submit-payment');
+        if (btnSubmit) {
+            btnSubmit.addEventListener('click', function () {
+                const methodInput = document.querySelector('input[name="payment_method"]:checked');
+                if (!methodInput) return;
+                const method = methodInput.value;
+
+                // Visual loading state
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i> PROCESSING...';
+                this.disabled = true;
+
+                const payload = {
+                    payment_method: method,
+                    amount: parseFloat('{{.Order.Amount}}'),
+                    currency: 'USD',
+                    order_id: '{{.Order.ID}}'
+                };
+
+                fetch('/dashboard/transactions/process-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                })
+                .then(r => r.json())
+                .then(data => {
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                    if (data.error) {
+                        alert("Error processing payment: " + data.error);
+                    } else {
+                        // Successfully received Client Secret / Transaction Intent ID
+                        alert("API Success! Payment Gateway Responded.\nIntent ID: " + data.intent_id + "\nStatus: " + data.status + "\n\n(Ready for Stripe.js Elements completion)");
+                    }
+                })
+                .catch(err => {
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                    alert("Network error connecting to payment gateway.");
+                });
+            });
+        }
+    });
+
+</script>
+{{end}}

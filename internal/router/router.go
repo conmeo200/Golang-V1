@@ -11,7 +11,7 @@ import (
 func RegisterRoutes(mux *http.ServeMux, app *app.App) {
 
 	// Route Api
-	api_router.RegisterAPIRoutes(mux, app.UserHandler, app.AuthHandler, app.OrderHandler)
+	api_router.RegisterAPIRoutes(mux, app.UserHandler, app.AuthHandler, app.OrderHandler, app.PaymentHandler)
 
 	// Route Web
 	web_router.RegisterWebRoutes(mux, app.ClientHandler, app.DashboardHandler)
