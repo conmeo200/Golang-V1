@@ -38,6 +38,17 @@ jobs:
     - name: Install dependencies
       run: go mod download
 
+    - name: Verify Build (All Binaries)
+      run: |
+        echo "Verifying API build..."
+        go build -o /dev/null ./cmd/api
+        echo "Verifying Worker build..."
+        go build -o /dev/null ./cmd/worker
+        echo "Verifying Migrate build..."
+        go build -o /dev/null ./cmd/migrate
+        echo "Verifying Seed build..."
+        go build -o /dev/null ./cmd/seed
+
     - name: Check Migrations & Seeders
       env:
         DB_HOST: localhost

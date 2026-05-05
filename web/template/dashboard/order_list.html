@@ -1,317 +1,302 @@
 {{define "content"}}
 <style>
-    .order-stats-grid {
+    :root {
+        --dash-primary: #10b981;
+        --dash-bg: #f8fafc;
+        --dash-card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+
+    .dashboard-header {
+        margin-bottom: 2.5rem;
+    }
+
+    .btn-premium {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+    }
+
+    .btn-premium:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        color: white;
+        filter: brightness(1.05);
+    }
+
+    .stat-grid-premium {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
         gap: 1.5rem;
-        margin-bottom: 2.5rem;
+        margin-bottom: 3rem;
     }
-    
-    .order-stat-card {
+
+    .stat-card-premium {
         background: white;
-        padding: 1.5rem;
-        border-radius: 12px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        padding: 1.75rem;
+        border-radius: 20px;
+        border: 1px solid #f1f5f9;
+        box-shadow: var(--dash-card-shadow);
         display: flex;
         align-items: center;
         gap: 1.25rem;
+        transition: transform 0.2s ease;
     }
-    
-    .stat-icon {
-        width: 48px;
-        height: 48px;
+
+    .stat-card-premium:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-icon-wrapper {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-info { display: flex; flex-direction: column; }
+    .stat-label-modern { font-size: 0.813rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
+    .stat-value-modern { font-size: 1.5rem; font-weight: 800; color: #1e293b; line-height: 1; }
+
+    .table-container-premium {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid #f1f5f9;
+        box-shadow: var(--dash-card-shadow);
+        overflow: hidden;
+    }
+
+    .premium-table thead th {
+        background: #f8fafc;
+        padding: 1rem 1.5rem !important;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        border-bottom: 1px solid #f1f5f9 !important;
+    }
+
+    .premium-table td {
+        padding: 1.25rem 1.5rem !important;
+        vertical-align: middle !important;
+        border-bottom: 1px solid #f8fafc;
+        font-size: 0.938rem;
+    }
+
+    .avatar-modern {
+        width: 38px;
+        height: 38px;
         border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.25rem;
-    }
-    
-    .stat-content {
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .stat-label {
-        font-size: 0.875rem;
-        color: #64748b;
-        font-weight: 500;
-    }
-    
-    .stat-value {
-        font-size: 1.25rem;
         font-weight: 700;
-        color: #0f172a;
+        color: white;
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
     }
-    
-    .order-table-card {
-        background: white;
-        border-radius: 12px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    
-    .table-container {
-        padding: 0;
-    }
-    
-    table.dataTable {
-        border-collapse: collapse !important;
-        margin: 0 !important;
-        width: 100% !important;
-    }
-    
-    table.dataTable thead th {
-        background: #f8fafc;
-        padding: 12px 16px !important;
+
+    .badge-modern {
+        padding: 0.5rem 0.875rem;
+        border-radius: 10px;
+        font-weight: 700;
         font-size: 0.75rem;
-        font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: #64748b;
-        border-bottom: 1px solid #e2e8f0 !important;
-    }
-    
-    table.dataTable td {
-        padding: 16px !important;
-        vertical-align: middle !important;
-        border-bottom: 1px solid #f1f5f9;
-        font-size: 0.875rem;
-    }
-    
-    .custom-badge {
         display: inline-flex;
         align-items: center;
-        padding: 4px 12px;
+        gap: 0.375rem;
+    }
+
+    .status-completed { background: #dcfce7; color: #15803d; }
+    .status-pending { background: #fef3c7; color: #b45309; }
+    .status-failed { background: #fee2e2; color: #b91c1c; }
+    .status-paid { background: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; }
+    .status-unpaid { background: #f1f5f9; color: #475569; }
+
+    .btn-action-modern {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: 1.5px solid #e2e8f0;
+        background: white;
+        color: #64748b;
+        transition: all 0.2s ease;
+    }
+
+    .btn-action-modern:hover {
+        background: #f8fafc;
+        color: #1e293b;
+        border-color: #cbd5e0;
+    }
+
+    .order-id-code {
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        font-weight: 700;
+        color: #10b981;
+        background: #f0fdf4;
+        padding: 0.25rem 0.6rem;
         border-radius: 6px;
-        font-size: 0.75rem;
-        font-weight: 600;
     }
-    
-    .badge-pending { background: #fef3c7; color: #92400e; }
-    .badge-completed { background: #dcfce7; color: #166534; }
-    .badge-failed { background: #fee2e2; color: #991b1c; }
-    .badge-paid { background: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
-    .badge-unpaid { background: #f1f5f9; color: #475569; }
-    
-    .user-avatar {
-        width: 32px;
-        height: 32px;
-        background: #3b82f6;
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-        font-size: 0.813rem;
-        flex-shrink: 0;
-    }
-    
-    /* Dropdown Reset */
-    .dropdown {
-        position: relative;
-    }
-    .dropdown-menu {
+
+    /* Custom DataTables Dropdown */
+    .dropdown-modern { position: relative; }
+    .dropdown-menu-modern {
         display: none;
         position: absolute;
         right: 0;
         top: 100%;
         z-index: 1000;
-        min-width: 160px;
+        min-width: 200px;
         background: white;
         border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-        list-style: none;
-        margin: 4px 0 0;
-        padding: 8px 0;
+        border-radius: 12px;
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        padding: 0.75rem 0;
+        margin-top: 0.5rem;
+        animation: slideUp 0.2s ease-out;
     }
-    .dropdown-menu.show {
-        display: block;
-    }
-    .dropdown-item {
-        display: block;
-        width: 100%;
-        padding: 8px 16px;
-        clear: both;
-        font-weight: 400;
-        color: #1e293b;
-        text-align: inherit;
-        white-space: nowrap;
-        background-color: transparent;
-        border: 0;
-        cursor: pointer;
-        text-decoration: none;
-        font-size: 0.875rem;
-    }
-    .dropdown-item:hover {
-        background-color: #f8fafc;
-        color: #0f172a;
-    }
-    
-    .btn-action {
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid #e2e8f0;
-        background: white;
-        border-radius: 6px;
-        color: #64748b;
-        cursor: pointer;
-    }
-    .btn-action:hover {
-        background: #f8fafc;
-        border-color: #cbd5e0;
-    }
-    
-    /* Search Bar Tweaks */
-    .dataTables_filter {
-        margin-bottom: 1.5rem !important;
-        padding: 0 1.5rem !important;
-    }
-    .dataTables_filter input {
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 6px !important;
-        padding: 6px 12px !important;
-        outline: none !important;
-    }
-    .dataTables_length {
-        padding: 0 1.5rem !important;
-        font-size: 0.875rem !important;
-        color: #64748b !important;
-    }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .dropdown-menu-modern.show { display: block; }
+    .dropdown-header-modern { padding: 0.5rem 1rem; font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; cursor: default; }
+    .dropdown-link-modern { display: flex; align-items: center; width: 100%; padding: 0.75rem 1rem; color: #334155; text-decoration: none; font-size: 0.875rem; font-weight: 600; border: none; background: transparent; text-align: left; transition: background 0.2s; }
+    .dropdown-link-modern:hover { background: #f8fafc; color: #1e293b; }
 </style>
 
-<div class="container-fluid">
-    <div class="mb-4">
-        <h1 style="margin-bottom: 0.5rem;">Order Management</h1>
-        <p style="color: #64748b; font-size: 0.875rem;">Monitor and manage customer transactions.</p>
+<div class="container-fluid px-4 py-4">
+    <div class="dashboard-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="h2 fw-extrabold text-slate-900 mb-1">Order Registry</h1>
+            <p class="text-slate-500 mb-0">High-fidelity reconciliation & life-cycle tracking</p>
+        </div>
+        <a href="/dashboard/orders/new" class="btn-premium">
+            <i class="fas fa-plus-circle me-2"></i> Register New Order
+        </a>
     </div>
 
-    <!-- Stats Grid -->
-    <div class="order-stats-grid">
-        <div class="order-stat-card">
-            <div class="stat-icon" style="background: #eff6ff; color: #2563eb;">
-                <i class="fa fa-shopping-cart"></i>
+    <!-- Modern Stats -->
+    <div class="stat-grid-premium">
+        <div class="stat-card-premium">
+            <div class="stat-icon-wrapper" style="background: #ecfdf5; color: #10b981;">
+                <i class="fas fa-receipt"></i>
             </div>
-            <div class="stat-content">
-                <span class="stat-label">Total Orders</span>
-                <span class="stat-value">{{.Stats.TotalOrders}}</span>
-            </div>
-        </div>
-        <div class="order-stat-card">
-            <div class="stat-icon" style="background: #fffbeb; color: #d97706;">
-                <i class="fa fa-clock"></i>
-            </div>
-            <div class="stat-content">
-                <span class="stat-label">Pending</span>
-                <span class="stat-value">{{.Stats.PendingOrders}}</span>
+            <div class="stat-info">
+                <span class="stat-label-modern">Total Inventory</span>
+                <span class="stat-value-modern">{{.Stats.TotalOrders}}</span>
             </div>
         </div>
-        <div class="order-stat-card">
-            <div class="stat-icon" style="background: #f0fdf4; color: #16a34a;">
-                <i class="fa fa-check-circle"></i>
+        <div class="stat-card-premium">
+            <div class="stat-icon-wrapper" style="background: #fffbeb; color: #d97706;">
+                <i class="fas fa-hourglass-half"></i>
             </div>
-            <div class="stat-content">
-                <span class="stat-label">Completed</span>
-                <span class="stat-value">{{.Stats.CompletedOrders}}</span>
+            <div class="stat-info">
+                <span class="stat-label-modern">Awaiting Action</span>
+                <span class="stat-value-modern">{{.Stats.PendingOrders}}</span>
             </div>
         </div>
-        <div class="order-stat-card">
-            <div class="stat-icon" style="background: #f5f3ff; color: #7c3aed;">
-                <i class="fa fa-dollar-sign"></i>
+        <div class="stat-card-premium">
+            <div class="stat-icon-wrapper" style="background: #f0fdf4; color: #15803d;">
+                <i class="fas fa-check-double"></i>
             </div>
-            <div class="stat-content">
-                <span class="stat-label">Revenue</span>
-                <span class="stat-value">${{printf "%.2f" .Stats.TotalRevenue}}</span>
+            <div class="stat-info">
+                <span class="stat-label-modern">Settled Orders</span>
+                <span class="stat-value-modern">{{.Stats.CompletedOrders}}</span>
+            </div>
+        </div>
+        <div class="stat-card-premium">
+            <div class="stat-icon-wrapper" style="background: #f5f3ff; color: #7c3aed;">
+                <i class="fas fa-coins"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label-modern">Gross Volume</span>
+                <span class="stat-value-modern">${{printf "%.2f" .Stats.TotalRevenue}}</span>
             </div>
         </div>
     </div>
 
     {{if .Success}}
-    <div style="background: #dcfce7; color: #166534; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #bbf7d0;">
-        {{.Success}}
+    <div class="alert alert-success border-0 shadow-sm rounded-4 mb-4 d-flex align-items-center" role="alert">
+        <i class="fas fa-check-circle me-3 fa-lg"></i>
+        <div><h6 class="alert-heading fw-bold mb-0">{{.Success}}</h6></div>
     </div>
     {{end}}
 
-    <div class="order-table-card">
-        <div class="table-container">
-            <table id="ordersTable" class="table">
+    <div class="table-container-premium">
+        <div class="table-responsive">
+            <table id="ordersTable" class="table premium-table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th>Order ID</th>
-                        <th>Customer</th>
-                        <th style="text-align: right;">Amount</th>
-                        <th style="text-align: center;">Status</th>
-                        <th style="text-align: center;">Payment</th>
-                        <th>Date</th>
-                        <th>Actions</th>
+                        <th>Reference</th>
+                        <th>Customer Record</th>
+                        <th class="text-end">Valuation</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Payment</th>
+                        <th class="text-end">Timestamp</th>
+                        <th class="text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {{range .Orders}}
                     <tr>
-                        <td style="font-family: monospace; font-weight: 600; color: #3b82f6;">
-                            #{{slice .UUID.String 0 8}}
-                        </td>
+                        <td><span class="order-id-code">#{{slice .UUID.String 0 8}}</span></td>
                         <td>
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <div class="user-avatar">
-                                    {{slice .User.Email 0 1 | printf "%s" | printf "%s"}}
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="avatar-modern" style="background: linear-gradient(135deg, #10b981 0%, #34d399 100%);">
+                                    {{printf "%.1s" .User.Email}}
                                 </div>
-                                <div style="display: flex; flex-direction: column;">
-                                    <span style="font-weight: 600; color: #1e293b;">{{.User.Email}}</span>
-                                    <span style="font-size: 0.75rem; color: #64748b;">{{.UserID}}</span>
+                                <div class="d-flex flex-column">
+                                    <span class="fw-bold text-slate-800">{{.User.Email}}</span>
+                                    <span class="text-slate-400 x-small fw-600">ID: {{slice .UserID.String 0 8}}</span>
                                 </div>
                             </div>
                         </td>
-                        <td style="text-align: right; font-weight: 700; color: #0f172a;">
-                            ${{printf "%.2f" .Amount}}
-                        </td>
-                        <td style="text-align: center;">
+                        <td class="text-end fw-extrabold text-slate-900">${{printf "%.2f" .Amount}}</td>
+                        <td class="text-center">
                             {{if eq .Status "completed"}}
-                            <span class="custom-badge badge-completed">Completed</span>
+                                <span class="badge-modern status-completed"><i class="fas fa-check-circle"></i> Settled</span>
                             {{else if eq .Status "pending"}}
-                            <span class="custom-badge badge-pending">Pending</span>
+                                <span class="badge-modern status-pending"><i class="fas fa-clock"></i> Active</span>
                             {{else}}
-                            <span class="custom-badge badge-failed">{{.Status}}</span>
+                                <span class="badge-modern status-failed"><i class="fas fa-times-circle"></i> {{.Status}}</span>
                             {{end}}
                         </td>
-                        <td style="text-align: center;">
+                        <td class="text-center">
                             {{if eq .PaymentStatus "paid"}}
-                            <span class="custom-badge badge-paid">Paid</span>
+                                <span class="badge-modern status-paid"><i class="fas fa-credit-card"></i> Paid</span>
                             {{else}}
-                            <span class="custom-badge badge-unpaid">Unpaid</span>
+                                <span class="badge-modern status-unpaid"><i class="fas fa-receipt"></i> Unpaid</span>
                             {{end}}
                         </td>
-                        <td style="color: #64748b; font-size: 0.813rem;">
-                            {{.CreatedAt}}
-                        </td>
-                        <td>
-                            <div class="dropdown">
-                                <button class="btn-action toggle-dropdown">
-                                    <i class="fa fa-ellipsis-v"></i>
+                        <td class="text-end text-slate-400 fw-500 small">{{.CreatedAt}}</td>
+                        <td class="text-center">
+                            <div class="dropdown-modern">
+                                <button class="btn-action-modern toggle-dropdown-modern">
+                                    <i class="fas fa-layer-group"></i>
                                 </button>
-                                <div class="dropdown-menu">
-                                    <h6 style="padding: 8px 16px; margin: 0; font-size: 0.75rem; color: #94a3b8; text-transform: uppercase;">Update Status</h6>
+                                <div class="dropdown-menu-modern">
+                                    <div class="dropdown-header-modern">State Management</div>
                                     <form action="/dashboard/orders/update-status" method="POST">
                                         <input type="hidden" name="uuid" value="{{.UUID}}">
                                         <input type="hidden" name="status" value="completed">
                                         <input type="hidden" name="payment_status" value="paid">
-                                        <button type="submit" class="dropdown-item">Mark Completed</button>
+                                        <button type="submit" class="dropdown-link-modern"><i class="fas fa-check-circle me-2 text-success"></i> Mark as Settled</button>
                                     </form>
                                     <form action="/dashboard/orders/update-status" method="POST">
                                         <input type="hidden" name="uuid" value="{{.UUID}}">
                                         <input type="hidden" name="status" value="failed">
                                         <input type="hidden" name="payment_status" value="unpaid">
-                                        <button type="submit" class="dropdown-item" style="color: #ef4444;">Mark Failed</button>
+                                        <button type="submit" class="dropdown-link-modern text-danger"><i class="fas fa-times-circle me-2"></i> Flag as Overdue</button>
                                     </form>
-                                    <hr style="margin: 4px 0; opacity: 0.1;">
-                                    <a href="/dashboard/orders/detail?uuid={{.UUID}}" class="dropdown-item">View Details</a>
+                                    <div class="dropdown-divider bg-slate-50"></div>
+                                    <a href="/dashboard/orders/detail?uuid={{.UUID}}" class="dropdown-link-modern"><i class="fas fa-external-link-alt me-2 text-primary"></i> Analytical View</a>
                                 </div>
                             </div>
                         </td>
@@ -325,37 +310,42 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Dropdown toggle logic
-        document.querySelectorAll('.toggle-dropdown').forEach(button => {
+        // Modern Dropdown toggle
+        document.querySelectorAll('.toggle-dropdown-modern').forEach(button => {
             button.addEventListener('click', function(e) {
                 e.stopPropagation();
                 const menu = this.nextElementSibling;
-                // Close all other menus first
-                document.querySelectorAll('.dropdown-menu').forEach(m => {
+                document.querySelectorAll('.dropdown-menu-modern').forEach(m => {
                     if (m !== menu) m.classList.remove('show');
                 });
                 menu.classList.toggle('show');
+                this.classList.toggle('active');
             });
         });
 
-        // Close dropdowns when clicking outside
         document.addEventListener('click', function() {
-            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            document.querySelectorAll('.dropdown-menu-modern').forEach(menu => {
                 menu.classList.remove('show');
             });
         });
 
-        // Initialize DataTable
+        // Initialize DataTable with higher styling
         if ($.fn.DataTable) {
             $('#ordersTable').DataTable({
                 "order": [[ 5, "desc" ]],
                 "pageLength": 10,
-                "dom": '<"top"lf>rt<"bottom"ip><"clear">',
+                "dom": '<"p-3 d-flex justify-content-between align-items-center"lf>rt<"p-3 d-flex justify-content-between align-items-center"ip>',
                 "language": {
                     "search": "",
-                    "searchPlaceholder": "Search orders..."
+                    "searchPlaceholder": "Filter Order Entries...",
+                    "lengthMenu": "_MENU_ per page",
+                    "info": "Entries _START_ to _END_ of _TOTAL_"
                 }
             });
+            
+            // Re-style DataTable elements
+            $('.dataTables_filter input').addClass('form-control form-control-sm border-0 bg-slate-100 rounded-pill px-4');
+            $('.dataTables_length select').addClass('form-select form-select-sm border-0 bg-slate-50 rounded-3');
         }
     });
 </script>

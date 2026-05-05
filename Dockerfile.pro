@@ -21,7 +21,7 @@ COPY . .
 # -s -w: Giảm dung lượng file binary bằng cách xóa bảng ký hiệu và thông tin debug
 # CGO_ENABLED=0: Tạo static binary để chạy được trên alpine không cần glibc
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-    go build -ldflags="-s -w" -o bin/server ./cmd/server && \
+    go build -ldflags="-s -w" -o bin/api ./cmd/api && \
     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     go build -ldflags="-s -w" -o bin/worker ./cmd/worker && \
     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
@@ -59,4 +59,4 @@ USER appuser
 EXPOSE 8080
 
 # Mặc định là chạy Server, nhưng có thể ghi đè command để chạy Worker/Migrate
-CMD ["./bin/server"]
+CMD ["./bin/api"]

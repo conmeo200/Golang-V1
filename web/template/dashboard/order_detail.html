@@ -1,4 +1,5 @@
 {{define "content"}}
+<script src="https://js.stripe.com/v3/"></script>
 <div class="container-fluid">
     <div class="mb-4">
         <a href="/dashboard/orders" class="text-decoration-none mb-2 d-inline-block">← Back to Orders</a>
@@ -86,26 +87,15 @@
                                 <div id="stripe-fields">
                                     <div style="margin-bottom: 20px;">
                                         <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 8px;">CARDHOLDER NAME</label>
-                                        <input type="text" class="form-control-custom bg-light border-0" placeholder="JOHN DOE" required>
+                                        <input type="text" id="cardholder-name" class="form-control-custom bg-light border-0" placeholder="JOHN DOE" required>
                                     </div>
     
                                     <div style="margin-bottom: 20px;">
-                                        <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 8px;">CARD NUMBER</label>
-                                        <div class="input-with-icon">
-                                            <i class="fa fa-credit-card icon text-muted"></i>
-                                            <input type="text" class="form-control-custom bg-light border-0" placeholder="0000 0000 0000 0000" required>
+                                        <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 8px;">CREDIT OR DEBIT CARD</label>
+                                        <div id="card-element" class="form-control-custom bg-light border-0" style="padding: 12px;">
+                                            <!-- Stripe Element will be inserted here -->
                                         </div>
-                                    </div>
-    
-                                    <div class="form-row-custom" style="margin-bottom: 24px;">
-                                        <div class="form-col-custom">
-                                            <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 8px;">EXPIRY DATE</label>
-                                            <input type="text" class="form-control-custom bg-light border-0" placeholder="MM/YY" required>
-                                        </div>
-                                        <div class="form-col-custom">
-                                            <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 8px;">CVC / CVV</label>
-                                            <input type="password" class="form-control-custom bg-light border-0" placeholder="•••" required>
-                                        </div>
+                                        <div id="card-errors" role="alert" class="text-danger small mt-2"></div>
                                     </div>
                                 </div>
 
@@ -249,48 +239,112 @@
         }
     }
 
-    // Payment Processing via REST API
+    // Payment Processing via Stripe.js
     document.addEventListener("DOMContentLoaded", function () {
+        const stripePubKey = '{{.StripePubKey}}';
+        if (!stripePubKey) {
+            console.error("Stripe Public Key is missing!");
+            return;
+        }
+
+        const stripe = Stripe(stripePubKey);
+        const elements = stripe.elements();
+        
+        const style = {
+            base: {
+                color: '#32325d',
+                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                fontSmoothing: 'antialiased',
+                fontSize: '16px',
+                '::placeholder': { color: '#aab7c4' }
+            },
+            invalid: {
+                color: '#fa755a',
+                iconColor: '#fa755a'
+            }
+        };
+
+        const card = elements.create('card', { style: style, hidePostalCode: true });
+        card.mount('#card-element');
+
+        card.on('change', function(event) {
+            const displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
         const btnSubmit = document.getElementById('btn-submit-payment');
         if (btnSubmit) {
-            btnSubmit.addEventListener('click', function () {
+            btnSubmit.addEventListener('click', async function () {
                 const methodInput = document.querySelector('input[name="payment_method"]:checked');
                 if (!methodInput) return;
                 const method = methodInput.value;
 
+                if (method !== 'stripe') {
+                    alert("PayPal is not yet implemented via this secure flow.");
+                    return;
+                }
+
+                const cardholderName = document.getElementById('cardholder-name').value;
+                if (!cardholderName) {
+                    alert("Please enter your name.");
+                    return;
+                }
+
                 // Visual loading state
                 const originalText = this.innerHTML;
-                this.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i> PROCESSING...';
+                this.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i> AUTHORIZING...';
                 this.disabled = true;
 
-                const payload = {
-                    payment_method: method,
-                    amount: parseFloat('{{.Order.Amount}}'),
-                    currency: 'USD',
-                    order_id: '{{.Order.ID}}'
-                };
+                try {
+                    // 1. Create PaymentIntent on server
+                    const response = await fetch('/dashboard/transactions/process-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            payment_method: 'stripe',
+                            amount: parseFloat('{{.Order.Amount}}'),
+                            currency: 'USD',
+                            order_id: '{{.Order.UUID}}'
+                        })
+                    });
 
-                fetch('/dashboard/transactions/process-payment', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                })
-                .then(r => r.json())
-                .then(data => {
-                    this.innerHTML = originalText;
-                    this.disabled = false;
+                    const data = await response.json();
                     if (data.error) {
-                        alert("Error processing payment: " + data.error);
-                    } else {
-                        // Successfully received Client Secret / Transaction Intent ID
-                        alert("API Success! Payment Gateway Responded.\nIntent ID: " + data.intent_id + "\nStatus: " + data.status + "\n\n(Ready for Stripe.js Elements completion)");
+                        throw new Error(data.error);
                     }
-                })
-                .catch(err => {
+
+                    // 2. Confirm Payment with Stripe
+                    const result = await stripe.confirmCardPayment(data.client_secret, {
+                        payment_method: {
+                            card: card,
+                            billing_details: { name: cardholderName }
+                        }
+                    });
+
+                    if (result.error) {
+                        throw new Error(result.error.message);
+                    } else if (result.paymentIntent.status === 'succeeded') {
+                        // 3. Success!
+                        this.innerHTML = '<i class="fa fa-check me-2"></i> SUCCESS';
+                        this.classList.remove('btn-premium-pay');
+                        this.classList.add('btn-success');
+                        
+                        // We rely on Webhook to update the DB, but we can refresh UI
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    const displayError = document.getElementById('card-errors');
+                    displayError.textContent = err.message;
                     this.innerHTML = originalText;
                     this.disabled = false;
-                    alert("Network error connecting to payment gateway.");
-                });
+                }
             });
         }
     });

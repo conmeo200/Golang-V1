@@ -1,23 +1,22 @@
 package main
 
 import (
-	"github.com/conmeo200/Golang-V1/internal/config"
-	"github.com/conmeo200/Golang-V1/internal/database"
-	"github.com/conmeo200/Golang-V1/internal/logger"
+	"log"
+
+	"github.com/conmeo200/Golang-V1/internal/bootstrap"
+	"github.com/conmeo200/Golang-V1/internal/infrastructure/logger"
 )
 
 func main() {
-	cfg := config.Load()
 	logger.Init()
+	logger.AppLogger.Println("Initializing migration...")
 
-	db, err := database.NewPostgres(cfg)
-	if err != nil {
-		logger.ErrorLogger.Fatalf("Failed to connect to database: %v", err)
-	}
+	cfg := bootstrap.Load()
+	db := bootstrap.InitDatabase(cfg)
 
 	logger.AppLogger.Println("Running migrations...")
-	if err := database.Migrate(db); err != nil {
-		logger.ErrorLogger.Fatalf("Migration failed: %v", err)
+	if err := bootstrap.Migrate(db); err != nil {
+		log.Fatalf("Migration failed: %v", err)
 	}
 	logger.AppLogger.Println("Migrations completed successfully.")
 }

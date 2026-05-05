@@ -1,54 +1,224 @@
 {{define "content"}}
-<div class="container-fluid px-4">
-    <h1 class="mt-4">{{.Title}}</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="/dashboard/payments">Payments</a></li>
-        <li class="breadcrumb-item active">New</li>
-    </ol>
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --input-focus: #6366f1;
+    }
 
-    <div class="card mb-4">
-        <div class="card-header">
-            <i class="fas fa-money-bill-wave me-1"></i>
-            Initiate Transaction (Manual Test)
-        </div>
-        <div class="card-body">
-            <form action="/dashboard/payments/create" method="POST">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="order_id" class="form-label">Order ID (Internal UUID)</label>
-                        <input type="text" class="form-control" name="order_id" id="order_id" placeholder="e.g. 550e8400-e29b-41d4-a716-446655440000" required>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-3">
-                        <label for="amount" class="form-label">Amount</label>
-                        <input type="number" step="0.01" class="form-control" name="amount" id="amount" placeholder="10.00" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="currency" class="form-label">Currency</label>
-                        <select class="form-select" name="currency" id="currency">
-                            <option value="usd">USD</option>
-                            <option value="eur">EUR</option>
-                            <option value="vnd">VND</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="alert alert-info mt-3">
-                    <strong>Note:</strong> Submitting this form will trigger the <code>CreatePayment</code> method in <code>PaymentService</code>, which uses a database transaction to record the payment and create entries in <code>outbox_events</code> and <code>inbox_events</code>.
-                </div>
+    .payment-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: var(--card-shadow);
+        background: #ffffff;
+        overflow: hidden;
+        transition: transform 0.2s ease;
+    }
 
-                <div class="mt-4 mb-0">
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-block">Start Transaction</button>
-                    </div>
+    .payment-header {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 2rem;
+        border: none;
+    }
+
+    .payment-header h2 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .payment-header p {
+        opacity: 0.9;
+        margin-bottom: 0;
+        font-size: 0.95rem;
+    }
+
+    .form-section {
+        padding: 2rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .form-control, .form-select {
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        transition: all 0.2s ease;
+        background-color: #f9fafb;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--input-focus);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        background-color: #fff;
+    }
+
+    .input-group-text {
+        background-color: #f3f4f6;
+        border-color: #d1d5db;
+        border-radius: 10px 0 0 10px;
+    }
+
+    .btn-submit {
+        background: var(--primary-gradient);
+        border: none;
+        padding: 1rem;
+        border-radius: 12px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.5);
+        filter: brightness(1.1);
+    }
+
+    .mechanism-note {
+        background: #f8fafc;
+        border-left: 4px solid #6366f1;
+        padding: 1.25rem;
+        border-radius: 8px;
+        margin-top: 2rem;
+    }
+
+    .mechanism-note code {
+        color: #4f46e5;
+        font-weight: 600;
+        background: #eef2ff;
+        padding: 2px 4px;
+        border-radius: 4px;
+    }
+
+    .breadcrumb-custom {
+        background: transparent;
+        padding: 0;
+        margin-bottom: 2rem;
+    }
+
+    .breadcrumb-item a {
+        color: #6366f1;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .breadcrumb-item.active {
+        color: #6b7280;
+    }
+</style>
+
+<div class="container-fluid px-4 py-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-custom">
+                    <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/dashboard/payments">Payments</a></li>
+                    <li class="breadcrumb-item active">Initiate Transaction</li>
+                </ol>
+            </nav>
+
+            <div class="card payment-card">
+                <div class="card-header payment-header text-center">
+                    <h2><i class="fas fa-shield-alt"></i> Secure Payment Initiation</h2>
+                    <p>Testing Transactional Outbox & Inbox Patterns</p>
                 </div>
-            </form>
-        </div>
-        <div class="card-footer text-center py-3">
-            <div class="small"><a href="/dashboard/payments">Back to list</a></div>
+                <div class="card-body form-section">
+                    <form action="/dashboard/payments/create" method="POST" id="paymentForm">
+                        <div class="row g-4">
+                            <!-- Order Reference -->
+                            <div class="col-12">
+                                <label for="order_id" class="form-label">Associated Order</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-shopping-basket"></i></span>
+                                    <select class="form-select" name="order_id" id="order_id" required>
+                                        <option value="" disabled selected>Select an order to pay for...</option>
+                                        {{range .Orders}}
+                                            <option value="{{.UUID}}">
+                                                Order #{{slice .UUID.String 0 8}} - {{.User.Email}} (${{printf "%.2f" .Amount}}) [{{.Status}}]
+                                            </option>
+                                        {{else}}
+                                            <option value="" disabled>No orders available</option>
+                                        {{end}}
+                                    </select>
+                                </div>
+                                <div class="form-text mt-2 text-muted">Select an existing order from the system to initiate this payment.</div>
+                            </div>
+
+                            <!-- Amount & Currency -->
+                            <div class="col-md-8">
+                                <label for="amount" class="form-label">Payment Amount</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                    <input type="number" step="0.01" class="form-control" name="amount" id="amount" 
+                                           placeholder="0.00" required min="0.01">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="currency" class="form-label">Currency</label>
+                                <select class="form-select" name="currency" id="currency" required>
+                                    <option value="usd" selected>USD - US Dollar</option>
+                                    <option value="eur">EUR - Euro</option>
+                                    <option value="vnd">VND - Vietnam Dong</option>
+                                    <option value="gbp">GBP - British Pound</option>
+                                </select>
+                            </div>
+
+                            <!-- Mechanism Note -->
+                            <div class="col-12">
+                                <div class="mechanism-note">
+                                    <div class="d-flex gap-3">
+                                        <div class="text-primary mt-1">
+                                            <i class="fas fa-info-circle fa-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1 text-dark fw-bold">Transactional Logic</h6>
+                                            <p class="mb-0 small text-secondary">
+                                                This form triggers the <code>CreatePayment</code> service. An atomic DB transaction will lock records, create the payment, log an <code>inbox_event</code> for idempotency, and stage a <code>payment.created</code> message in the <code>outbox_events</code> table.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="col-12 mt-5">
+                                <button type="submit" class="btn btn-primary btn-submit w-100 mb-3">
+                                    <i class="fas fa-paper-plane me-2"></i> Confirm and Process Transaction
+                                </button>
+                                <div class="text-center">
+                                    <a href="/dashboard/payments" class="text-decoration-none text-muted small hover-primary">
+                                        <i class="fas fa-arrow-left me-1"></i> Cancel and return to overview
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    // Simple UI interaction: Add active state to menu items
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('paymentForm');
+        form.addEventListener('submit', function() {
+            const btn = this.querySelector('button[type="submit"]');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Processing...';
+            btn.disabled = true;
+        });
+    });
+</script>
 {{end}}

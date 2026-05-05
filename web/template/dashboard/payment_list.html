@@ -1,57 +1,242 @@
 {{define "content"}}
-<div class="container-fluid px-4">
-    <h1 class="mt-4">{{.Title}}</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
-        <li class="breadcrumb-item active">Payments</li>
-    </ol>
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
 
-    <div class="card mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <div>
-                <i class="fas fa-table me-1"></i>
-                Payment Records
-            </div>
-            <a href="/dashboard/payments/new" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus me-1"></i> Create Manual Payment
-            </a>
+    .table-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: var(--card-shadow);
+        background: #ffffff;
+        overflow: hidden;
+    }
+
+    .card-header-premium {
+        background: #ffffff;
+        border-bottom: 1px solid #f1f5f9;
+        padding: 1.5rem 2rem;
+    }
+
+    .card-title-premium {
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .btn-create-premium {
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        padding: 0.6rem 1.25rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-create-premium:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.5);
+        color: white;
+        filter: brightness(1.1);
+    }
+
+    .table thead th {
+        background-color: #f8fafc;
+        color: #64748b;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        padding: 1rem 1.5rem;
+        border-bottom-width: 1px;
+    }
+
+    .table tbody td {
+        padding: 1rem 1.5rem;
+        vertical-align: middle;
+        color: #334155;
+        font-size: 0.9rem;
+        border-bottom-color: #f1f5f9;
+    }
+
+    .uuid-code {
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        background: #f1f5f9;
+        color: #475569;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+    }
+
+    .badge-premium {
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+
+    .badge-success-premium {
+        background-color: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-warning-premium {
+        background-color: #fef9c3;
+        color: #854d0e;
+    }
+
+    .badge-danger-premium {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge-info-premium {
+        background-color: #e0f2fe;
+        color: #075985;
+    }
+
+    .breadcrumb-custom {
+        background: transparent;
+        padding: 0;
+        margin-bottom: 2rem;
+    }
+
+    .breadcrumb-item a {
+        color: #6366f1;
+        text-decoration: none;
+        font-weight: 500;
+    }
+</style>
+
+<div class="container-fluid px-4 py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold text-dark mb-1">{{.Title}}</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb breadcrumb-custom mb-0">
+                    <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Payments</li>
+                </ol>
+            </nav>
         </div>
-        <div class="card-body">
-            <table class="table table-bordered table-striped" id="datatablesSimple">
-                <thead>
-                    <tr>
-                        <th>UUID</th>
-                        <th>Order ID</th>
-                        <th>Amount</th>
-                        <th>Currency</th>
-                        <th>Method</th>
-                        <th>Status</th>
-                        <th>Created At</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{range .Payments}}
-                    <tr>
-                        <td><small><code>{{.UUID}}</code></small></td>
-                        <td><small><code>{{.OrderID}}</code></small></td>
-                        <td>{{printf "%.2f" .Amount}}</td>
-                        <td>{{.Currency}}</td>
-                        <td><span class="badge bg-info text-dark">{{.PaymentMethod}}</span></td>
-                        <td>
-                            <span class="badge {{if eq .Status "SUCCESS"}}bg-success{{else if eq .Status "PENDING"}}bg-warning{{else}}bg-danger{{end}}">
-                                {{.Status}}
-                            </span>
-                        </td>
-                        <td>{{.CreatedAt}}</td>
-                    </tr>
-                    {{else}}
-                    <tr>
-                        <td colspan="7" class="text-center">No payments found.</td>
-                    </tr>
-                    {{end}}
-                </tbody>
-            </table>
+        <a href="/dashboard/payments/new" class="btn btn-create-premium">
+            <i class="fas fa-plus me-2"></i> Register Payment
+        </a>
+    </div>
+
+    <div class="card table-card">
+        <div class="card-header card-header-premium">
+            <h5 class="card-title-premium">
+                <i class="fas fa-history text-indigo"></i>
+                Transaction History
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="datatablesSimple">
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Order ID</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                            <th>Issued At</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range .Payments}}
+                        <tr>
+                            <td><span class="uuid-code">{{.UUID}}</span></td>
+                            <td><span class="uuid-code text-muted">{{.OrderID}}</span></td>
+                            <td class="fw-bold text-dark">
+                                {{printf "%.2f" .Amount}} <span class="text-muted small uppercase">{{.Currency}}</span>
+                            </td>
+                            <td>
+                                <span class="badge-premium badge-info-premium">
+                                    <i class="fas fa-credit-card me-1 small"></i> {{.PaymentMethod}}
+                                </span>
+                            </td>
+                            <td>
+                                {{if eq .Status "SUCCESS"}}
+                                    <span class="badge-premium badge-success-premium">
+                                        <i class="fas fa-check-circle me-1 small"></i> Verified
+                                    </span>
+                                {{else if eq .Status "PENDING"}}
+                                    <span class="badge-premium badge-warning-premium">
+                                        <i class="fas fa-clock me-1 small"></i> Awaiting
+                                    </span>
+                                {{else}}
+                                    <span class="badge-premium badge-danger-premium">
+                                        <i class="fas fa-exclamation-triangle me-1 small"></i> {{.Status}}
+                                    </span>
+                                {{end}}
+                            </td>
+                            <td class="text-secondary small">
+                                {{.CreatedAt}}
+                            </td>
+                            <td>
+                                {{if and (eq .Status "SUCCESS") (eq .Provider "stripe")}}
+                                <button class="btn btn-sm btn-outline-danger" onclick="refundPayment('{{.ProviderPaymentID}}')">
+                                    <i class="fas fa-undo"></i> Refund
+                                </button>
+                                {{end}}
+                            </td>
+                        </tr>
+                        {{else}}
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="fas fa-box-open fa-3x mb-3 opacity-20"></i>
+                                    <p class="mb-0">No transaction records found.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    function refundPayment(intentID) {
+        if (!confirm("Are you sure you want to refund this payment?")) {
+            return;
+        }
+
+        fetch('/api/v1/payments/refund', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                intent_id: intentID
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw new Error(err.error || 'Unknown error'); });
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert("Refund successful! Stripe ID: " + data.refund_id);
+            location.reload(); // Reload object list
+        })
+        .catch(error => {
+            alert("Error processing refund: " + error.message);
+        });
+    }
+</script>
 {{end}}

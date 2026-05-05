@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/conmeo200/Golang-V1/internal/model"
+	"github.com/conmeo200/Golang-V1/internal/core/model"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )

@@ -1,24 +1,23 @@
 package main
 
 import (
-	"github.com/conmeo200/Golang-V1/internal/config"
-	"github.com/conmeo200/Golang-V1/internal/database"
+	"log"
+
+	"github.com/conmeo200/Golang-V1/internal/bootstrap"
 	"github.com/conmeo200/Golang-V1/internal/database/seeder"
-	"github.com/conmeo200/Golang-V1/internal/logger"
+	"github.com/conmeo200/Golang-V1/internal/infrastructure/logger"
 )
 
 func main() {
-	cfg := config.Load()
 	logger.Init()
+	logger.AppLogger.Println("Initializing seeder...")
 
-	db, err := database.NewPostgres(cfg)
-	if err != nil {
-		logger.ErrorLogger.Fatalf("Failed to connect to database: %v", err)
-	}
+	cfg := bootstrap.Load()
+	db := bootstrap.InitDatabase(cfg)
 
 	logger.AppLogger.Println("Running seeders...")
 	if err := seeder.Seed(db); err != nil {
-		logger.ErrorLogger.Fatalf("Seeding failed: %v", err)
+		log.Fatalf("Seeding failed: %v", err)
 	}
 	logger.AppLogger.Println("Seeding completed successfully.")
 }
