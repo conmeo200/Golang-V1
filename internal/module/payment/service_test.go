@@ -40,9 +40,9 @@ func (s *PaymentServiceTestSuite) SetupSuite() {
 	}
 
 	// 3. Initialize repositories and service
-	paymentRepo := repository.NewPaymentRepository(db)
-	outboxRepo := repository.NewOutboxEventRepository(db)
-	inboxRepo := repository.NewInboxEventRepository(db)
+	paymentRepo := persistence.NewPaymentRepository(db)
+	outboxRepo := persistence.NewOutboxEventRepository(db)
+	inboxRepo := persistence.NewInboxEventRepository(db)
 
 	s.service = NewPaymentService(paymentRepo, outboxRepo, inboxRepo)
 }

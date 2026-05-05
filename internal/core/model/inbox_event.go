@@ -5,7 +5,7 @@ import (
 )
 
 type InboxEvent struct {
-	ID uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	ID uuid.UUID `gorm:"type:uuid;primaryKey"`
 
 	EventID   uuid.UUID `gorm:"type:uuid;uniqueIndex;not null"`
 	EventType string    `gorm:"type:varchar(100);not null"`

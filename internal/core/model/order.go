@@ -5,7 +5,7 @@ import (
 )
 
 type Order struct {
-	UUID           uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	UUID           uuid.UUID `gorm:"type:uuid;primaryKey"`
 	UserID         uuid.UUID `gorm:"type:uuid;not null;index"`
 	Amount         float64   `gorm:"type:numeric(15,2);not null"`
 	Status         string    `gorm:"type:varchar(50);default:'pending';not null;index;comment:'pending, processing, completed, failed'"`
