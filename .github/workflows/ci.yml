@@ -2,9 +2,7 @@ name: Go CI
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   test:
@@ -75,7 +73,7 @@ jobs:
   deploy:
     name: Build & Push to Docker Hub
     needs: test # Chỉ chạy nếu test thành công
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
 
     steps:
