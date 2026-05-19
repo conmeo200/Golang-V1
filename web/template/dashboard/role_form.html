@@ -1,0 +1,24 @@
+{{define "content"}}
+<header style="margin-bottom: 2rem;">
+    <a href="/dashboard/roles" style="color: var(--primary); text-decoration: none; font-size: 0.875rem; font-weight: 600; display: block; margin-bottom: 1rem;">← Back to Roles</a>
+    <h1>{{if .IsEdit}}Edit Role{{else}}Create New Role{{end}}</h1>
+</header>
+
+<div class="card" style="max-width: 600px;">
+    <form action="{{if .IsEdit}}/dashboard/roles/update/{{.Role.ID}}{{else}}/dashboard/roles/create{{end}}" method="POST">
+        <div class="form-group">
+            <label class="form-label">Role Name</label>
+            <input type="text" class="form-control" name="name" value="{{.Role.Name}}" placeholder="e.g. Moderator" required>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" name="description" rows="3" placeholder="Description of the role's responsibilities">{{.Role.Description}}</textarea>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+            <button type="submit" class="btn btn-primary">{{if .IsEdit}}Save Changes{{else}}Create Role{{end}}</button>
+            <a href="/dashboard/roles" class="btn btn-outline">Cancel</a>
+        </div>
+    </form>
+</div>
+{{end}}

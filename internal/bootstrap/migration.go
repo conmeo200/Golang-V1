@@ -22,5 +22,16 @@ func Migrate(db *gorm.DB) error {
 		&model.InboxEvent{},
 		&model.WebhookLog{},
 		&model.DeadLetterEvent{},
+		// News Models
+		&model.NewsUser{},
+		&model.Category{},
+		&model.Article{},
+		&model.ArticleTrans{},
+		&model.Tag{},
+		&model.NewsComment{},
+		&model.ArticleStats{},
+		&model.ArticleViewLog{},
+		&model.ArticleVersion{},
 	)
 }
+

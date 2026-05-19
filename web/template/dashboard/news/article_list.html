@@ -1,0 +1,98 @@
+{{define "content"}}
+<div class="dashboard-header" style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+            <h1 style="margin-bottom: 0.25rem;">News Articles</h1>
+            <p style="color: var(--text-muted);">Manage your website content, translations, and publishing status.</p>
+        </div>
+        <a href="/dashboard/news/articles/new" class="btn btn-primary" style="padding: 0.75rem 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span>+</span> Write Article
+        </a>
+    </div>
+</div>
+
+<div class="card" style="padding: 0; overflow: hidden;">
+    <div class="table-responsive">
+        <table class="table-premium">
+            <thead>
+                <tr>
+                    <th style="width: 80px; text-align: center;">ID</th>
+                    <th>Article Content</th>
+                    <th>Author</th>
+                    <th>Category</th>
+                    <th style="text-align: center;">Status</th>
+                    <th style="text-align: center;">Stats</th>
+                    <th style="text-align: center;">Created At</th>
+                    <th style="width: 100px; text-align: center;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Articles}}
+                <tr>
+                    <td style="text-align: center;">
+                        <span class="id-badge">#{{.ID}}</span>
+                    </td>
+                    <td>
+                        <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                            {{range .Translations}}
+                            <div style="font-weight: 700; color: var(--text-main);">
+                                <span style="font-size: 0.65rem; background: #e2e8f0; padding: 2px 4px; border-radius: 4px; text-transform: uppercase;">{{.LanguageCode}}</span>
+                                {{.Title}}
+                            </div>
+                            {{else}}
+                            <div style="color: var(--text-muted); font-style: italic;">No translations available</div>
+                            {{end}}
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">Slug: <code>{{.Slug}}</code></div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;">
+                                👤
+                            </div>
+                            <span style="font-size: 0.875rem;">{{.Author.Username}}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                            {{range .Categories}}
+                            <span class="badge badge-info" style="font-size: 0.7rem;">{{.Name}}</span>
+                            {{else}}
+                            <span style="color: #cbd5e1; font-size: 0.75rem;">Uncategorized</span>
+                            {{end}}
+                        </div>
+                    </td>
+                    <td style="text-align: center;">
+                        <span class="badge-premium {{if eq .Status "published"}}badge-success-premium{{else if eq .Status "draft"}}badge-warning-premium{{else}}badge-danger-premium{{end}}">
+                            {{.Status}}
+                        </span>
+                    </td>
+                    <td style="text-align: center;">
+                        <div style="display: flex; flex-direction: column; gap: 0.125rem; font-size: 0.75rem; color: var(--text-muted);">
+                            <span>👁️ {{.Stats.ViewCount}}</span>
+                            <span>💬 {{.Stats.CommentCount}}</span>
+                        </div>
+                    </td>
+                    <td style="text-align: center; color: var(--text-muted); font-size: 0.813rem;">
+                        {{.CreatedAt.Format "2006-01-02"}}
+                    </td>
+                    <td style="text-align: center;">
+                        <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                            <a href="/dashboard/news/articles/edit?id={{.ID}}" class="btn btn-outline" style="padding: 0.4rem;">✏️</a>
+                            <button class="btn btn-outline" style="padding: 0.4rem; color: #ef4444; border-color: #fee2e2;">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 4rem; color: var(--text-muted);">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📰</div>
+                        <p>No articles found. Click "Write Article" to get started.</p>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{end}}

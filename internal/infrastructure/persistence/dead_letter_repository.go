@@ -2,6 +2,7 @@ package persistence
 
 import (
 	"github.com/conmeo200/Golang-V1/internal/core/model"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -35,4 +36,12 @@ func (r *deadLetterRepo) MarkAsReplayed(id uint) error {
 
 func (r *deadLetterRepo) MarkAsResolved(id uint) error {
 	return r.db.Model(&model.DeadLetterEvent{}).Where("id = ?", id).Update("status", "resolved").Error
+}
+
+func (r *deadLetterRepo) Exists(eventID uuid.UUID, queueName string) (bool, error) {
+	var count int64
+	err := r.db.Model(&model.DeadLetterEvent{}).
+		Where("event_id = ? AND queue_name = ?", eventID, queueName).
+		Count(&count).Error
+	return count > 0, err
 }

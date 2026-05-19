@@ -152,3 +152,41 @@ func (h *DashboardHandler) ProcessPayment(w http.ResponseWriter, r *http.Request
 
 	http.Redirect(w, r, "/dashboard/payments", http.StatusSeeOther)
 }
+
+func (h *DashboardHandler) PaymentDetailPage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("web/template/dashboard/layout.html", "web/template/dashboard/payment_detail.html")
+	if err != nil {
+		log.Printf("Error parsing payment detail template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	paymentUUIDStr := r.URL.Query().Get("uuid")
+	paymentUUID, err := uuid.Parse(paymentUUIDStr)
+	if err != nil {
+		http.Redirect(w, r, "/dashboard/payments?error=Invalid+Payment+ID", http.StatusSeeOther)
+		return
+	}
+
+	payment, err := h.paymentService.GetPaymentByUUID(r.Context(), paymentUUID)
+	if err != nil || payment == nil {
+		http.Redirect(w, r, "/dashboard/payments?error=Payment+not+found", http.StatusSeeOther)
+		return
+	}
+
+	order, _ := h.orderService.GetOrder(r.Context(), payment.OrderID)
+
+	data := struct {
+		Title      string
+		ActiveMenu string
+		Payment    *model.Payment
+		Order      *model.Order
+	}{
+		Title:      "Payment Detail #" + payment.UUID.String()[:8],
+		ActiveMenu: "payments",
+		Payment:    payment,
+		Order:      order,
+	}
+
+	tmpl.ExecuteTemplate(w, "layout.html", data)
+}

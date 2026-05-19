@@ -3,18 +3,22 @@ package consumers
 import (
 	"context"
 	"encoding/json"
+	"errors"
+
 	//"fmt"
 	"log"
 	"time"
 
 	"github.com/conmeo200/Golang-V1/internal/core/model"
+	"github.com/conmeo200/Golang-V1/internal/infrastructure/persistence"
 	"github.com/conmeo200/Golang-V1/internal/infrastructure/prometheus"
 	"github.com/conmeo200/Golang-V1/internal/infrastructure/rabbitmq"
-	"github.com/conmeo200/Golang-V1/internal/infrastructure/persistence"
+	"github.com/conmeo200/Golang-V1/internal/core/constant"
 	"github.com/conmeo200/Golang-V1/internal/module/order"
 	"github.com/google/uuid"
 	prometheus_client "github.com/prometheus/client_golang/prometheus"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"gorm.io/gorm"
 )
 
 type PaymentConsumer struct {
@@ -37,9 +41,9 @@ func (c *PaymentConsumer) Name() string {
 
 func (c *PaymentConsumer) Start(ctx context.Context) error {
 	config := rabbitmq.ConsumerConfig{
-		QueueName:    "payment_completed_queue",
-		ExchangeName: "payment.exchange",
-		RoutingKey:   "PaymentCompleted",
+		QueueName:    constant.QueuePaymentCompleted,
+		ExchangeName: constant.ExchangePayment,
+		RoutingKey:   constant.RoutingPaymentCompleted,
 		ConsumerName: "payment_worker",
 		RetryTTL:     5000,
 		MaxRetries:   3,
@@ -56,82 +60,87 @@ func (c *PaymentConsumer) Stop() error {
 }
 
 func (c *PaymentConsumer) handleMessage(msg amqp.Delivery) error {
-	timer := prometheus_client.NewTimer(prometheus.MessageProcessingDuration.WithLabelValues("payment_completed_queue"))
+	timer := prometheus_client.NewTimer(
+		prometheus.MessageProcessingDuration.WithLabelValues(constant.QueuePaymentCompleted),
+	)
 	defer timer.ObserveDuration()
 
-	log.Printf("📥 [PaymentConsumer] Received message: %s", string(msg.Body))
+	// Extract eventID (header → fallback)
+	eventID := extractEventID(msg)
 
-	// Generate deterministic eventID from payload to ensure idempotency
-	eventID := uuid.NewSHA1(uuid.NameSpaceOID, msg.Body)
+	log.Printf("[PaymentConsumer] Processing event_id=%s queue=%s", eventID, c.Name())
 
 	var event struct {
 		Payload struct {
-			OrderID string `json:"order_id"`
-			Status  string `json:"status"`
+			OrderID string  `json:"order_id"`
+			Status  string  `json:"status"`
+			Amount  float64 `json:"amount"`
 		} `json:"payload"`
 	}
 
 	if err := json.Unmarshal(msg.Body, &event); err != nil {
-		log.Printf("❌ [PaymentConsumer] Failed to unmarshal message: %v", err)
-		return nil // Don't retry if JSON is invalid
+		log.Printf("[PaymentConsumer] Invalid JSON for event %s: %v", eventID, err)
+		return err // Retry + DLQ
+	}
+
+	// Validation
+	if event.Payload.OrderID == "" {
+		log.Printf("[PaymentConsumer] Missing order_id for event %s", eventID)
+		return errors.New("missing order_id")
 	}
 
 	orderUUID, err := uuid.Parse(event.Payload.OrderID)
 	if err != nil {
-		log.Printf("❌ [PaymentConsumer] Invalid Order UUID: %v", err)
+		log.Printf("[PaymentConsumer] Invalid order UUID %s: %v", event.Payload.OrderID, err)
+		return err
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// Idempotency check before transaction (Optimization)
+	exists, err := c.inboxRepo.HasBeenProcessed(ctx, eventID)
+	if err != nil {
+		return err
+	}
+	if exists {
+		log.Printf("[PaymentConsumer] Event %s already processed, skipping", eventID)
 		return nil
 	}
 
-	// 1. Inbox Idempotency Check
-	ctx := context.Background()
-	exists, err := c.inboxRepo.HasBeenProcessed(ctx, eventID)
-	if err != nil {
-		prometheus.MessagesConsumedTotal.WithLabelValues("payment_completed_queue", "failed").Inc()
-		log.Printf("❌ [PaymentConsumer] Failed to check inbox for event %s: %v", eventID, err)
-		return err // Retry
-	}
-	if exists {
-		prometheus.MessagesConsumedTotal.WithLabelValues("payment_completed_queue", "success").Inc()
-		log.Printf("⚠️ [PaymentConsumer] Event %s already processed, skipping", eventID)
-		return nil // Ack
-	}
+	// Start Transactional Processing
+	return c.orderService.DB().WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// 1. Double check idempotency within transaction (Critical for high concurrency)
+		// Note: We use a raw query or repo method that supports locking if needed, 
+		// but simple insert constraint is usually enough.
+		
+		// 2. Business logic (Only if status is SUCCESS)
+		if event.Payload.Status == "SUCCESS" {
+			if err := c.orderService.WithTx(tx).UpdateOrderStatus(ctx, orderUUID, "completed", "paid"); err != nil {
+				return err
+			}
+			log.Printf("[PaymentConsumer] Order %s marked as PAID", orderUUID)
+		} else {
+			log.Printf("[PaymentConsumer] Payment for order %s status: %s (Skipping business logic)", orderUUID, event.Payload.Status)
+		}
 
-	if event.Payload.Status != "SUCCESS" {
-		log.Printf("⚠️ [PaymentConsumer] Payment status is not SUCCESS: %s", event.Payload.Status)
-		// Even if not success, we might want to record it in inbox to avoid reprocessing
-		c.inboxRepo.Create(ctx, &model.InboxEvent{
+		// 3. Record in Inbox (Same transaction)
+		inboxStatus := "PROCESSED"
+		if event.Payload.Status != "SUCCESS" {
+			inboxStatus = "IGNORED"
+		}
+
+		if err := c.inboxRepo.WithTx(tx).Create(ctx, &model.InboxEvent{
 			EventID:     eventID,
 			EventType:   "PaymentCompleted",
 			Payload:     msg.Body,
-			Status:      "PROCESSED",
+			Status:      inboxStatus,
 			ProcessedAt: time.Now().Unix(),
-		})
-		prometheus.MessagesConsumedTotal.WithLabelValues("payment_completed_queue", "success").Inc()
+		}); err != nil {
+			return err
+		}
+
 		return nil
-	}
-
-	// 2. Update Order status
-	err = c.orderService.UpdateOrderStatus(ctx, orderUUID, "completed", "paid")
-	if err != nil {
-		log.Printf("❌ [PaymentConsumer] Failed to update order status: %v", err)
-		return err // Trigger retry
-	}
-
-	// 3. Save to Inbox
-	err = c.inboxRepo.Create(ctx, &model.InboxEvent{
-		EventID:     eventID,
-		EventType:   "PaymentCompleted",
-		Payload:     msg.Body,
-		Status:      "PROCESSED",
-		ProcessedAt: time.Now().Unix(),
 	})
-	if err != nil {
-		prometheus.MessagesConsumedTotal.WithLabelValues("payment_completed_queue", "failed").Inc()
-		log.Printf("❌ [PaymentConsumer] Failed to save to inbox: %v", err)
-		return err // Trigger retry so we don't lose the idempotency record
-	}
-
-	prometheus.MessagesConsumedTotal.WithLabelValues("payment_completed_queue", "success").Inc()
-	log.Printf("✅ [PaymentConsumer] Order %s successfully marked as COMPLETED and PAID", orderUUID)
-	return nil
 }
+

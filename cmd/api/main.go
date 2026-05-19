@@ -17,9 +17,11 @@ func main() {
 
 	// 1. Centralized Bootstrap
 	container, err := bootstrap.InitContainer()
+
 	if err != nil {
 		log.Fatalf("Failed to initialize container: %v", err)
 	}
+	
 	defer container.Close()
 
 	// 2. Initialize API App

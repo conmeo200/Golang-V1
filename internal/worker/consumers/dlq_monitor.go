@@ -7,36 +7,41 @@ import (
 
 	"github.com/conmeo200/Golang-V1/internal/core/model"
 	"github.com/conmeo200/Golang-V1/internal/infrastructure/rabbitmq"
-	"github.com/google/uuid"
+	"github.com/conmeo200/Golang-V1/internal/core/constant"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type DLQMonitor struct {
 	rabbitConsumer *rabbitmq.Consumer
 	deadLetterRepo model.DeadLetterRepo
-	targetQueue    string
 }
 
-func NewDLQMonitor(rabbitConsumer *rabbitmq.Consumer, deadLetterRepo model.DeadLetterRepo, targetQueue string) *DLQMonitor {
+func NewDLQMonitor(
+	rabbitConsumer *rabbitmq.Consumer,
+	deadLetterRepo model.DeadLetterRepo,
+) *DLQMonitor {
 	return &DLQMonitor{
 		rabbitConsumer: rabbitConsumer,
 		deadLetterRepo: deadLetterRepo,
-		targetQueue:    targetQueue,
 	}
 }
 
 func (m *DLQMonitor) Name() string {
-	return "dlq_monitor_" + m.targetQueue
+	return "dlq_monitor_payment"
 }
 
 func (m *DLQMonitor) Start(ctx context.Context) error {
 	config := rabbitmq.ConsumerConfig{
-		QueueName:    m.targetQueue,
-		ConsumerName: "dlq_monitor_" + m.targetQueue,
+		QueueName:    constant.QueueDLQMonitor,
+		ConsumerName: m.Name(),
 		Handler:      m.handleMessage,
-		// DLQ Monitor doesn't need its own DLQ or Retries
-		MaxRetries:   0, 
+
+		// DLQ monitor: không retry, không DLQ thêm
+		DisableRetry: true,
+		MaxRetries:   0,
 	}
+
+	log.Printf("[DLQMonitor] Starting monitor for queue: %s", constant.QueuePaymentCompletedDLQ)
 
 	m.rabbitConsumer.Start(ctx, config)
 	return nil
@@ -47,26 +52,32 @@ func (m *DLQMonitor) Stop() error {
 }
 
 func (m *DLQMonitor) handleMessage(msg amqp.Delivery) error {
-	log.Printf("🚨 [DLQMonitor] Received DEAD LETTER from queue: %s", m.targetQueue)
-	
-	headersJSON, _ := json.Marshal(msg.Headers)
-	
-	// Extract reason from x-death header if available
-	reason := "unknown"
-	if deaths, ok := msg.Headers["x-death"].([]interface{}); ok && len(deaths) > 0 {
-		if death, ok := deaths[0].(amqp.Table); ok {
-			if r, ok := death["reason"].(string); ok {
-				reason = r
-			}
-		}
+	eventID := extractEventID(msg)
+	reason := extractDeathReason(msg.Headers)
+
+	headersJSON, err := json.Marshal(msg.Headers)
+	if err != nil {
+		log.Printf("[DLQMonitor] Failed to marshal headers: %v", err)
 	}
 
-	// Try to get a meaningful EventID from body or headers
-	eventID := uuid.New() // default to new
-	
+	log.Printf(
+		"[DLQMonitor] queue=%s exchange=%s routing=%s event_id=%s reason=%s",
+		constant.QueuePaymentCompletedDLQ,
+		msg.Exchange,
+		msg.RoutingKey,
+		eventID.String(),
+		reason,
+	)
+
+	// Deduplication (nếu repo hỗ trợ)
+	if exists, err := m.deadLetterRepo.Exists(eventID, constant.QueuePaymentCompletedDLQ); err == nil && exists {
+		log.Printf("[DLQMonitor] Duplicate detected, skipping event_id=%s", eventID)
+		return nil
+	}
+
 	event := &model.DeadLetterEvent{
 		EventID:      eventID,
-		QueueName:    m.targetQueue,
+		QueueName:    constant.QueuePaymentCompletedDLQ,
 		ExchangeName: msg.Exchange,
 		RoutingKey:   msg.RoutingKey,
 		Payload:      msg.Body,
@@ -76,10 +87,11 @@ func (m *DLQMonitor) handleMessage(msg amqp.Delivery) error {
 	}
 
 	if err := m.deadLetterRepo.Create(event); err != nil {
-		log.Printf("❌ [DLQMonitor] Failed to save dead letter to DB: %v", err)
+		log.Printf("[DLQMonitor] Failed to save dead letter: %v", err)
 		return err
 	}
 
-	log.Printf("✅ [DLQMonitor] Dead letter saved to DB with ID: %d", event.ID)
+	log.Printf("[DLQMonitor] Saved dead letter ID=%d event_id=%s", event.ID, eventID)
+
 	return nil
 }

@@ -1,0 +1,88 @@
+{{define "content"}}
+<div class="dashboard-header" style="margin-bottom: 2rem;">
+    <a href="/dashboard/news/articles" style="text-decoration: none; color: var(--text-muted); font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+        ← Back to Articles
+    </a>
+    <h1 style="margin-bottom: 0.25rem;">Write New Article</h1>
+    <p style="color: var(--text-muted);">Craft your content with multi-language support and SEO optimization.</p>
+</div>
+
+<form action="/dashboard/news/articles/create" method="POST">
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+        <!-- Main Content Area -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="card">
+                <div class="form-group">
+                    <label class="form-label">Article Title</label>
+                    <input type="text" name="title" class="form-control" placeholder="Enter a catchy title..." required style="font-size: 1.25rem; font-weight: 700; padding: 1.25rem;">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Content</label>
+                    <textarea name="content" class="form-control" rows="15" placeholder="Write your story here... (Markdown supported)" required style="font-family: inherit; resize: vertical;"></textarea>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="font-size: 1rem; margin-bottom: 1.25rem;">SEO & Metadata</h3>
+                <div class="form-group">
+                    <label class="form-label">Meta Description</label>
+                    <textarea name="meta_description" class="form-control" rows="3" placeholder="Brief summary for search engines..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tags (Comma separated)</label>
+                    <input type="text" name="tags" class="form-control" placeholder="e.g. Technology, Golang, Tutorial">
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Options -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="card">
+                <h3 style="font-size: 1rem; margin-bottom: 1.25rem;">Publishing Settings</h3>
+                
+                <div class="form-group">
+                    <label class="form-label">Language</label>
+                    <select name="language" class="form-control" style="appearance: auto;">
+                        <option value="vi" selected>Vietnamese (vi)</option>
+                        <option value="en">English (en)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <div style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem;">
+                        {{range .Categories}}
+                        <label style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" name="categories" value="{{.ID}}">
+                            <span style="font-size: 0.875rem;">{{.Name}}</span>
+                        </label>
+                        {{else}}
+                        <p style="font-size: 0.813rem; color: var(--text-muted); margin-bottom: 0;">No categories available.</p>
+                        {{end}}
+                    </div>
+                </div>
+
+                <hr style="opacity: 0.1; margin: 1.5rem 0;">
+
+                <div class="form-group">
+                    <label class="form-label">Feature Image URL</label>
+                    <input type="text" name="image_url" class="form-control" placeholder="https://example.com/image.jpg">
+                </div>
+            </div>
+
+            <div class="card" style="background: #f8fafc; border: 1px dashed #cbd5e1;">
+                <h3 style="font-size: 0.813rem; color: #64748b; text-transform: uppercase; margin-bottom: 1rem;">Action</h3>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <button type="submit" name="status" value="published" class="btn btn-primary" style="width: 100%; padding: 0.875rem;">
+                        🚀 Publish Now
+                    </button>
+                    <button type="submit" name="status" value="draft" class="btn btn-outline" style="width: 100%; padding: 0.875rem; background: white;">
+                        💾 Save as Draft
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{{end}}

@@ -1,0 +1,141 @@
+{{define "content"}}
+<div class="dashboard-header" style="margin-bottom: 2rem;">
+    <a href="/dashboard/payments" style="text-decoration: none; color: var(--text-muted); font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+        ← Back to Payments
+    </a>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+            <h1 style="margin-bottom: 0.25rem;">Payment Detail <span class="uuid-code">#{{slice .Payment.UUID.String 0 8}}</span></h1>
+            <p style="color: var(--text-muted);">Verification and metadata for this transaction attempt.</p>
+        </div>
+        <div>
+            <span class="badge-premium {{if eq .Payment.Status "SUCCESS"}}badge-success-premium{{else if eq .Payment.Status "PENDING"}}badge-warning-premium{{else}}badge-danger-premium{{end}}">
+                {{.Payment.Status}}
+            </span>
+        </div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+    <!-- Payment Info Card -->
+    <div class="card" style="padding: 2rem;">
+        <h3 style="font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 1.5rem; letter-spacing: 0.05em;">Transaction Information</h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+                <span style="color: var(--text-muted);">Amount</span>
+                <span style="font-weight: 800; font-size: 1.25rem; color: var(--text-main);">{{printf "%.2f" .Payment.Amount}} {{.Payment.Currency}}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+                <span style="color: var(--text-muted);">Payment Method</span>
+                <span style="font-weight: 600;">{{.Payment.PaymentMethod}}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+                <span style="color: var(--text-muted);">Provider</span>
+                <span style="font-weight: 600; text-transform: capitalize;">{{.Payment.Provider}}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+                <span style="color: var(--text-muted);">Provider ID</span>
+                <code style="font-size: 0.75rem;">{{.Payment.ProviderPaymentID}}</code>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+                <span style="color: var(--text-muted);">Timestamp</span>
+                <span>{{.Payment.CreatedAt}}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--text-muted);">Idempotency Key</span>
+                <code style="font-size: 0.75rem; color: #94a3b8;">{{.Payment.IdempotencyKey}}</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Order Card -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div class="card" style="padding: 2rem; border-left: 4px solid #3b82f6;">
+            <h3 style="font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 1.5rem; letter-spacing: 0.05em;">Related Order</h3>
+            
+            {{if .Order}}
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="width: 48px; height: 48px; border-radius: 12px; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+                        📦
+                    </div>
+                    <div>
+                        <div style="font-weight: 700; color: var(--text-main);">Order #{{slice .Order.UUID.String 0 8}}</div>
+                        <div style="font-size: 0.813rem; color: var(--text-muted);">Created on {{.Order.CreatedAt}}</div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; font-size: 0.875rem;">
+                    <span style="color: var(--text-muted);">Customer</span>
+                    <span style="font-weight: 600;">{{.Order.User.Email}}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.875rem;">
+                    <span style="color: var(--text-muted);">Order Total</span>
+                    <span style="font-weight: 600;">${{printf "%.2f" .Order.Amount}}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.875rem;">
+                    <span style="color: var(--text-muted);">Current Status</span>
+                    <span class="badge {{if eq .Order.Status "completed"}}badge-success{{else}}badge-warning{{end}}">{{.Order.Status}}</span>
+                </div>
+
+                <a href="/dashboard/orders/detail?uuid={{.Order.UUID}}" class="btn btn-outline" style="margin-top: 1rem; text-align: center;">
+                    View Full Order Details
+                </a>
+            </div>
+            {{else}}
+            <p style="color: var(--text-muted); text-align: center; padding: 2rem 0;">Order information unavailable.</p>
+            {{end}}
+        </div>
+
+        <div class="card" style="background: #f8fafc; border: 1px dashed #cbd5e1;">
+            <h3 style="font-size: 0.813rem; color: #64748b; font-weight: 700; text-transform: uppercase; margin-bottom: 0.75rem;">Internal Log</h3>
+            <p style="font-size: 0.75rem; color: #64748b; line-height: 1.5; margin-bottom: 0;">
+                Transaction initiated via <strong>{{.Payment.Provider}}</strong>. 
+                Webhook status: <strong>{{if eq .Payment.Status "SUCCESS"}}Verified{{else}}Pending Verification{{end}}</strong>.
+                Inbox event ID: <code>{{.Payment.UUID}}</code>
+            </p>
+        </div>
+    </div>
+</div>
+
+{{if and (eq .Payment.Status "SUCCESS") (eq .Payment.Provider "stripe")}}
+<div class="card" style="margin-top: 2rem; border: 1px solid #fee2e2; background: #fffafa;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h4 style="font-size: 0.938rem; color: #991b1b; margin-bottom: 0.25rem;">Danger Zone</h4>
+            <p style="font-size: 0.813rem; color: #b91c1c; margin-bottom: 0;">Refunds are processed immediately through Stripe.</p>
+        </div>
+        <button class="btn" style="background: #ef4444; color: white; padding: 0.6rem 1.25rem; border-radius: 8px; border: none; font-weight: 600;" 
+                onclick="refundPayment('{{.Payment.ProviderPaymentID}}')">
+            Process Refund
+        </button>
+    </div>
+</div>
+{{end}}
+
+<script>
+    function refundPayment(intentID) {
+        if (!confirm("Are you sure you want to refund this payment? This cannot be undone.")) {
+            return;
+        }
+
+        fetch('/api/v1/payments/refund', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ intent_id: intentID })
+        })
+        .then(response => {
+            if (!response.ok) return response.json().then(err => { throw new Error(err.error || 'Refund failed'); });
+            return response.json();
+        })
+        .then(data => {
+            alert("Refund successful! Stripe ID: " + data.refund_id);
+            location.reload();
+        })
+        .catch(error => {
+            alert("Error: " + error.message);
+        });
+    }
+</script>
+{{end}}

@@ -10,12 +10,14 @@ import (
 )
 
 type OrderRepo interface {
+	WithTx(tx *gorm.DB) OrderRepo
 	Create(ctx context.Context, order *model.Order) (*model.Order, error)
 	GetByUUID(ctx context.Context, uuid uuid.UUID) (*model.Order, error)
 	ListByUserID(ctx context.Context, userID uuid.UUID) ([]model.Order, error)
 	ListAll(ctx context.Context) ([]model.Order, error)
 	Update(ctx context.Context, order *model.Order) error
 	Delete(ctx context.Context, uuid uuid.UUID) error
+	DB() *gorm.DB
 }
 
 type OrderRepository struct {
@@ -27,6 +29,14 @@ func NewOrderRepository(db *gorm.DB) *OrderRepository {
 		panic("db cannot be nil")
 	}
 	return &OrderRepository{db: db}
+}
+
+func (r *OrderRepository) WithTx(tx *gorm.DB) OrderRepo {
+	return &OrderRepository{db: tx}
+}
+
+func (r *OrderRepository) DB() *gorm.DB {
+	return r.db
 }
 
 func (r *OrderRepository) Create(ctx context.Context, order *model.Order) (*model.Order, error) {

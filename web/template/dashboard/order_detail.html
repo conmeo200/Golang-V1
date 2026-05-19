@@ -1,216 +1,156 @@
 {{define "content"}}
 <script src="https://js.stripe.com/v3/"></script>
-<div class="container-fluid">
-    <div class="mb-4">
-        <a href="/dashboard/orders" class="text-decoration-none mb-2 d-inline-block">← Back to Orders</a>
-        <h1>Order Detail #{{slice .Order.UUID.String 0 8}}</h1>
+
+<div class="dashboard-header" style="margin-bottom: 2rem;">
+    <a href="/dashboard/orders" style="text-decoration: none; color: var(--text-muted); font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+        ← Back to Orders
+    </a>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+            <h1 style="margin-bottom: 0.25rem;">Order Detail <span class="order-id-code">#{{slice .Order.UUID.String 0 8}}</span></h1>
+            <p style="color: var(--text-muted);">Manage fulfillment and track payment lifecycle for this transaction.</p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <span class="badge {{if eq .Order.Status "completed"}}badge-success{{else}}badge-warning{{end}}">{{.Order.Status}}</span>
+            <span class="badge {{if eq .Order.PaymentStatus "paid"}}badge-info{{else}}badge-danger{{end}}">{{.Order.PaymentStatus}}</span>
+        </div>
     </div>
+</div>
 
-    <div class="row">
-        <!-- Order Info -->
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card shadow-sm border-0 mb-4 text-white bg-dark">
-                <div class="card-body">
-                    <h5 class="card-title opacity-75">Order Summary</h5>
-                    <h2 class="mb-0">${{printf "%.2f" .Order.Amount}}</h2>
-                    <hr class="opacity-25">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Status:</span>
-                        <span class="badge bg-primary">{{.Order.Status}}</span>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Payment:</span>
-                        <span class="badge bg-info text-dark">{{.Order.PaymentStatus}}</span>
-                    </div>
-                </div>
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+    <!-- Left Column: Summary & Info -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div class="card" style="background: var(--bg-card); border-left: 4px solid var(--primary);">
+            <h3 style="font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 1rem;">Order Summary</h3>
+            <div style="font-size: 2rem; font-weight: 800; color: var(--text-main); margin-bottom: 1.5rem;">
+                ${{printf "%.2f" .Order.Amount}}
             </div>
-
-            <div class="card shadow-sm border-0">
-                <div class="card-body">
-                    <h6 class="text-muted text-uppercase small fw-bold">Customer Information</h6>
-                    <p class="mb-1"><strong>{{.Order.User.Email}}</strong></p>
-                    <p class="text-muted small mb-0">ID: {{.Order.UserID}}</p>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.875rem;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-muted);">Customer</span>
+                    <span style="font-weight: 600;">{{.Order.User.Email}}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-muted);">Created At</span>
+                    <span>{{.Order.CreatedAt}}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-muted);">Reference</span>
+                    <code style="font-size: 0.75rem;">{{.Order.UUID}}</code>
                 </div>
             </div>
         </div>
 
-        <!-- Payment Module (Tabs) -->
-        <div class="payment-module-container mb-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-header bg-white pt-4 pb-0 px-4 border-0">
-                    <div class="d-flex align-items-center custom-tabs" role="tablist">
-                        <button class="custom-tab-btn active pe-4" id="form-tab" data-target="#payment-form">
-                            <i class="fa fa-credit-card"></i> Pay Now
-                        </button>
-                        <button class="custom-tab-btn px-4" id="lifecycle-tab" data-target="#payment-lifecycle">
-                            <i class="fa fa-stream"></i> Lifecycle
-                        </button>
+        <div class="card">
+            <h3 style="font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 1rem;">System Metadata</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.813rem;">
+                <div style="padding: 0.75rem; background: var(--bg-main); border-radius: 8px;">
+                    <div style="font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem;">Outbox Status</div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; color: #22c55e;">
+                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e;"></span>
+                        Processed & Published
+                    </div>
+                </div>
+                <div style="padding: 0.75rem; background: var(--bg-main); border-radius: 8px;">
+                    <div style="font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem;">Consistency</div>
+                    <div style="color: var(--text-muted);">Eventual (Verified)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Interactive Payment & Timeline -->
+    <div class="card" style="padding: 0; overflow: hidden;">
+        <div class="custom-tabs">
+            <button class="custom-tab-btn active" data-target="#pay-tab">
+                💳 Secure Checkout
+            </button>
+            <button class="custom-tab-btn" data-target="#timeline-tab">
+                🔄 Payment Lifecycle
+            </button>
+        </div>
+
+        <div class="card-body" style="padding: 2rem;">
+            <div id="pay-tab" class="custom-pane active">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <div>
+                        <h4 style="margin-bottom: 0.25rem;">Payment Gateway</h4>
+                        <p style="color: var(--text-muted); font-size: 0.813rem; margin-bottom: 0;">Authorized by Stripe Secure Infrastructure.</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; font-size: 1.5rem; color: var(--text-muted);">
+                        <span>💳</span>
                     </div>
                 </div>
 
-                <div class="card-body p-4">
-                    <div class="custom-tab-content">
-
-                        <!-- TAB 1: Payment Form -->
-                        <div class="custom-pane active" id="payment-form">
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <div>
-                                    <h5 class="mb-1 text-dark fw-bold">Secure Checkout</h5>
-                                    <p class="text-muted small mb-0">Enter card details below. All transactions are
-                                        encrypted.</p>
-                                </div>
-                                <div class="payment-methods" style="display: flex; gap: 0.5rem;">
-                                    <i class="fa fa-cc-visa fa-2x" style="color: #1a1f71;"></i>
-                                    <i class="fa fa-cc-mastercard fa-2x" style="color: #eb001b;"></i>
-                                </div>
-                            </div>
-
-                            <hr class="opacity-10 mb-4">
-
-                            <form class="premium-form">
-                                <!-- Payment Method Selector -->
-                                <div style="margin-bottom: 24px;">
-                                    <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 12px; letter-spacing: 0.5px;">PAYMENT METHOD</label>
-                                    <div style="display: flex; gap: 16px; width: 100%;">
-                                        <label class="method-selector active" id="label-stripe">
-                                            <input type="radio" name="payment_method" value="stripe" checked style="display: none;" onchange="togglePaymentMethod('stripe')">
-                                            <i class="fa fa-cc-stripe fa-lg" style="color: #635bff;"></i> <span style="font-weight: bold; margin-left: 8px;">Stripe</span>
-                                        </label>
-                                        <label class="method-selector" id="label-paypal">
-                                            <input type="radio" name="payment_method" value="paypal" style="display: none;" onchange="togglePaymentMethod('paypal')">
-                                            <i class="fa fa-paypal fa-lg" style="color: #003087;"></i> <span style="font-weight: bold; margin-left: 8px;">PayPal</span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- STRIPE FORM FIELDS -->
-                                <div id="stripe-fields">
-                                    <div style="margin-bottom: 20px;">
-                                        <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 8px;">CARDHOLDER NAME</label>
-                                        <input type="text" id="cardholder-name" class="form-control-custom bg-light border-0" placeholder="JOHN DOE" required>
-                                    </div>
-    
-                                    <div style="margin-bottom: 20px;">
-                                        <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 8px;">CREDIT OR DEBIT CARD</label>
-                                        <div id="card-element" class="form-control-custom bg-light border-0" style="padding: 12px;">
-                                            <!-- Stripe Element will be inserted here -->
-                                        </div>
-                                        <div id="card-errors" role="alert" class="text-danger small mt-2"></div>
-                                    </div>
-                                </div>
-
-                                <!-- PAYPAL FORM FIELDS -->
-                                <div id="paypal-fields" style="display: none;">
-                                    <div class="text-center rounded-3 bg-light border-dashed" style="padding: 24px; margin-bottom: 24px;">
-                                        <i class="fa fa-paypal fa-3x mb-3" style="color: #003087;"></i>
-                                        <p class="text-dark fw-bold mb-1">Pay via PayPal</p>
-                                        <small class="text-muted d-block px-3">Enter the PayPal account email or the transaction reference ID if already processed.</small>
-                                    </div>
-                                    <div style="margin-bottom: 20px;">
-                                        <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 8px;">PAYPAL EMAIL (OPTIONAL)</label>
-                                        <div class="input-with-icon">
-                                            <i class="fa fa-envelope icon text-muted"></i>
-                                            <input type="email" class="form-control-custom bg-light border-0" placeholder="customer@example.com">
-                                        </div>
-                                    </div>
-                                    <div style="margin-bottom: 24px;">
-                                        <label class="form-label text-muted small fw-bold" style="display: block; margin-bottom: 8px;">TRANSACTION ID (IF ALREADY PAID)</label>
-                                        <input type="text" class="form-control-custom bg-light border-0" placeholder="e.g. 5VR********">
-                                    </div>
-                                </div>
-
-                                <button type="button" class="btn btn-premium-pay w-100 py-3 mt-2 rounded-3 text-center" style="margin-top: 8px;" id="btn-submit-payment">
-                                    <i class="fa fa-lock me-2"></i> AUTHORIZE ${{printf "%.2f" .Order.Amount}}
-                                </button>
-
-                                <div class="text-center mt-3">
-                                    <small class="text-muted"><i class="fa fa-shield-alt text-success me-1"></i>
-                                        Payments are secure and encrypted</small>
-                                </div>
-                            </form>
-                        </div>
-
-                        <!-- TAB 2: Payment Lifecycle -->
-                        <div class="custom-pane" id="payment-lifecycle">
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <div>
-                                    <h5 class="mb-1 text-dark fw-bold">Lifecycle Tracking</h5>
-                                    <p class="text-muted small mb-0">Live status of all payment attempts and
-                                        fulfillment.</p>
-                                </div>
-                            </div>
-
-                            <hr class="opacity-10 mb-4">
-
-                            <div class="payment-flow-tags">
-                                <!-- Origin Tag -->
-                                <div class="flow-entry mb-4">
-                                    <span class="step-label">Origin</span>
-                                    <div class="tag-group">
-                                        <span class="badge bg-dark-soft text-dark">System</span>
-                                        <span class="tag-arrow">→</span>
-                                        <span class="badge bg-primary-soft text-primary">Order Created</span>
-                                    </div>
-                                    <span class="flow-time">{{.Order.CreatedAt}}</span>
-                                </div>
-
-                                {{range .Transactions}}
-                                <div class="flow-entry mb-4 pb-3 border-bottom-dashed">
-                                    <span class="step-label">Transaction Request</span>
-                                    <div class="tag-group mb-2">
-                                        <!-- Tag 1: Payment Method -->
-                                        <span class="badge badge-lg bg-indigo-soft text-indigo text-uppercase">
-                                            <i class="fa {{if eq .PaymentMethod " vnpay"}}fa-credit-card{{else if eq
-                                                .PaymentMethod "banking"
-                                                }}fa-university{{else}}fa-money-bill-wave{{end}} me-1"></i>
-                                            {{.PaymentMethod}}
-                                        </span>
-
-                                        <span class="tag-arrow">→</span>
-
-                                        <!-- Tag 2: Flow Status -->
-                                        <span class="badge badge-lg {{if eq .Status " success"}}bg-success-soft
-                                            text-success{{else if eq .Status "failed" }}bg-danger-soft
-                                            text-danger{{else}}bg-warning-soft text-warning{{end}} text-uppercase">
-                                            {{if eq .Status "success"}}✔ CAPTURED{{else if eq .Status "failed"}}✘
-                                            FAILED{{else}}⌚ {{.Status}}{{end}}
-                                        </span>
-                                    </div>
-                                    <div class="flow-details">
-                                        <p class="text-muted small mb-0">Ref: <code>{{.ReferenceID}}</code> • Amount:
-                                            <strong>${{printf "%.2f" .Amount}}</strong></p>
-                                    </div>
-                                    <span class="flow-time">{{.CreatedAt}}</span>
-                                </div>
-                                {{end}}
-
-                                <!-- Fulfillment Tag -->
-                                {{if eq .Order.Status "completed"}}
-                                <div class="flow-entry">
-                                    <span class="step-label">Closure</span>
-                                    <div class="tag-group">
-                                        <span class="badge bg-success-soft text-success">Fulfilled</span>
-                                        <span class="tag-arrow">→</span>
-                                        <span class="badge bg-green text-white">Closed</span>
-                                    </div>
-                                    <span class="flow-time">{{.Order.UpdatedAt}}</span>
-                                </div>
-                                {{end}}
-                            </div>
-                        </div>
-
+                <form id="payment-form-stripe">
+                    <div class="form-group">
+                        <label class="form-label">Cardholder Name</label>
+                        <input type="text" id="cardholder-name" class="form-control" placeholder="JOHN DOE" required>
                     </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Credit or Debit Card</label>
+                        <div id="card-element" style="padding: 1rem; border: 1.5px solid var(--border); border-radius: 8px; background: var(--bg-main);">
+                            <!-- Stripe Element -->
+                        </div>
+                        <div id="card-errors" role="alert" style="color: #ef4444; font-size: 0.813rem; margin-top: 0.5rem;"></div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" id="btn-submit-payment" style="width: 100%; padding: 1rem; margin-top: 1rem; font-size: 1rem; font-weight: 700;">
+                        Authorize Payment: ${{printf "%.2f" .Order.Amount}}
+                    </button>
+                </form>
+            </div>
+
+            <div id="timeline-tab" class="custom-pane">
+                <div class="payment-flow-tags">
+                    <div class="flow-entry mb-4">
+                        <span class="step-label">Order Created</span>
+                        <div class="tag-group">
+                            <span class="badge" style="background: #f1f5f9; color: #475569;">System</span>
+                            <span class="tag-arrow">→</span>
+                            <span class="badge badge-info">Pending</span>
+                        </div>
+                        <span class="flow-time">{{.Order.CreatedAt}}</span>
+                    </div>
+
+                    {{range .Transactions}}
+                    <div class="flow-entry mb-4 pb-3" style="border-bottom: 1px dashed var(--border);">
+                        <span class="step-label">Transaction Attempt</span>
+                        <div class="tag-group">
+                            <span class="badge-premium badge-info-premium">{{.PaymentMethod}}</span>
+                            <span class="tag-arrow">→</span>
+                            <span class="badge-premium {{if eq .Status "success"}}badge-success-premium{{else}}badge-danger-premium{{end}}">
+                                {{.Status}}
+                            </span>
+                        </div>
+                        <div style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-muted);">
+                            Ref: <code style="color: var(--primary);">{{.ReferenceID}}</code>
+                        </div>
+                        <span class="flow-time">{{.CreatedAt}}</span>
+                    </div>
+                    {{end}}
+
+                    {{if eq .Order.Status "completed"}}
+                    <div class="flow-entry">
+                        <span class="step-label">Closure</span>
+                        <div class="tag-group">
+                            <span class="badge badge-success">Fulfilled</span>
+                            <span class="tag-arrow">→</span>
+                            <span class="badge" style="background: #0f172a; color: white;">Order Closed</span>
+                        </div>
+                        <span class="flow-time">{{.Order.UpdatedAt}}</span>
+                    </div>
+                    {{end}}
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-</div>
-
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // Tab Logic
         const tabs = document.querySelectorAll('.custom-tab-btn');
         const panes = document.querySelectorAll('.custom-pane');
 
@@ -218,136 +158,84 @@
             tab.addEventListener('click', () => {
                 tabs.forEach(t => t.classList.remove('active'));
                 panes.forEach(p => p.classList.remove('active'));
-
                 tab.classList.add('active');
                 const target = document.querySelector(tab.getAttribute('data-target'));
                 if (target) target.classList.add('active');
             });
         });
-    });
 
-    function togglePaymentMethod(method) {
-        document.querySelectorAll('.method-selector').forEach(el => el.classList.remove('active'));
-        if (method === 'stripe') {
-            document.getElementById('label-stripe').classList.add('active');
-            document.getElementById('stripe-fields').style.display = 'block';
-            document.getElementById('paypal-fields').style.display = 'none';
-        } else {
-            document.getElementById('label-paypal').classList.add('active');
-            document.getElementById('stripe-fields').style.display = 'none';
-            document.getElementById('paypal-fields').style.display = 'block';
-        }
-    }
-
-    // Payment Processing via Stripe.js
-    document.addEventListener("DOMContentLoaded", function () {
+        // Stripe Logic
         const stripePubKey = '{{.StripePubKey}}';
-        if (!stripePubKey) {
-            console.error("Stripe Public Key is missing!");
-            return;
-        }
+        if (!stripePubKey) return;
 
         const stripe = Stripe(stripePubKey);
         const elements = stripe.elements();
-        
-        const style = {
-            base: {
-                color: '#32325d',
-                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-                fontSmoothing: 'antialiased',
-                fontSize: '16px',
-                '::placeholder': { color: '#aab7c4' }
+        const card = elements.create('card', {
+            style: {
+                base: {
+                    fontSize: '16px',
+                    color: '#1e293b',
+                    '::placeholder': { color: '#94a3b8' }
+                }
             },
-            invalid: {
-                color: '#fa755a',
-                iconColor: '#fa755a'
-            }
-        };
-
-        const card = elements.create('card', { style: style, hidePostalCode: true });
+            hidePostalCode: true
+        });
         card.mount('#card-element');
 
-        card.on('change', function(event) {
-            const displayError = document.getElementById('card-errors');
-            if (event.error) {
-                displayError.textContent = event.error.message;
-            } else {
-                displayError.textContent = '';
+        const btnSubmit = document.getElementById('btn-submit-payment');
+        btnSubmit.addEventListener('click', async function () {
+            const cardholderName = document.getElementById('cardholder-name').value;
+            if (!cardholderName) { alert("Enter cardholder name"); return; }
+
+            btnSubmit.innerHTML = '<span class="spinner"></span> Authorizing...';
+            btnSubmit.disabled = true;
+
+            try {
+                const response = await fetch('/dashboard/transactions/process-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        payment_method: 'stripe',
+                        amount: parseFloat('{{.Order.Amount}}'),
+                        currency: 'USD',
+                        order_id: '{{.Order.UUID}}'
+                    })
+                });
+
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+
+                const result = await stripe.confirmCardPayment(data.client_secret, {
+                    payment_method: { card: card, billing_details: { name: cardholderName } }
+                });
+
+                if (result.error) throw new Error(result.error.message);
+                
+                if (result.paymentIntent.status === 'succeeded') {
+                    btnSubmit.innerHTML = '✅ Payment Succeeded';
+                    btnSubmit.style.background = '#22c55e';
+                    setTimeout(() => window.location.reload(), 1500);
+                }
+            } catch (err) {
+                document.getElementById('card-errors').textContent = err.message;
+                btnSubmit.innerHTML = 'Authorize Payment: ${{printf "%.2f" .Order.Amount}}';
+                btnSubmit.disabled = false;
             }
         });
-
-        const btnSubmit = document.getElementById('btn-submit-payment');
-        if (btnSubmit) {
-            btnSubmit.addEventListener('click', async function () {
-                const methodInput = document.querySelector('input[name="payment_method"]:checked');
-                if (!methodInput) return;
-                const method = methodInput.value;
-
-                if (method !== 'stripe') {
-                    alert("PayPal is not yet implemented via this secure flow.");
-                    return;
-                }
-
-                const cardholderName = document.getElementById('cardholder-name').value;
-                if (!cardholderName) {
-                    alert("Please enter your name.");
-                    return;
-                }
-
-                // Visual loading state
-                const originalText = this.innerHTML;
-                this.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i> AUTHORIZING...';
-                this.disabled = true;
-
-                try {
-                    // 1. Create PaymentIntent on server
-                    const response = await fetch('/dashboard/transactions/process-payment', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            payment_method: 'stripe',
-                            amount: parseFloat('{{.Order.Amount}}'),
-                            currency: 'USD',
-                            order_id: '{{.Order.UUID}}'
-                        })
-                    });
-
-                    const data = await response.json();
-                    if (data.error) {
-                        throw new Error(data.error);
-                    }
-
-                    // 2. Confirm Payment with Stripe
-                    const result = await stripe.confirmCardPayment(data.client_secret, {
-                        payment_method: {
-                            card: card,
-                            billing_details: { name: cardholderName }
-                        }
-                    });
-
-                    if (result.error) {
-                        throw new Error(result.error.message);
-                    } else if (result.paymentIntent.status === 'succeeded') {
-                        // 3. Success!
-                        this.innerHTML = '<i class="fa fa-check me-2"></i> SUCCESS';
-                        this.classList.remove('btn-premium-pay');
-                        this.classList.add('btn-success');
-                        
-                        // We rely on Webhook to update the DB, but we can refresh UI
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1500);
-                    }
-                } catch (err) {
-                    console.error(err);
-                    const displayError = document.getElementById('card-errors');
-                    displayError.textContent = err.message;
-                    this.innerHTML = originalText;
-                    this.disabled = false;
-                }
-            });
-        }
     });
-
 </script>
+
+<style>
+    .spinner {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid white;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-right: 0.5rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+</style>
 {{end}}

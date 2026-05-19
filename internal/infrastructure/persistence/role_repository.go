@@ -12,6 +12,10 @@ type RoleRepositoryInterface interface {
 	GetAllPermissions() ([]model.Permission, error)
 	UpdateRolePermissions(roleID uint, permissionIDs []string) error
 	GetUsersCountByRoleName(roleName string) (int64, error)
+	CreateRole(role *model.Role) error
+	UpdateRole(role *model.Role) error
+	DeleteRole(id uint) error
+	SeedPermissions(perms []model.Permission) error
 }
 
 type RoleRepository struct {
@@ -72,4 +76,25 @@ func (r *RoleRepository) GetUsersCountByRoleName(roleName string) (int64, error)
 	var count int64
 	err := r.db.Model(&model.User{}).Where("role = ?", roleName).Count(&count).Error
 	return count, err
+}
+
+func (r *RoleRepository) CreateRole(role *model.Role) error {
+	return r.db.Create(role).Error
+}
+
+func (r *RoleRepository) UpdateRole(role *model.Role) error {
+	return r.db.Save(role).Error
+}
+
+func (r *RoleRepository) DeleteRole(id uint) error {
+	return r.db.Delete(&model.Role{}, id).Error
+}
+
+func (r *RoleRepository) SeedPermissions(perms []model.Permission) error {
+	for _, p := range perms {
+		if err := r.db.Where(model.Permission{ID: p.ID}).Assign(p).FirstOrCreate(&p).Error; err != nil {
+			return err
+		}
+	}
+	return nil
 }

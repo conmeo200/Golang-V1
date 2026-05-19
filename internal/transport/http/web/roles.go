@@ -147,3 +147,110 @@ func (h *DashboardHandler) RoleDetailPage(w http.ResponseWriter, r *http.Request
 
 	tmpl.ExecuteTemplate(w, "layout.html", data)
 }
+
+type RoleFormPageData struct {
+	Title      string
+	ActiveMenu string
+	IsEdit     bool
+	Role       RoleItem
+}
+
+func (h *DashboardHandler) RoleFormPage(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("web/template/dashboard/layout.html", "web/template/dashboard/role_form.html")
+	if err != nil {
+		log.Printf("Error parsing role form template: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	data := RoleFormPageData{
+		Title:      "Create New Role",
+		ActiveMenu: "roles",
+		IsEdit:     false,
+	}
+
+	// Check if edit mode
+	if strings.Contains(r.URL.Path, "/edit/") {
+		pathParts := strings.Split(r.URL.Path, "/")
+		roleIDStr := pathParts[len(pathParts)-1]
+		roleID, err := strconv.ParseUint(roleIDStr, 10, 32)
+		if err == nil {
+			role, err := h.roleService.GetRoleWithPermissions(uint(roleID))
+			if err == nil {
+				data.IsEdit = true
+				data.Title = "Edit Role"
+				data.Role = RoleItem{
+					ID:          int(role.ID),
+					Name:        role.Name,
+					Description: role.Description,
+				}
+			}
+		}
+	}
+
+	tmpl.ExecuteTemplate(w, "layout.html", data)
+}
+
+func (h *DashboardHandler) ProcessRoleCreate(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	name := r.FormValue("name")
+	description := r.FormValue("description")
+
+	err = h.roleService.CreateRole(name, description)
+	if err != nil {
+		http.Error(w, "Failed to create role", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/dashboard/roles", http.StatusSeeOther)
+}
+
+func (h *DashboardHandler) ProcessRoleUpdate(w http.ResponseWriter, r *http.Request) {
+	pathParts := strings.Split(r.URL.Path, "/")
+	roleIDStr := pathParts[len(pathParts)-1]
+	roleID, err := strconv.ParseUint(roleIDStr, 10, 32)
+	if err != nil {
+		http.Error(w, "Invalid Role ID", http.StatusBadRequest)
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	name := r.FormValue("name")
+	description := r.FormValue("description")
+
+	err = h.roleService.UpdateRole(uint(roleID), name, description)
+	if err != nil {
+		http.Error(w, "Failed to update role", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/dashboard/roles", http.StatusSeeOther)
+}
+
+func (h *DashboardHandler) ProcessRoleDelete(w http.ResponseWriter, r *http.Request) {
+	pathParts := strings.Split(r.URL.Path, "/")
+	roleIDStr := pathParts[len(pathParts)-1]
+	roleID, err := strconv.ParseUint(roleIDStr, 10, 32)
+	if err != nil {
+		http.Error(w, "Invalid Role ID", http.StatusBadRequest)
+		return
+	}
+
+	err = h.roleService.DeleteRole(uint(roleID))
+	if err != nil {
+		http.Error(w, "Failed to delete role", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/dashboard/roles", http.StatusSeeOther)
+}

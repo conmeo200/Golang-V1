@@ -16,9 +16,11 @@ func main() {
 
 	// 1. Centralized Bootstrap (DB, RMQ, Config)
 	container, err := bootstrap.InitContainer()
+
 	if err != nil {
 		logger.ErrorLogger.Fatalf("Failed to initialize container: %v", err)
 	}
+	
 	defer container.Close()
 
 	// 2. Initialize Worker App

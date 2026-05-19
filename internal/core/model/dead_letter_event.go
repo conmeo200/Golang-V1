@@ -29,4 +29,5 @@ type DeadLetterRepo interface {
 	ListPending() ([]DeadLetterEvent, error)
 	MarkAsReplayed(id uint) error
 	MarkAsResolved(id uint) error
+	Exists(eventID uuid.UUID, queueName string) (bool, error)
 }

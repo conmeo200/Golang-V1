@@ -14,9 +14,10 @@ type Container struct {
 }
 
 func InitContainer() (*Container, error) {
-	cfg := LoadConfig()
-	db := InitDatabase(cfg)
+	cfg 	 := LoadConfig()
+	db 		 := InitDatabase(cfg)
 	rmq, err := rabbitmq.NewRabbitMQ(cfg.RabbitMQUser, cfg.RabbitMQPassword, cfg.RabbitMQHost, cfg.RabbitMQPort)
+
 	if err != nil {
 		return nil, err
 	}
@@ -32,6 +33,7 @@ func (c *Container) Close() {
 	if c.RabbitMQ != nil {
 		c.RabbitMQ.Close()
 	}
+	
 	if c.DB != nil {
 		sqlDB, err := c.DB.DB()
 		if err == nil {

@@ -43,6 +43,8 @@ type ConsumerConfig struct {
 	RetryQueue        string // default: queueName + ".retry.queue"
 	RetryRoutingKey   string // default: queueName + ".retry"
 
+	DisableRetry      bool   // If true, no DLX or Retry topology will be created
+
 	// Handler is the business logic function. 
 	// Returning an error triggers the Retry/DLQ mechanism.
 	Handler           func(msg amqp.Delivery) error 
@@ -67,7 +69,7 @@ func (cfg *ConsumerConfig) setDefaults() {
 	if cfg.RetryRoutingKey == "" {
 		cfg.RetryRoutingKey = cfg.QueueName + ".retry"
 	}
-	if cfg.MaxRetries == 0 {
+	if cfg.MaxRetries == 0 && !cfg.DisableRetry {
 		cfg.MaxRetries = 3
 	}
 	if cfg.PrefetchCount == 0 {
@@ -78,7 +80,7 @@ func (cfg *ConsumerConfig) setDefaults() {
 // Start wraps the consumer in a self-healing background loop handling all topology
 func (c *Consumer) Start(ctx context.Context, cfg ConsumerConfig) {
 	cfg.setDefaults()
-
+fmt.Printf("consumer line 83")
 	go func() {
 		for {
 			select {
@@ -103,28 +105,34 @@ func (c *Consumer) Start(ctx context.Context, cfg ConsumerConfig) {
 }
 
 func (c *Consumer) consumeLoop(ctx context.Context, cfg ConsumerConfig) error {
-	// 1. Setup DLX
-	if err := c.SetupDLX(cfg.DLXExchange, cfg.DLXQueue, cfg.DLXRoutingKey); err != nil {
-		return err
+	// 1. Setup DLX & Retry (Only if enabled)
+	if !cfg.DisableRetry {
+		if err := c.SetupDLX(cfg.DLXExchange, cfg.DLXQueue, cfg.DLXRoutingKey); err != nil {
+			return err
+		}
+
+		if err := c.SetupDelayedRetry(cfg.RetryExchange, cfg.RetryQueue, cfg.RetryRoutingKey, cfg.ExchangeName, cfg.RoutingKey, cfg.RetryTTL); err != nil {
+			return err
+		}
 	}
 
-	// 2. Setup Delayed Retry
-	if err := c.SetupDelayedRetry(cfg.RetryExchange, cfg.RetryQueue, cfg.RetryRoutingKey, cfg.ExchangeName, cfg.RoutingKey, cfg.RetryTTL); err != nil {
-		return err
+	// 2. Declare Main Queue
+	args := amqp.Table{}
+	if !cfg.DisableRetry && cfg.MaxRetries > 0 {
+		// Use Retry Exchange as the Dead Letter Exchange for the main queue
+		args["x-dead-letter-exchange"] = cfg.RetryExchange
+		args["x-dead-letter-routing-key"] = cfg.RetryRoutingKey
 	}
 
-	// 3. Declare Main Queue (Failures go to retry.exchange)
-	args := amqp.Table{
-		"x-dead-letter-exchange":    cfg.RetryExchange,
-		"x-dead-letter-routing-key": cfg.RetryRoutingKey,
-	}
 	if _, err := c.DeclareQueue(cfg.QueueName, args); err != nil {
 		return err
 	}
 
-	// 4. Bind Main Queue
-	if err := c.QueueBind(cfg.QueueName, cfg.RoutingKey, cfg.ExchangeName); err != nil {
-		return err
+	// 3. Bind Main Queue
+	if cfg.ExchangeName != "" {
+		if err := c.QueueBind(cfg.QueueName, cfg.RoutingKey, cfg.ExchangeName); err != nil {
+			return err
+		}
 	}
 
 	// 5. QoS (Parallelism is controlled by PrefetchCount)
@@ -165,6 +173,12 @@ func (c *Consumer) consumeLoop(ctx context.Context, cfg ConsumerConfig) error {
 func (c *Consumer) handleDelivery(msg amqp.Delivery, cfg ConsumerConfig) {
 	err := cfg.Handler(msg)
 	if err != nil {
+		if cfg.DisableRetry {
+			log.Printf("❌ Consumer [%s]: Processing failed, retries disabled, nacking with requeue=false", cfg.ConsumerName)
+			msg.Nack(false, false)
+			return
+		}
+
 		retryCount := c.GetRetryCount(msg)
 
 		if retryCount >= cfg.MaxRetries {
@@ -187,6 +201,7 @@ func (c *Consumer) handleDelivery(msg amqp.Delivery, cfg ConsumerConfig) {
 					return
 				}
 			}
+			fmt.Printf("consumer line 204")
 			// If DLQ publish fails, nack with requeue=true to try again later
 			log.Printf("⚠️ Consumer [%s]: Failed to publish to DLQ, requeueing: %v", cfg.ConsumerName, err)
 			msg.Nack(false, true)
@@ -288,7 +303,7 @@ func (c *Consumer) SetupDelayedRetry(retryExchange, retryQueue, retryRoutingKey,
 	}
 
 	args := amqp.Table{
-		"x-dead-letter-exchange":    mainExchange,
+		"x-dead-letter-exchange":    "",
 		"x-dead-letter-routing-key": mainRoutingKey,
 		"x-message-ttl":             ttlMs,
 	}
