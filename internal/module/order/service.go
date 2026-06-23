@@ -7,39 +7,27 @@ import (
 	"log"
 	"time"
 
-	"github.com/conmeo200/Golang-V1/internal/core/dto"
-	"github.com/conmeo200/Golang-V1/internal/core/model"
+	"github.com/conmeo200/Golang-V1/internal/domain/dto"
+	"github.com/conmeo200/Golang-V1/internal/domain/model"
 	"github.com/conmeo200/Golang-V1/internal/infrastructure/rabbitmq"
-	"github.com/conmeo200/Golang-V1/internal/infrastructure/persistence"
+	"github.com/conmeo200/Golang-V1/internal/module/order/port"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-type OrderServiceInterface interface {
-	WithTx(tx *gorm.DB) OrderServiceInterface
-	CreateOrder(ctx context.Context, userID uuid.UUID, amount float64, idempotencyKey string) (*model.Order, error)
-	GetOrder(ctx context.Context, orderUUID uuid.UUID) (*model.Order, error)
-	ListOrdersByUserID(ctx context.Context, userID uuid.UUID) ([]model.Order, error)
-	ListAllOrders(ctx context.Context) ([]model.Order, error)
-	UpdateOrderStatus(ctx context.Context, orderUUID uuid.UUID, status string, paymentStatus string) error
-	DeleteOrder(ctx context.Context, orderUUID uuid.UUID) error
-	ProcessOrder(event dto.OrderMessage) error
-	DB() *gorm.DB
-}
-
 type OrderService struct {
-	repo     persistence.OrderRepo
+	repo     port.OrderRepository
 	producer *rabbitmq.Producer
 }
 
-func NewOrderService(repo persistence.OrderRepo, producer *rabbitmq.Producer) *OrderService {
+func NewOrderService(repo port.OrderRepository, producer *rabbitmq.Producer) *OrderService {
 	return &OrderService{
 		repo:     repo,
 		producer: producer,
 	}
 }
 
-func (s *OrderService) WithTx(tx *gorm.DB) OrderServiceInterface {
+func (s *OrderService) WithTx(tx *gorm.DB) port.OrderService {
 	return &OrderService{
 		repo:     s.repo.WithTx(tx),
 		producer: s.producer,

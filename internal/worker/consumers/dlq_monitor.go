@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/conmeo200/Golang-V1/internal/core/model"
+	"github.com/conmeo200/Golang-V1/internal/domain/model"
 	"github.com/conmeo200/Golang-V1/internal/infrastructure/rabbitmq"
-	"github.com/conmeo200/Golang-V1/internal/core/constant"
+	"github.com/conmeo200/Golang-V1/internal/domain/constant"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 

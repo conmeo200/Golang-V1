@@ -21,30 +21,9 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
-      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/
+      RABBITMQ_URL: amqp://${RabbitMQUser}:${RabbitMQPassword}@rabbitmq:5672/
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       ALLOWED_API_KEYS: ${ALLOWED_API_KEYS}
-
-  # 2. Background Worker (RabbitMQ Consumer)
-  # worker:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: app_worker
-  #   # Đè lệnh mặc định (là 'air' cho server) để chạy riêng file main của worker
-  #   command: go run cmd/worker/main.go 
-  #   volumes:
-  #     - .:/app
-  #   depends_on:
-  #     - db
-  #     - rabbitmq
-  #   environment:
-  #     DB_HOST: db
-  #     DB_PORT: 5432
-  #     DB_USER: ${DB_USER}
-  #     DB_PASSWORD: ${DB_PASSWORD}
-  #     DB_NAME: ${DB_NAME}
-  #     RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672/
 
   # 3. Database (PostgreSQL)
   db:
@@ -67,8 +46,8 @@ services:
       - "5672:5672"
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_USER: ${RabbitMQUser}
+      RABBITMQ_DEFAULT_PASS: ${RabbitMQPassword}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 

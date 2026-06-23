@@ -6,33 +6,23 @@ import (
 	"strings"
 
 	"github.com/conmeo200/Golang-V1/internal/auth"
-	"github.com/conmeo200/Golang-V1/internal/core/model"
-	"github.com/conmeo200/Golang-V1/internal/infrastructure/persistence"
+	"github.com/conmeo200/Golang-V1/internal/domain/model"
+	"github.com/conmeo200/Golang-V1/internal/module/auth/port"
+	userPort "github.com/conmeo200/Golang-V1/internal/module/user/port"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type AuthServiceInterface interface {
-	RegisterUser(ctx context.Context, email string, password string) (*model.User, error)
-	LoginUser(ctx context.Context, email string, password string) (*model.User, error)
-	RevokeToken(ctx context.Context, tokenString string, expiresAt int64) error
-	IsTokenBlacklisted(ctx context.Context, tokenString string) bool
-	ChangePassword(ctx context.Context, userID string, oldPassword string, newPassword string) error
-	ForgotPassword(ctx context.Context, email string) (string, error)
-	RefreshToken(ctx context.Context, tokenString string) (string, string, error)
-	GetUserByID(ctx context.Context, id string) (*model.User, error)
-}
-
 type AuthService struct {
-	authRepo  *persistence.AuthRepository
-	userRepo  persistence.UserRepo
-	tokenRepo persistence.TokenRepo
+	authRepo  port.AuthRepository
+	userRepo  userPort.UserRepository
+	tokenRepo port.TokenRepository
 }
 
 func NewAuthService(
-	authRepo *persistence.AuthRepository,
-	userRepo persistence.UserRepo,
-	tokenRepo persistence.TokenRepo) *AuthService {
+	authRepo port.AuthRepository,
+	userRepo userPort.UserRepository,
+	tokenRepo port.TokenRepository) *AuthService {
 		return &AuthService{
 			authRepo: authRepo,
 			userRepo: userRepo,

@@ -6,10 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/conmeo200/Golang-V1/internal/bootstrap"
-	"github.com/conmeo200/Golang-V1/internal/core/model"
-	"github.com/conmeo200/Golang-V1/internal/infrastructure/persistence"
-	"github.com/conmeo200/Golang-V1/internal/infrastructure/stripe"
+	"github.com/conmeo200/Golang-V1/internal/domain/model"
+	"github.com/conmeo200/Golang-V1/internal/module/payment/port"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -20,47 +18,6 @@ type PaymentProvider interface {
 }
 
 // PaymentFactory delegates payment processing to the correct provider
-type PaymentFactory struct{}
-
-func NewPaymentFactory() *PaymentFactory {
-	return &PaymentFactory{}
-}
-
-func (f *PaymentFactory) GetProvider(method string) (PaymentProvider, error) {
-	switch method {
-	case bootstrap.PaymentMethodStripe:
-		return stripe.NewStripeService(), nil
-	// TODO: Add PayPal when ready
-	// case bootstrap.PaymentMethodPayPal:
-	// 	return NewPayPalService(), nil
-	default:
-		return nil, fmt.Errorf("unsupported payment method: %s", method)
-	}
-}
-
-func (f *PaymentFactory) GetProviderName(method string) string {
-	switch method {
-	case bootstrap.PaymentMethodStripe:
-		return "Stripe"
-	// TODO: Add PayPal when ready
-	// case bootstrap.PaymentMethodPayPal:
-	// 	return "PayPal"
-	default:
-		return "Unknown"
-	}
-}
-
-type PaymentServiceInterface interface {
-	ListAllTransactions(ctx context.Context) ([]model.Payment, error)
-	GetPaymentByUUID(ctx context.Context, paymentID uuid.UUID) (*model.Payment, error)
-	GetPaymentsByOrderID(ctx context.Context, orderID uuid.UUID) ([]model.Payment, error)
-	GetPaymentByProviderPaymentID(ctx context.Context, providerID string) (*model.Payment, error)
-	
-	CreatePendingPayment(ctx context.Context, payment *model.Payment) error
-	CreatePayment(ctx context.Context, payment *model.Payment, eventIDs ...uuid.UUID) error
-	HandleWebhookEvent(ctx context.Context, providerID string, eventType string, eventID uuid.UUID, payload map[string]interface{}) error
-	UpdatePaymentStatus(ctx context.Context, txUUID uuid.UUID, status string) error
-}
 
 type EventMessage struct {
 	EventID    uuid.UUID              `json:"event_id"`
@@ -69,48 +26,48 @@ type EventMessage struct {
 	Payload    map[string]interface{} `json:"payload"`
 }
 
-type paymentService struct {
-	repo       persistence.PaymentRepo
-	outboxRepo persistence.OutboxEventRepo
-	inboxRepo  persistence.InboxEventRepo
+type PaymentService struct {
+	repo       port.PaymentRepository
+	outboxRepo port.OutboxEventRepository
+	inboxRepo  port.InboxEventRepository
 }
 
 func NewPaymentService(
-	repo persistence.PaymentRepo,
-	outboxRepo persistence.OutboxEventRepo,
-	inboxRepo persistence.InboxEventRepo,
-) *paymentService {
-	return &paymentService{
-		repo:       repo,
-		outboxRepo: outboxRepo,
-		inboxRepo:  inboxRepo,
+	repo port.PaymentRepository,
+	outboxRepo port.OutboxEventRepository,
+	inboxRepo port.InboxEventRepository,
+) *PaymentService {
+	return &PaymentService{
+		repo      	   : repo,
+		outboxRepo	   : outboxRepo,
+		inboxRepo 	   : inboxRepo,
 	}
 }
 
-func (s *paymentService) ListAllTransactions(ctx context.Context) ([]model.Payment, error) {
+func (s *PaymentService) ListAllTransactions(ctx context.Context) ([]model.Payment, error) {
 	return s.repo.ListAll(ctx)
 }
 
-func (s *paymentService) GetPaymentByUUID(ctx context.Context, paymentID uuid.UUID) (*model.Payment, error) {
+func (s *PaymentService) GetPaymentByUUID(ctx context.Context, paymentID uuid.UUID) (*model.Payment, error) {
 	return s.repo.GetByUUID(ctx, paymentID)
 }
 
-func (s *paymentService) GetPaymentsByOrderID(ctx context.Context, orderID uuid.UUID) ([]model.Payment, error) {
+func (s *PaymentService) GetPaymentsByOrderID(ctx context.Context, orderID uuid.UUID) ([]model.Payment, error) {
 	return s.repo.GetByOrderID(ctx, orderID)
 }
 
-func (s *paymentService) GetPaymentByProviderPaymentID(ctx context.Context, providerID string) (*model.Payment, error) {
+func (s *PaymentService) GetPaymentByProviderPaymentID(ctx context.Context, providerID string) (*model.Payment, error) {
 	return s.repo.GetByProviderPaymentID(ctx, providerID)
 }
 
-func (s *paymentService) CreatePendingPayment(ctx context.Context, payment *model.Payment) error {
-	payment.Status = "PENDING"
+func (s *PaymentService) CreatePendingPayment(ctx context.Context, payment *model.Payment) error {
+	payment.Status 	  = "PENDING"
 	payment.CreatedAt = time.Now().Unix()
 
 	return s.repo.Create(ctx, payment)
 }
 
-func (s *paymentService) CreatePayment(ctx context.Context, payment *model.Payment, eventIDs ...uuid.UUID) error {
+func (s *PaymentService) CreatePayment(ctx context.Context, payment *model.Payment, eventIDs ...uuid.UUID) error {
 	var eventID uuid.UUID
 	if len(eventIDs) > 0 {
 		eventID = eventIDs[0]
@@ -178,7 +135,7 @@ func (s *paymentService) CreatePayment(ctx context.Context, payment *model.Payme
 	})
 }
 
-func (s *paymentService) HandleWebhookEvent(ctx context.Context, providerID string, eventType string, eventID uuid.UUID, payload map[string]interface{}) error {
+func (s *PaymentService) HandleWebhookEvent(ctx context.Context, providerID string, eventType string, eventID uuid.UUID, payload map[string]interface{}) error {
 	now := time.Now().Unix()
 
 	return s.repo.DB().WithContext(ctx).Transaction(func(tx *gorm.DB) error {
@@ -269,7 +226,7 @@ func (s *paymentService) HandleWebhookEvent(ctx context.Context, providerID stri
 	})
 }
 
-func (s *paymentService) UpdatePaymentStatus(ctx context.Context, txUUID uuid.UUID, status string) error {
+func (s *PaymentService) UpdatePaymentStatus(ctx context.Context, txUUID uuid.UUID, status string) error {
 	payment, err := s.repo.GetByUUID(ctx, txUUID)
 	if err != nil {
 		return err
@@ -284,7 +241,7 @@ func (s *paymentService) UpdatePaymentStatus(ctx context.Context, txUUID uuid.UU
 	return s.repo.Update(ctx, payment)
 }
 
-func (s *paymentService) DeletePayment(ctx context.Context, uuid uuid.UUID) error {
+func (s *PaymentService) DeletePayment(ctx context.Context, uuid uuid.UUID) error {
 	return s.repo.Delete(ctx, uuid)
 }
 

@@ -3,23 +3,16 @@ package transaction
 import (
 	"context"
 
-	"github.com/conmeo200/Golang-V1/internal/core/model"
-	"github.com/conmeo200/Golang-V1/internal/infrastructure/persistence"
+	"github.com/conmeo200/Golang-V1/internal/domain/model"
+	"github.com/conmeo200/Golang-V1/internal/module/transaction/port"
 	"github.com/google/uuid"
 )
 
-type TransactionServiceInterface interface {
-	ListAllTransactions(ctx context.Context) ([]model.Transaction, error)
-	GetTransactionsByOrderID(ctx context.Context, orderID uuid.UUID) ([]model.Transaction, error)
-	CreateTransaction(ctx context.Context, tx *model.Transaction) error
-	UpdateTransactionStatus(ctx context.Context, txUUID uuid.UUID, status string) error
-}
-
 type TransactionService struct {
-	repo *persistence.TransactionRepository
+	repo port.TransactionRepository
 }
 
-func NewTransactionService(repo *persistence.TransactionRepository) *TransactionService {
+func NewTransactionService(repo port.TransactionRepository) *TransactionService {
 	return &TransactionService{repo: repo}
 }
 

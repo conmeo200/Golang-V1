@@ -18,8 +18,8 @@ type Config struct {
 	DBReplicaHosts   []string
 	RabbitMQHost     string
 	RabbitMQPort     string
-	RabbitMQUser        string
-	RabbitMQPassword    string
+	RabbitMQUser     string
+	RabbitMQPassword string
 
 	// Stripe Configuration
 	StripePublicKey     string
@@ -27,11 +27,11 @@ type Config struct {
 	StripeWebhookSecret string
 
 	// PayPal Configuration
-	PayPalClientID      string
-	PayPalSecret        string
-	PayPalEnvironment   string // "sandbox" or "live"
-	
-	WorkersEnabled      []string
+	PayPalClientID    string
+	PayPalSecret      string
+	PayPalEnvironment string // "sandbox" or "live"
+
+	WorkersEnabled []string
 }
 
 func Load() *Config {
@@ -55,12 +55,13 @@ func Load() *Config {
 
 	return &Config{
 		Port:         v.GetString("APP_PORT"),
-		DBHost:       v.GetString("DB_HOST"),
-		DBPort:       v.GetString("DB_PORT"),
-		DBUser:       v.GetString("DB_USER"),
-		DBPassword:   v.GetString("DB_PASSWORD"),
-		DBName:       v.GetString("DB_NAME"),
+		DBHost:       v.GetString("DBHost"),
+		DBPort:       v.GetString("DBPort"),
+		DBUser:       v.GetString("DBUser"),
+		DBPassword:   v.GetString("DBPassword"),
+		DBName:       v.GetString("DBName"),
 		JWTSecretKey: v.GetString("JWT_SECRET_KEY"),
+
 		DBReplicaHosts: func() []string {
 			hosts := v.GetString("DB_REPLICA_HOSTS")
 			if hosts == "" {
@@ -68,18 +69,18 @@ func Load() *Config {
 			}
 			return strings.Split(hosts, ",")
 		}(),
-		RabbitMQHost:        v.GetString("RABBITMQ_HOST"),
-		RabbitMQPort:        v.GetString("RABBITMQ_PORT"),
-		RabbitMQUser:        v.GetString("RABBITMQ_USER"),
-		RabbitMQPassword:    v.GetString("RABBITMQ_PASSWORD"),
-		
+
+		RabbitMQHost:        v.GetString("RabbitMQHost"),
+		RabbitMQPort:        v.GetString("RabbitMQPort"),
+		RabbitMQUser:        v.GetString("RabbitMQUser"),
+		RabbitMQPassword:    v.GetString("RabbitMQPassword"),
 		StripePublicKey:     v.GetString("STRIPE_PUBLIC_KEY"),
 		StripeSecretKey:     v.GetString("STRIPE_SECRET_KEY"),
 		StripeWebhookSecret: v.GetString("STRIPE_WEBHOOK_SECRET"),
-		
 		PayPalClientID:      v.GetString("PAYPAL_CLIENT_ID"),
 		PayPalSecret:        v.GetString("PAYPAL_SECRET"),
 		PayPalEnvironment:   v.GetString("PAYPAL_ENVIRONMENT"),
+
 		WorkersEnabled: func() []string {
 			workers := v.GetString("WORKERS_ENABLED")
 			if workers == "" {

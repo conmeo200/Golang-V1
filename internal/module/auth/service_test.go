@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/conmeo200/Golang-V1/internal/core/model"
+	"github.com/conmeo200/Golang-V1/internal/domain/model"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

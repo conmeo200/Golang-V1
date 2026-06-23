@@ -3,7 +3,6 @@ package stripe
 import (
 	"fmt"
 
-	"github.com/conmeo200/Golang-V1/internal/bootstrap"
 	"github.com/conmeo200/Golang-V1/internal/infrastructure/logger"
 	"github.com/stripe/stripe-go/v78"
 	"github.com/stripe/stripe-go/v78/paymentintent"
@@ -12,20 +11,21 @@ import (
 )
 
 type StripeService struct{
+	secretkey string
 	webhookSecret string
 }
 
-func NewStripeService() *StripeService {
+func NewStripeService(secret_key string, webhook_key string) *StripeService {
 	// Initialize Stripe API credentials
-	cfg := bootstrap.Load()
-	if cfg.StripeSecretKey != "" {
-		stripe.Key = cfg.StripeSecretKey
+	if secret_key != "" {
+		stripe.Key = secret_key
 	} else {
 		logger.ErrorLogger.Println("WARNING: Stripe Secret Key is missing in environment.")
 	}
 	
 	return &StripeService{
-		webhookSecret: cfg.StripeWebhookSecret,
+		secretkey	  : secret_key,
+		webhookSecret : webhook_key,
 	}
 }
 

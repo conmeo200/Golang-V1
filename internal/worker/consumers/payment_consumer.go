@@ -9,12 +9,12 @@ import (
 	"log"
 	"time"
 
-	"github.com/conmeo200/Golang-V1/internal/core/model"
-	"github.com/conmeo200/Golang-V1/internal/infrastructure/persistence"
+	"github.com/conmeo200/Golang-V1/internal/domain/constant"
+	"github.com/conmeo200/Golang-V1/internal/domain/model"
 	"github.com/conmeo200/Golang-V1/internal/infrastructure/prometheus"
 	"github.com/conmeo200/Golang-V1/internal/infrastructure/rabbitmq"
-	"github.com/conmeo200/Golang-V1/internal/core/constant"
-	"github.com/conmeo200/Golang-V1/internal/module/order"
+	orderPort "github.com/conmeo200/Golang-V1/internal/module/order/port"
+	paymentPort "github.com/conmeo200/Golang-V1/internal/module/payment/port"
 	"github.com/google/uuid"
 	prometheus_client "github.com/prometheus/client_golang/prometheus"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -22,12 +22,12 @@ import (
 )
 
 type PaymentConsumer struct {
-	orderService   order.OrderServiceInterface
+	orderService   orderPort.OrderService
 	rabbitConsumer *rabbitmq.Consumer
-	inboxRepo      persistence.InboxEventRepo
+	inboxRepo      paymentPort.InboxEventRepository
 }
 
-func NewPaymentConsumer(orderService order.OrderServiceInterface, rabbitConsumer *rabbitmq.Consumer, inboxRepo persistence.InboxEventRepo) *PaymentConsumer {
+func NewPaymentConsumer(orderService orderPort.OrderService, rabbitConsumer *rabbitmq.Consumer, inboxRepo paymentPort.InboxEventRepository) *PaymentConsumer {
 	return &PaymentConsumer{
 		orderService:   orderService,
 		rabbitConsumer: rabbitConsumer,

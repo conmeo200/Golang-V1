@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/conmeo200/Golang-V1/internal/bootstrap"
-	"github.com/conmeo200/Golang-V1/internal/database/seeder"
+	"github.com/conmeo200/Golang-V1/migrations/seeder"
 	"github.com/conmeo200/Golang-V1/internal/infrastructure/logger"
 )
 

@@ -3,7 +3,7 @@ package persistence
 import (
 	"context"
 
-	"github.com/conmeo200/Golang-V1/internal/core/model"
+	"github.com/conmeo200/Golang-V1/internal/domain/model"
 	"gorm.io/gorm"
 )
 

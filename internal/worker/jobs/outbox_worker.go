@@ -6,20 +6,20 @@ import (
 	"math"
 	"time"
 
-	"github.com/conmeo200/Golang-V1/internal/core/model"
+	"github.com/conmeo200/Golang-V1/internal/domain/model"
 	"github.com/conmeo200/Golang-V1/internal/infrastructure/prometheus"
 	"github.com/conmeo200/Golang-V1/internal/infrastructure/rabbitmq"
-	"github.com/conmeo200/Golang-V1/internal/infrastructure/persistence"
+	paymentPort "github.com/conmeo200/Golang-V1/internal/module/payment/port"
 )
 
 type OutboxWorker struct {
-	outboxRepo persistence.OutboxEventRepo
+	outboxRepo paymentPort.OutboxEventRepository
 	producer   *rabbitmq.Producer
 	maxRetries int
 	limit      int
 }
 
-func NewOutboxWorker(outboxRepo persistence.OutboxEventRepo, producer *rabbitmq.Producer) *OutboxWorker {
+func NewOutboxWorker(outboxRepo paymentPort.OutboxEventRepository, producer *rabbitmq.Producer) *OutboxWorker {
 	return &OutboxWorker{
 		outboxRepo: outboxRepo,
 		producer:   producer,

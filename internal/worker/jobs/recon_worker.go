@@ -5,19 +5,18 @@ import (
 	"log"
 	"time"
 
-	"github.com/conmeo200/Golang-V1/internal/core/model"
-	"github.com/conmeo200/Golang-V1/internal/infrastructure/persistence"
-	"github.com/conmeo200/Golang-V1/internal/module/payment"
+	"github.com/conmeo200/Golang-V1/internal/domain/model"
+	paymentPort "github.com/conmeo200/Golang-V1/internal/module/payment/port"
 	"github.com/stripe/stripe-go/v78"
 	"github.com/stripe/stripe-go/v78/paymentintent"
 )
 
 type ReconciliationWorker struct {
-	paymentRepo  persistence.PaymentRepo
-	paymentSvc   payment.PaymentServiceInterface
+	paymentRepo  paymentPort.PaymentRepository
+	paymentSvc   paymentPort.PaymentService
 }
 
-func NewReconciliationWorker(paymentRepo persistence.PaymentRepo, paymentSvc payment.PaymentServiceInterface) *ReconciliationWorker {
+func NewReconciliationWorker(paymentRepo paymentPort.PaymentRepository, paymentSvc paymentPort.PaymentService) *ReconciliationWorker {
 	return &ReconciliationWorker{
 		paymentRepo: paymentRepo,
 		paymentSvc:  paymentSvc,

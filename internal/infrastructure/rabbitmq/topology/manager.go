@@ -3,7 +3,7 @@ package topology
 import (
 	"log"
 
-	"github.com/conmeo200/Golang-V1/internal/core/constant"
+	"github.com/conmeo200/Golang-V1/internal/domain/constant"
 	"github.com/conmeo200/Golang-V1/internal/infrastructure/rabbitmq"
 	amqp "github.com/rabbitmq/amqp091-go"
 )

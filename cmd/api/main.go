@@ -1,40 +1,19 @@
 package main
 
 import (
-	"log"
-	"os"
-	"os/signal"
-	"syscall"
+	"fmt"
 
-	"github.com/conmeo200/Golang-V1/internal/app"
 	"github.com/conmeo200/Golang-V1/internal/bootstrap"
-	"github.com/conmeo200/Golang-V1/internal/infrastructure/logger"
 )
 
 func main() {
-	logger.Init()
-	logger.AppLogger.Println("Starting API Server...")
+	fmt.Println("Init Api......")
 
-	// 1. Centralized Bootstrap
-	container, err := bootstrap.InitContainer()
+	err := bootstrap.RunAPI()
 
 	if err != nil {
-		log.Fatalf("Failed to initialize container: %v", err)
+		fmt.Println("Error running api: ", err)
 	}
-	
-	defer container.Close()
 
-	// 2. Initialize API App
-	apiApp := app.NewAPIApp(container)
-
-	// 3. Run in Background
-	go apiApp.Run()
-
-	// 4. Graceful Shutdown
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-	<-sigChan
-
-	logger.AppLogger.Println("API Server shutting down...")
-	apiApp.Stop()
+	fmt.Println("Server Api Running ......")
 }

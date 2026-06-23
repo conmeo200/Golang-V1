@@ -1,7 +1,7 @@
 package bootstrap
 
 import (
-	"github.com/conmeo200/Golang-V1/internal/core/model"
+	"github.com/conmeo200/Golang-V1/internal/domain/model"
 	"gorm.io/gorm"
 )
 
@@ -34,4 +34,3 @@ func Migrate(db *gorm.DB) error {
 		&model.ArticleVersion{},
 	)
 }
-
