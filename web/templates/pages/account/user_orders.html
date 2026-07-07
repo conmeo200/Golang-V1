@@ -1,0 +1,64 @@
+{{define "content"}}
+<div class="container">
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        {{template "sidebar_user" .}}
+
+        <!-- Main Content -->
+        <div class="dashboard-content">
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 24px;">Đơn mua của tôi</h2>
+            
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-tabs" style="background: transparent; padding: 0; box-shadow: none;">
+                    <select class="form-input" style="width: auto; padding: 8px 16px; border-radius: var(--radius-full); font-weight: 500; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+                        <option>Tất cả trạng thái</option>
+                        <option>Chờ xác nhận</option>
+                        <option>Đang giao</option>
+                        <option>Hoàn thành</option>
+                        <option>Đã hủy</option>
+                    </select>
+                </div>
+                <div class="filter-search" style="width: 300px;">
+                    <i class="ph ph-magnifying-glass"></i>
+                    <input type="text" placeholder="Tìm kiếm theo Tên Shop, ID Đơn hàng..." style="width: 100%;">
+                </div>
+            </div>
+
+            <!-- Orders List Mock -->
+            {{range .Orders}}
+            <div class="order-box" style="max-width: 100%; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 24px; margin-bottom: 24px;">
+                <div class="flex justify-between items-center mb-4 pb-4" style="border-bottom: 1px dashed var(--border);">
+                    <div class="flex items-center gap-2">
+                        <i class="ph-fill ph-storefront" style="color: var(--primary);"></i>
+                        <span style="font-weight: 600;">{{.ShopName}}</span>
+                        <a href="#" class="btn btn-outline" style="padding: 2px 8px; font-size: 0.75rem;">Xem Shop</a>
+                    </div>
+                    <div>
+                        <span class="status-badge {{if eq .Status "Hoàn thành"}}success{{else}}warning{{end}}">{{.Status}}</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <img src="{{.Image}}" style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius-sm);">
+                    <div class="flex-1">
+                        <h4 style="font-size: 1rem; font-weight: 600; margin-bottom: 8px;">{{.ProductName}}</h4>
+                        <div style="color: var(--text-muted); font-size: 0.875rem;">Phân loại hàng: Đen, XL</div>
+                        <div style="margin-top: 8px;">x{{.Quantity}}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="color: var(--primary); font-weight: 600; font-size: 1.125rem;">{{.Price}}</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-end mt-4 pt-4 items-center gap-4" style="border-top: 1px solid var(--border);">
+                    <div style="font-size: 1rem;">Thành tiền: <span style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">{{.Total}}</span></div>
+                    <button class="btn btn-primary">Mua Lại</button>
+                    <button class="btn btn-outline">Liên hệ Shop</button>
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</div>
+{{end}}

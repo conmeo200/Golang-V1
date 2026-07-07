@@ -3,22 +3,22 @@ package bootstrap
 import (
 	"log"
 
-	rabbitmqinfra "github.com/conmeo200/Golang-V1/internal/infrastructure/rabbitmq"
+	_ "github.com/conmeo200/Golang-V1/internal/infrastructure/rabbitmq"
 )
 
 func RunAPI() error {
 	cfg := LoadConfig()
-	db := InitDatabase(cfg)
+	// db := InitDatabase(cfg)
 
-	rabbitConn, err := rabbitmqinfra.NewRabbitMQ(cfg.RabbitMQUser, cfg.RabbitMQPassword, cfg.RabbitMQHost, cfg.RabbitMQPort)
-	if err != nil {
-		return err
-	}
+	// rabbitConn, err := rabbitmqinfra.NewRabbitMQ(cfg.RabbitMQUser, cfg.RabbitMQPassword, cfg.RabbitMQHost, cfg.RabbitMQPort)
+	// if err != nil {
+	// 	return err
+	// }
 
 	container := BuildContainer(
 		cfg,
-		db,
-		rabbitConn,
+		nil,
+		nil,
 	)
 
 	app := NewAPIApp(container)

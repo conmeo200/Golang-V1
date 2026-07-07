@@ -1,0 +1,102 @@
+{{define "content"}}
+<div class="container">
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        {{template "sidebar_seller" .}}
+
+        <!-- Main Content -->
+        <div class="dashboard-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 style="font-size: 1.5rem; font-weight: 700;">Thêm Sản Phẩm Mới</h2>
+                <a href="/seller/products" class="btn btn-outline" style="padding: 8px 16px; font-size: 0.875rem;"><i class="ph ph-arrow-left"></i> Quay lại</a>
+            </div>
+            
+            <div style="background: var(--surface); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border);">
+                <form action="/seller/products/add" method="POST" enctype="multipart/form-data">
+                    <div class="grid grid-cols-2 gap-8">
+                        <div>
+                            <div class="form-group">
+                                <label class="form-label">Tên sản phẩm *</label>
+                                <input type="text" name="name" class="form-input" placeholder="Nhập tên sản phẩm" required>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="form-group">
+                                    <label class="form-label">Giá bán (VNĐ) *</label>
+                                    <input type="number" name="price" class="form-input" placeholder="Ví dụ: 150000" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Số lượng kho *</label>
+                                    <input type="number" name="stock" class="form-input" placeholder="0" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Danh mục *</label>
+                                <select name="category" class="form-input" required>
+                                    <option value="">Chọn danh mục</option>
+                                    <option value="Thời trang Nam">Thời trang Nam</option>
+                                    <option value="Thời trang Nữ">Thời trang Nữ</option>
+                                    <option value="Giày dép">Giày dép</option>
+                                    <option value="Phụ kiện">Phụ kiện</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Mô tả sản phẩm</label>
+                                <textarea name="description" class="form-input" rows="5" placeholder="Nhập mô tả chi tiết..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="form-group">
+                                <label class="form-label">Hình ảnh sản phẩm *</label>
+                                <div style="border: 2px dashed var(--border); border-radius: var(--radius-md); padding: 40px; text-align: center; background: #F8FAFC; transition: all 0.3s; cursor: pointer;" id="image-upload-area">
+                                    <i class="ph ph-upload-simple" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 16px;"></i>
+                                    <p style="font-weight: 600; margin-bottom: 8px;">Kéo thả ảnh vào đây</p>
+                                    <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 16px;">hoặc click để tải lên</p>
+                                    <input type="file" name="image" id="image-input" accept="image/*" style="display: none;" required>
+                                    <button type="button" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.875rem;" onclick="document.getElementById('image-input').click()">Chọn tệp</button>
+                                </div>
+                                <div id="image-preview" style="margin-top: 16px; display: none;">
+                                    <img src="" id="preview-img" style="max-width: 100%; border-radius: var(--radius-md); border: 1px solid var(--border);">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 pt-6" style="border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px;">
+                        <a href="/seller/products" class="btn btn-outline">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-primary">Lưu sản phẩm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const imageInput = document.getElementById('image-input');
+    const imageUploadArea = document.getElementById('image-upload-area');
+    const imagePreview = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+
+    imageUploadArea.addEventListener('click', (e) => {
+        if(e.target.tagName !== 'BUTTON') {
+            imageInput.click();
+        }
+    });
+
+    imageInput.addEventListener('change', function(e) {
+        if(this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                imagePreview.style.display = 'block';
+                imageUploadArea.style.borderColor = 'var(--primary)';
+            }
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+</script>
+{{end}}

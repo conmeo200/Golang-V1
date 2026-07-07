@@ -1,0 +1,57 @@
+{{define "content"}}
+<div class="container">
+    <div class="mt-8 mb-8">
+        <h1 style="font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 16px;">Liên hệ với chúng tôi</h1>
+        <p style="text-align: center; color: var(--text-muted); max-width: 600px; margin: 0 auto 48px auto;">
+            Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn. Vui lòng điền thông tin vào form dưới đây hoặc liên hệ trực tiếp qua hotline.
+        </p>
+
+        <div class="grid grid-cols-2 gap-8">
+            <div class="auth-card" style="margin: 0; max-width: 100%;">
+                <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 24px;">Gửi tin nhắn</h2>
+                <form>
+                    <div class="form-group">
+                        <label class="form-label">Họ và tên</label>
+                        <input type="text" class="form-input" placeholder="Nhập họ và tên của bạn">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" placeholder="Nhập địa chỉ email">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tin nhắn</label>
+                        <textarea class="form-input" rows="4" placeholder="Nội dung tin nhắn..."></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary w-full">Gửi liên hệ</button>
+                </form>
+            </div>
+            
+            <div class="flex-col gap-6">
+                <div class="stat-card" style="flex-direction: row; align-items: flex-start;">
+                    <div class="stat-icon blue"><i class="ph ph-map-pin"></i></div>
+                    <div>
+                        <div style="font-size: 1.125rem; font-weight: 600; margin-bottom: 4px;">Địa chỉ trụ sở</div>
+                        <div class="stat-label" style="line-height: 1.5;">Tầng 12, Tòa nhà Bitexco<br>Quận 1, TP. Hồ Chí Minh, Việt Nam</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card mt-6" style="flex-direction: row; align-items: flex-start;">
+                    <div class="stat-icon green"><i class="ph ph-phone"></i></div>
+                    <div>
+                        <div style="font-size: 1.125rem; font-weight: 600; margin-bottom: 4px;">Hotline hỗ trợ</div>
+                        <div class="stat-label">1900 1234 (Miễn phí cuộc gọi)</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card mt-6" style="flex-direction: row; align-items: flex-start;">
+                    <div class="stat-icon orange"><i class="ph ph-envelope-simple"></i></div>
+                    <div>
+                        <div style="font-size: 1.125rem; font-weight: 600; margin-bottom: 4px;">Email Support</div>
+                        <div class="stat-label">support@shopeeclone.premium.vn</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

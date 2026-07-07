@@ -1,0 +1,63 @@
+{{define "content"}}
+<div class="container">
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        {{template "sidebar_seller" .}}
+
+        <!-- Main Content -->
+        <div class="dashboard-content">
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 24px;">Quản lý Đơn hàng</h2>
+            
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-tabs" style="background: transparent; padding: 0; box-shadow: none;">
+                    <select class="form-input" style="width: auto; padding: 8px 16px; border-radius: var(--radius-full); font-weight: 500; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+                        <option>Tất cả trạng thái</option>
+                        <option>Chờ xác nhận</option>
+                        <option>Chờ lấy hàng</option>
+                        <option>Đang giao</option>
+                        <option>Hoàn thành</option>
+                        <option>Đã hủy</option>
+                    </select>
+                </div>
+                
+                <div class="filter-actions">
+                    <input type="date" class="form-input" style="padding: 8px 16px; border-radius: var(--radius-full); width: auto;">
+                    <div class="filter-search" style="width: 250px;">
+                        <i class="ph ph-magnifying-glass"></i>
+                        <input type="text" placeholder="Tên khách hàng, Mã đơn..." style="width: 100%;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Mã Đơn</th>
+                        <th>Khách hàng</th>
+                        <th>Ngày tạo</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Orders}}
+                    <tr>
+                        <td style="font-weight: 500; color: var(--primary);">#{{.ID}}</td>
+                        <td>{{.Customer}}</td>
+                        <td>{{.Date}}</td>
+                        <td style="font-weight: 600;">{{.Total}}</td>
+                        <td><span class="status-badge {{if eq .Status "Hoàn thành"}}success{{else}}warning{{end}}">{{.Status}}</span></td>
+                        <td>
+                            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.875rem;">Chi tiết</button>
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{{end}}

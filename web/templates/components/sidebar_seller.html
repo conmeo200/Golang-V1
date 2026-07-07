@@ -1,0 +1,24 @@
+{{define "sidebar_seller"}}
+<div class="dashboard-sidebar">
+    <div class="flex items-center gap-4 mb-8 pb-8" style="border-bottom: 1px solid var(--border);">
+        <div class="flex items-center justify-center" style="width: 50px; height: 50px; border-radius: 12px; background: var(--primary); color: white; font-size: 1.5rem; font-weight: 700;">
+            S
+        </div>
+        <div>
+            <div style="font-weight: 600; color: var(--text-main);">{{.Seller.ShopName}}</div>
+            <div style="font-size: 0.875rem; color: var(--secondary); display: flex; align-items: center; gap: 4px;">
+                <i class="ph-fill ph-check-circle"></i> Shop Yêu Thích
+            </div>
+        </div>
+    </div>
+
+    <ul class="sidebar-menu">
+        <li><a href="/seller" {{if eq .ActiveMenu "overview"}}class="active"{{end}}><i class="ph ph-squares-four"></i> Tổng quan</a></li>
+        <li><a href="/seller/products" {{if eq .ActiveMenu "products"}}class="active"{{end}}><i class="ph ph-package"></i> Quản lý Sản phẩm</a></li>
+        <li><a href="/seller/orders" {{if eq .ActiveMenu "orders"}}class="active"{{end}}><i class="ph ph-receipt"></i> Quản lý Đơn hàng <span class="cart-badge" style="position: static; margin-left: auto;">5</span></a></li>
+        <li><a href="/seller/revenue" {{if eq .ActiveMenu "revenue"}}class="active"{{end}}><i class="ph ph-chart-line-up"></i> Doanh thu</a></li>
+        <li><a href="/seller/settings" {{if eq .ActiveMenu "settings"}}class="active"{{end}}><i class="ph ph-storefront"></i> Thiết lập Shop</a></li>
+        <li style="margin-top: 24px;"><a href="/account/user" style="color: var(--text-muted);"><i class="ph ph-arrow-left"></i> Về trang mua hàng</a></li>
+    </ul>
+</div>
+{{end}}

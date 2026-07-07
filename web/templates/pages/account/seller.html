@@ -1,0 +1,84 @@
+{{define "content"}}
+<div class="container">
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        {{template "sidebar_seller" .}}
+
+        <!-- Main Content -->
+        <div class="dashboard-content">
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 24px;">Tổng quan cửa hàng</h2>
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-4 gap-6 mb-8">
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="ph ph-package"></i></div>
+                    <div>
+                        <div class="stat-value">{{.Stats.TotalProducts}}</div>
+                        <div class="stat-label">Sản phẩm</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green"><i class="ph ph-currency-circle-dollar"></i></div>
+                    <div>
+                        <div class="stat-value">{{.Stats.Revenue}}</div>
+                        <div class="stat-label">Doanh thu tháng</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange"><i class="ph ph-shopping-bag"></i></div>
+                    <div>
+                        <div class="stat-value">{{.Stats.NewOrders}}</div>
+                        <div class="stat-label">Đơn mới</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple"><i class="ph ph-users"></i></div>
+                    <div>
+                        <div class="stat-value">{{.Stats.Followers}}</div>
+                        <div class="stat-label">Người theo dõi</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center mt-8 mb-4">
+                <h3 style="font-size: 1.25rem; font-weight: 700;">Sản phẩm của bạn</h3>
+                <a href="/seller/products/add" class="btn btn-primary" style="display: inline-flex; align-items: center;"><i class="ph ph-plus" style="margin-right: 8px;"></i> Thêm sản phẩm mới</a>
+            </div>
+
+            <!-- Products Table -->
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Phân loại</th>
+                        <th>Giá bán</th>
+                        <th>Kho</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Products}}
+                    <tr>
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <img src="{{.Image}}" alt="{{.Name}}" style="width: 40px; height: 40px; border-radius: var(--radius-sm); object-fit: cover;">
+                                <span style="font-weight: 500; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{.Name}}</span>
+                            </div>
+                        </td>
+                        <td>{{.Category}}</td>
+                        <td style="font-weight: 600; color: var(--primary);">{{.Price}}</td>
+                        <td>{{.Stock}}</td>
+                        <td>
+                            <div class="flex gap-2">
+                                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.875rem;"><i class="ph ph-pencil-simple"></i></button>
+                                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.875rem; color: #EF4444; border-color: #EF4444;"><i class="ph ph-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{{end}}

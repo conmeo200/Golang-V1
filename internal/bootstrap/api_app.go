@@ -13,11 +13,8 @@ type APIApp struct {
 }
 
 func NewAPIApp(container *Container) *APIApp {
-	// Web Handlers
-	webHandler := handler.NewWebHandler()
-
 	// Router (Gin)
-	router := handler.InitRouter(webHandler)
+	router := handler.InitRouter()
 	log.Println("✅ Web routes registered successfully")
 
 	server := &http.Server{

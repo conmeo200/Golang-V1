@@ -22,7 +22,15 @@ exclude_dir = [
   "node_modules",
   ".git",
   "storage",
-  "logs"
+  "logs",
+  "certs",
+  "kong",
+  "note",
+  "docs",
+  "database",
+  "nginx",
+  "migrations",
+  "web"
 ]
 
 # Ignore files
@@ -32,7 +40,7 @@ exclude_file = []
 delay = 1000
 
 # Docker/Linux compatibility
-poll = true
+poll = false
 
 # Graceful restart
 send_interrupt = true

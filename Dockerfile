@@ -4,14 +4,13 @@ FROM golang:1.25-alpine
 # Thiết lập thư mục làm việc
 WORKDIR /app
 
-# Cài đặt git để Air có thể theo dõi thay đổi
-RUN apk add --no-cache git
+# Cài đặt git và curl để tải Air binary
+RUN apk add --no-cache git curl
 
-# 1. Cài đặt Air (Hot Reload) để tự động build khi code thay đổi
-# Rất hữu ích khi dev, giúp bạn không phải restart docker thủ công
-RUN go install github.com/air-verse/air@latest
+# 1. Tải Air binary dựng sẵn (Nhanh hơn rất nhiều so với go install)
+RUN curl -sSfL https://raw.githubusercontent.com/air-verse/air/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
 
-# 2. Tối ưu Cache cho dependencies
+  # 2. Tối ưu Cache cho dependencies
 COPY go.mod go.sum ./
 RUN go mod download
 

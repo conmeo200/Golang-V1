@@ -18,9 +18,9 @@ services:
     environment:
       DB_HOST: db
       DB_PORT: 5432
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
+      DB_USER: ${DBUser}
+      DB_PASSWORD: ${DBPassword}
+      DB_NAME: ${DBName}
       RABBITMQ_URL: amqp://${RabbitMQUser}:${RabbitMQPassword}@rabbitmq:5672/
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       ALLOWED_API_KEYS: ${ALLOWED_API_KEYS}
@@ -32,9 +32,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DBUser}
+      POSTGRES_PASSWORD: ${DBPassword}
+      POSTGRES_DB: ${DBName}
     volumes:
       - pgdata:/var/lib/postgresql/data
 

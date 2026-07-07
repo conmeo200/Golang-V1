@@ -1,0 +1,57 @@
+{{define "content"}}
+<div class="container">
+    <h1 style="font-size: 2rem; font-weight: 700; margin-top: 40px; margin-bottom: 8px;">Giỏ hàng của bạn</h1>
+    <p style="color: var(--text-muted);">Bạn có {{len .CartItems}} sản phẩm trong giỏ hàng.</p>
+
+    <div class="cart-layout">
+        <!-- Cart Items List -->
+        <div class="cart-items">
+            {{range .CartItems}}
+            <div class="cart-item">
+                <img src="{{.Image}}" alt="{{.Name}}" class="cart-item-img">
+                <div class="cart-item-info">
+                    <h3 class="cart-item-title">{{.Name}}</h3>
+                    <div style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 12px;">Phân loại: Mặc định</div>
+                    <div class="cart-item-price">{{.Price}}</div>
+                </div>
+                <div class="quantity-selector" style="margin-bottom: 0;">
+                    <button class="qty-btn" style="padding: 8px 12px;"><i class="ph ph-minus"></i></button>
+                    <input type="text" class="qty-input" value="{{.Quantity}}" style="width: 40px;" readonly>
+                    <button class="qty-btn" style="padding: 8px 12px;"><i class="ph ph-plus"></i></button>
+                </div>
+                <button class="btn btn-outline" style="border: none; color: #EF4444; padding: 12px;">
+                    <i class="ph ph-trash" style="font-size: 1.25rem;"></i>
+                </button>
+            </div>
+            {{end}}
+        </div>
+
+        <!-- Order Summary -->
+        <div class="cart-summary">
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 24px;">Tóm tắt đơn hàng</h2>
+            <div class="summary-row">
+                <span>Tạm tính</span>
+                <span style="color: var(--text-main); font-weight: 600;">{{.Subtotal}}</span>
+            </div>
+            <div class="summary-row">
+                <span>Phí vận chuyển</span>
+                <span style="color: var(--secondary); font-weight: 600;">Miễn phí</span>
+            </div>
+            <div class="summary-row">
+                <span>Giảm giá</span>
+                <span style="color: #EF4444; font-weight: 600;">- 50.000đ</span>
+            </div>
+            
+            <div class="summary-total">
+                <span>Tổng cộng</span>
+                <span>{{.Total}}</span>
+            </div>
+
+            <a href="/checkout" class="btn btn-primary w-full" style="padding: 16px;">Tiến hành thanh toán</a>
+            <div class="text-center mt-4" style="font-size: 0.875rem; color: var(--text-muted);">
+                Bằng việc đặt hàng, bạn đồng ý với Điều khoản của chúng tôi.
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

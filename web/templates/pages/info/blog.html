@@ -1,0 +1,30 @@
+{{define "content"}}
+<div class="container">
+    <div class="mt-8 mb-8">
+        <h1 style="font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 16px;">Tin tức & Xu hướng</h1>
+        <p style="text-align: center; color: var(--text-muted); max-width: 600px; margin: 0 auto 48px auto;">
+            Cập nhật những xu hướng thời trang mới nhất và các bí quyết phối đồ cực chất từ các chuyên gia.
+        </p>
+
+        <div class="grid grid-cols-3 gap-8">
+            {{range .Posts}}
+            <div class="product-card" style="border-radius: var(--radius-lg); overflow: hidden;">
+                <div class="product-image-wrap" style="padding-top: 60%;">
+                    <img src="{{.Image}}" alt="{{.Title}}" class="product-image">
+                </div>
+                <div class="product-info" style="padding: 24px;">
+                    <div style="font-size: 0.875rem; color: var(--primary); font-weight: 600; margin-bottom: 8px;">Thời trang</div>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; line-height: 1.4;">{{.Title}}</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 0.95rem; line-height: 1.6;">{{.Excerpt}}</p>
+                    
+                    <div class="flex justify-between items-center mt-auto" style="border-top: 1px solid var(--border); padding-top: 16px;">
+                        <span style="font-size: 0.875rem; color: var(--text-muted);"><i class="ph ph-calendar-blank"></i> {{.Date}}</span>
+                        <a href="#" style="color: var(--primary); font-weight: 600; font-size: 0.875rem;">Đọc tiếp <i class="ph ph-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</div>
+{{end}}

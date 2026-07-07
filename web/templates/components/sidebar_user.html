@@ -1,0 +1,20 @@
+{{define "sidebar_user"}}
+<div class="dashboard-sidebar">
+    <div class="flex items-center gap-4 mb-8 pb-8" style="border-bottom: 1px solid var(--border);">
+        <img src="https://ui-avatars.com/api/?name={{.User.Name}}&background=random" alt="Avatar" style="width: 50px; height: 50px; border-radius: 50%;">
+        <div>
+            <div style="font-weight: 600; color: var(--text-main);">{{.User.Name}}</div>
+            <div style="font-size: 0.875rem; color: var(--text-muted);">Thành viên Bạc</div>
+        </div>
+    </div>
+
+    <ul class="sidebar-menu">
+        <li><a href="/account/user" {{if eq .ActiveMenu "profile"}}class="active"{{end}}><i class="ph ph-user"></i> Hồ sơ của tôi</a></li>
+        <li><a href="/account/user/orders" {{if eq .ActiveMenu "orders"}}class="active"{{end}}><i class="ph ph-receipt"></i> Đơn mua</a></li>
+        <li><a href="/account/user/notifications" {{if eq .ActiveMenu "notifications"}}class="active"{{end}}><i class="ph ph-bell"></i> Thông báo</a></li>
+        <li><a href="/account/user/addresses" {{if eq .ActiveMenu "addresses"}}class="active"{{end}}><i class="ph ph-map-pin"></i> Địa chỉ nhận hàng</a></li>
+        <li><a href="/account/user/password" {{if eq .ActiveMenu "password"}}class="active"{{end}}><i class="ph ph-lock-key"></i> Đổi mật khẩu</a></li>
+        <li style="margin-top: 24px;"><a href="/login" style="color: #EF4444;"><i class="ph ph-sign-out"></i> Đăng xuất</a></li>
+    </ul>
+</div>
+{{end}}

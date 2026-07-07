@@ -1,0 +1,33 @@
+{{define "content"}}
+<div class="container">
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        {{template "sidebar_user" .}}
+
+        <!-- Main Content -->
+        <div class="dashboard-content">
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 24px;">Thông báo của bạn</h2>
+            
+            <div class="flex-col gap-4">
+                {{range .Notifications}}
+                <div style="display: flex; gap: 16px; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); background: #F8FAFC;">
+                    <div style="font-size: 1.5rem; color: var(--primary);">
+                        <i class="ph-fill ph-bell-ringing"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <h4 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 4px; color: var(--text-main);">{{.Title}}</h4>
+                        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 8px;">{{.Message}}</p>
+                        <span style="font-size: 0.75rem; color: #94A3B8;">{{.Time}}</span>
+                    </div>
+                </div>
+                {{else}}
+                <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    <i class="ph ph-bell-slash" style="font-size: 3rem; margin-bottom: 16px; color: #CBD5E1;"></i>
+                    <p>Bạn chưa có thông báo nào.</p>
+                </div>
+                {{end}}
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

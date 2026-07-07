@@ -1,0 +1,82 @@
+{{define "base"}}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} | Shopee Clone Premium</title>
+    <meta name="description" content="Khám phá hàng ngàn sản phẩm cao cấp tại Shopee Clone Premium.">
+    <!-- Load custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Phosphor Icons for modern iconography -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container flex justify-between items-center">
+            <a href="/" class="nav-brand">ShopeeClone</a>
+            <div class="nav-links flex gap-4">
+                <a href="/">Trang chủ</a>
+                <a href="/promotions">Khuyến mãi</a>
+                <a href="/about">Giới thiệu</a>
+                <a href="/blog">Tin tức</a>
+                <a href="/contact">Liên hệ</a>
+            </div>
+            <div class="nav-actions">
+                <a href="#" class="cart-icon" aria-label="Tài khoản">
+                    <i class="ph ph-user"></i>
+                </a>
+                <a href="/cart" class="cart-icon" aria-label="Giỏ hàng">
+                    <i class="ph ph-shopping-cart"></i>
+                    <span class="cart-badge">3</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Injection -->
+    <main>
+        {{template "content" .}}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="grid grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="nav-brand mb-4">ShopeeClone</h3>
+                    <p class="text-muted">Nền tảng mua sắm trực tuyến hàng đầu, mang lại trải nghiệm Premium.</p>
+                </div>
+                <div>
+                    <h4 class="mb-4">Chăm sóc khách hàng</h4>
+                    <p class="mb-2"><a href="#">Trung tâm trợ giúp</a></p>
+                    <p class="mb-2"><a href="#">Hướng dẫn mua hàng</a></p>
+                    <p class="mb-2"><a href="#">Chính sách đổi trả</a></p>
+                </div>
+                <div>
+                    <h4 class="mb-4">Về chúng tôi</h4>
+                    <p class="mb-2"><a href="#">Giới thiệu</a></p>
+                    <p class="mb-2"><a href="#">Tuyển dụng</a></p>
+                    <p class="mb-2"><a href="#">Điều khoản</a></p>
+                </div>
+                <div>
+                    <h4 class="mb-4">Theo dõi chúng tôi</h4>
+                    <div class="flex gap-4">
+                        <a href="#"><i class="ph ph-facebook-logo" style="font-size: 24px;"></i></a>
+                        <a href="#"><i class="ph ph-instagram-logo" style="font-size: 24px;"></i></a>
+                        <a href="#"><i class="ph ph-twitter-logo" style="font-size: 24px;"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center pt-8" style="border-top: 1px solid var(--border);">
+                <p>&copy; 2026 Shopee Clone. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Load custom JS -->
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
+{{end}}

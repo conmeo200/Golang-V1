@@ -1,3 +1,8 @@
+# Golang-V1 Ecommerce Project
+
+> **[CRITICAL FOR AI ASSISTANTS]**
+> Before writing any code related to the database, models, or core business logic, you **MUST** read the documentation in `docs/BUSINESS_LOGIC.md` to ensure your implementation aligns with the project's financial and business rules.
+
 # Payment System - Queue Processing Flow
 
 This document describes the high-level architecture of the RabbitMQ-based message processing system used for payments.

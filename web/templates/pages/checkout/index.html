@@ -1,0 +1,98 @@
+{{define "content"}}
+<div class="container">
+    <h1 style="font-size: 2rem; font-weight: 700; margin-top: 40px; margin-bottom: 32px;">Thanh toán an toàn</h1>
+
+    <div class="cart-layout">
+        <!-- Form Checkout -->
+        <div class="checkout-form">
+            <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 8px;">
+                <i class="ph ph-map-pin" style="color: var(--primary);"></i> Thông tin giao hàng
+            </h2>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="form-group">
+                    <label class="form-label">Họ và tên</label>
+                    <input type="text" class="form-input" placeholder="Nhập họ và tên">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Số điện thoại</label>
+                    <input type="tel" class="form-input" placeholder="Nhập số điện thoại">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Địa chỉ chi tiết</label>
+                <input type="text" class="form-input" placeholder="Số nhà, Tên đường, Phường/Xã">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="form-group">
+                    <label class="form-label">Quận/Huyện</label>
+                    <input type="text" class="form-input" placeholder="Nhập Quận/Huyện">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tỉnh/Thành phố</label>
+                    <input type="text" class="form-input" placeholder="Nhập Tỉnh/Thành phố">
+                </div>
+            </div>
+
+            <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--border); padding-top: 32px;">
+                <i class="ph ph-credit-card" style="color: var(--primary);"></i> Phương thức thanh toán
+            </h2>
+
+            <div class="form-group">
+                <label class="flex items-center gap-4" style="padding: 16px; border: 1px solid var(--primary); border-radius: var(--radius-md); background: rgba(79, 70, 229, 0.05); cursor: pointer; margin-bottom: 12px;">
+                    <input type="radio" name="payment" checked style="width: 20px; height: 20px; accent-color: var(--primary);">
+                    <div class="flex items-center gap-2">
+                        <i class="ph ph-money" style="font-size: 1.5rem; color: var(--primary);"></i>
+                        <span style="font-weight: 600;">Thanh toán khi nhận hàng (COD)</span>
+                    </div>
+                </label>
+
+                <label class="flex items-center gap-4" style="padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; margin-bottom: 12px; transition: all var(--transition-fast);">
+                    <input type="radio" name="payment" style="width: 20px; height: 20px;">
+                    <div class="flex items-center gap-2">
+                        <i class="ph ph-credit-card" style="font-size: 1.5rem; color: var(--text-muted);"></i>
+                        <span style="font-weight: 500;">Thẻ Tín dụng/Ghi nợ</span>
+                    </div>
+                </label>
+
+                <label class="flex items-center gap-4" style="padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition-fast);">
+                    <input type="radio" name="payment" style="width: 20px; height: 20px;">
+                    <div class="flex items-center gap-2">
+                        <img src="https://vnpay.vn/assets/images/logo-icon/logo-primary.svg" alt="VNPAY" style="height: 24px;">
+                        <span style="font-weight: 500;">Ví điện tử VNPAY</span>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Order Summary Checkout -->
+        <div class="cart-summary">
+            <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 24px;">Đơn hàng ({{len .CartItems}} sản phẩm)</h2>
+            
+            <div style="margin-bottom: 24px;">
+                {{range .CartItems}}
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center gap-3">
+                        <img src="{{.Image}}" alt="{{.Name}}" style="width: 48px; height: 48px; border-radius: var(--radius-sm); object-fit: cover;">
+                        <div>
+                            <div style="font-size: 0.875rem; font-weight: 600; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{.Name}}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">SL: {{.Quantity}}</div>
+                        </div>
+                    </div>
+                    <div style="font-weight: 600;">{{.Price}}</div>
+                </div>
+                {{end}}
+            </div>
+
+            <div class="summary-total" style="margin-top: 16px; padding-top: 16px;">
+                <span>Tổng thanh toán</span>
+                <span style="color: var(--primary);">{{.Total}}</span>
+            </div>
+
+            <button class="btn btn-primary w-full" style="padding: 16px; font-size: 1.125rem;">Đặt hàng</button>
+        </div>
+    </div>
+</div>
+{{end}}

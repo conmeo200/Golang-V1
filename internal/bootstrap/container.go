@@ -65,43 +65,45 @@ func BuildContainer(
 		RabbitMQ: rabbit,
 	}
 
-	// repositories
-	c.UserRepo = userOut.NewUserRepository(db)
-	c.TokenRepo = authOut.NewTokenRepository(db)
-	c.TransactionRepo = txOut.NewTransactionRepository(db)
-	c.AuthRepo = authOut.NewAuthRepository(db)
-	c.OrderRepo = orderOut.NewOrderRepository(db)
-	c.PaymentRepo = paymentOut.NewPaymentRepository(db)
+	if db != nil {
+		// repositories
+		c.UserRepo = userOut.NewUserRepository(db)
+		c.TokenRepo = authOut.NewTokenRepository(db)
+		c.TransactionRepo = txOut.NewTransactionRepository(db)
+		c.AuthRepo = authOut.NewAuthRepository(db)
+		c.OrderRepo = orderOut.NewOrderRepository(db)
+		c.PaymentRepo = paymentOut.NewPaymentRepository(db)
 
-	// outbox/inbox repos for payment
-	outboxRepo := paymentOut.NewOutboxEventRepository(db)
-	inboxRepo := paymentOut.NewInboxEventRepository(db)
+		// outbox/inbox repos for payment
+		outboxRepo := paymentOut.NewOutboxEventRepository(db)
+		inboxRepo := paymentOut.NewInboxEventRepository(db)
 
-	// services
-	c.AuthService = authSvc.NewAuthService(
-		c.AuthRepo,
-		c.UserRepo,
-		c.TokenRepo,
-	)
+		// services
+		c.AuthService = authSvc.NewAuthService(
+			c.AuthRepo,
+			c.UserRepo,
+			c.TokenRepo,
+		)
 
-	c.OrderService = orderSvc.NewOrderService(
-		c.OrderRepo,
-		nil,
-	)
+		c.OrderService = orderSvc.NewOrderService(
+			c.OrderRepo,
+			nil,
+		)
 
-	c.PaymentService = paymentSvc.NewPaymentService(
-		c.PaymentRepo,
-		outboxRepo,
-		inboxRepo,
-	)
+		c.PaymentService = paymentSvc.NewPaymentService(
+			c.PaymentRepo,
+			outboxRepo,
+			inboxRepo,
+		)
 
-	c.UserService = userSvc.NewUserService(
-		c.UserRepo,
-	)
+		c.UserService = userSvc.NewUserService(
+			c.UserRepo,
+		)
 
-	c.TransactionService = txSvc.NewTransactionService(
-		c.TransactionRepo,
-	)
+		c.TransactionService = txSvc.NewTransactionService(
+			c.TransactionRepo,
+		)
+	}
 
 	c.StripeService = stripe.NewStripeService(
 		cfg.StripeSecretKey,

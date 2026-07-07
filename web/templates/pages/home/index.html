@@ -1,0 +1,37 @@
+{{define "content"}}
+<div class="container">
+    <!-- Hero Section -->
+    <section class="hero text-center">
+        <div class="hero-content mx-auto" style="margin: 0 auto;">
+            <h1 class="hero-title">Khám phá phong cách <br><span style="color: var(--primary);">đẳng cấp của bạn</span></h1>
+            <p class="hero-subtitle">Bộ sưu tập thời trang và phụ kiện mới nhất đã cập bến. Mua sắm ngay để nhận ưu đãi đặc biệt.</p>
+            <a href="#products" class="btn btn-primary">Mua sắm ngay <i class="ph ph-arrow-right" style="margin-left: 8px;"></i></a>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="mt-8 mb-8">
+        <div class="flex justify-between items-center mb-6">
+            <h2 style="font-size: 2rem; font-weight: 700;">Sản phẩm nổi bật</h2>
+            <a href="#" style="color: var(--primary); font-weight: 600;">Xem tất cả <i class="ph ph-caret-right"></i></a>
+        </div>
+
+        <div class="grid grid-cols-4 gap-6">
+            {{range .Products}}
+            <div class="product-card">
+                <a href="/product/1" class="product-image-wrap">
+                    <img src="{{.Image}}" alt="{{.Name}}" class="product-image">
+                </a>
+                <div class="product-info">
+                    <a href="/product/1" class="product-title">{{.Name}}</a>
+                    <div class="product-meta">
+                        <span class="product-price">{{.Price}}</span>
+                        <span class="product-sold">{{.Sold}}</span>
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </section>
+</div>
+{{end}}

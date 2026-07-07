@@ -1,0 +1,91 @@
+{{define "content"}}
+<div class="container">
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        {{template "sidebar_seller" .}}
+
+        <!-- Main Content -->
+        <div class="dashboard-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 style="font-size: 1.5rem; font-weight: 700;">Quản lý Sản phẩm</h2>
+                <a href="/seller/products/add" class="btn btn-primary" style="display: inline-flex; align-items: center;"><i class="ph ph-plus" style="margin-right: 8px;"></i> Thêm sản phẩm mới</a>
+            </div>
+            
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-tabs" style="background: transparent; padding: 0; box-shadow: none;">
+                    <select class="form-input" style="width: auto; padding: 8px 16px; border-radius: var(--radius-full); font-weight: 500; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+                        <option>Tất cả trạng thái</option>
+                        <option>Đang hoạt động</option>
+                        <option>Hết hàng</option>
+                        <option>Bị khóa</option>
+                    </select>
+                </div>
+                
+                <div class="filter-actions">
+                    <select class="form-input" style="width: auto; padding: 8px 16px; border-radius: var(--radius-full);">
+                        <option>Tất cả danh mục</option>
+                        <option>Thời trang Nam</option>
+                        <option>Giày dép</option>
+                        <option>Phụ kiện</option>
+                    </select>
+                    <div class="filter-search" style="width: 250px;">
+                        <i class="ph ph-magnifying-glass"></i>
+                        <input type="text" placeholder="Tìm tên sản phẩm, SKU..." style="width: 100%;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Table -->
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Phân loại</th>
+                        <th>Giá bán</th>
+                        <th>Kho</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Products}}
+                    <tr>
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <img src="{{.Image}}" alt="{{.Name}}" style="width: 40px; height: 40px; border-radius: var(--radius-sm); object-fit: cover;">
+                                <span style="font-weight: 500; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{.Name}}</span>
+                            </div>
+                        </td>
+                        <td>{{.Category}}</td>
+                        <td style="font-weight: 600; color: var(--primary);">{{.Price}}</td>
+                        <td>
+                            {{if eq .Stock 0}}
+                                <span style="color: #EF4444; font-weight: 600;">Hết hàng</span>
+                            {{else}}
+                                {{.Stock}}
+                            {{end}}
+                        </td>
+                        <td>
+                            <div class="flex gap-2">
+                                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.875rem;"><i class="ph ph-pencil-simple"></i></button>
+                                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.875rem; color: #EF4444; border-color: #EF4444;"><i class="ph ph-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+            
+            <!-- Pagination -->
+            <div class="flex justify-center mt-6">
+                <div class="flex gap-2">
+                    <button class="btn btn-outline" style="padding: 8px 16px;"><i class="ph ph-caret-left"></i></button>
+                    <button class="btn btn-primary" style="padding: 8px 16px;">1</button>
+                    <button class="btn btn-outline" style="padding: 8px 16px;">2</button>
+                    <button class="btn btn-outline" style="padding: 8px 16px;"><i class="ph ph-caret-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

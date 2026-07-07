@@ -1,0 +1,64 @@
+{{define "content"}}
+<div class="container">
+    <div class="detail-grid">
+        <!-- Image Gallery -->
+        <div class="detail-image-gallery">
+            <img src="{{.Product.Image}}" alt="{{.Product.Name}}" class="detail-main-img">
+            <div class="grid grid-cols-4 gap-4">
+                <img src="{{.Product.Image}}" alt="Thumbnail" class="detail-main-img" style="margin-bottom: 0; cursor: pointer; border: 2px solid var(--primary);">
+                <img src="{{.Product.Image}}" alt="Thumbnail" class="detail-main-img" style="margin-bottom: 0; cursor: pointer; opacity: 0.6;">
+                <img src="{{.Product.Image}}" alt="Thumbnail" class="detail-main-img" style="margin-bottom: 0; cursor: pointer; opacity: 0.6;">
+                <img src="{{.Product.Image}}" alt="Thumbnail" class="detail-main-img" style="margin-bottom: 0; cursor: pointer; opacity: 0.6;">
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="detail-info">
+            <div class="detail-category">{{.Product.Category}}</div>
+            <h1 class="detail-title">{{.Product.Name}}</h1>
+            
+            <div class="flex items-center gap-4 mb-4">
+                <div class="flex items-center" style="color: #F59E0B;">
+                    <i class="ph-fill ph-star"></i>
+                    <i class="ph-fill ph-star"></i>
+                    <i class="ph-fill ph-star"></i>
+                    <i class="ph-fill ph-star"></i>
+                    <i class="ph-fill ph-star-half"></i>
+                </div>
+                <span style="color: var(--text-muted);">({{.Product.Reviews}} đánh giá)</span>
+                <span style="color: var(--border);">|</span>
+                <span style="color: var(--text-muted);">{{.Product.Sold}} đã bán</span>
+            </div>
+
+            <div class="detail-price">{{.Product.Price}}</div>
+            
+            <p class="detail-desc">{{.Product.Description}}</p>
+
+            <div class="mb-4">
+                <strong style="display: block; margin-bottom: 8px;">Số lượng</strong>
+                <div class="quantity-selector">
+                    <button class="qty-btn"><i class="ph ph-minus"></i></button>
+                    <input type="text" class="qty-input" value="1" readonly>
+                    <button class="qty-btn"><i class="ph ph-plus"></i></button>
+                </div>
+            </div>
+
+            <div class="detail-actions">
+                <button class="btn btn-outline" style="flex: 1;" onclick="addToCart({{.Product.ID}})"><i class="ph ph-shopping-cart" style="margin-right: 8px; font-size: 1.25rem;"></i> Thêm vào giỏ</button>
+                <a href="/checkout" class="btn btn-primary" style="flex: 1;">Mua ngay</a>
+            </div>
+
+            <div class="mt-8 pt-6" style="border-top: 1px solid var(--border);">
+                <div class="flex items-center gap-4 mb-4">
+                    <i class="ph ph-shield-check" style="font-size: 1.5rem; color: var(--secondary);"></i>
+                    <span>Shopee Đảm Bảo - Trả hàng miễn phí trong 15 ngày</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <i class="ph ph-truck" style="font-size: 1.5rem; color: var(--secondary);"></i>
+                    <span>Miễn phí vận chuyển cho đơn hàng từ 50.000đ</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}
