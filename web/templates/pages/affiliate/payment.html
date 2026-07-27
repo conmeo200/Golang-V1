@@ -1,0 +1,28 @@
+{{define "content"}}
+<div class="animate-fade-up">
+    <div class="aff-card mb-8">
+        <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--aff-text); margin-bottom: 8px;">Thanh toán & Thu nhập</h2>
+        <p style="color: var(--aff-text-muted); margin-bottom: 24px;">Kiểm tra số dư, cấu hình tài khoản ngân hàng và lịch sử rút tiền.</p>
+        
+        <div class="grid grid-cols-2 gap-6">
+            <div class="aff-card gradient-card" style="border: none;">
+                <div style="font-size: 0.875rem; font-weight: 700; text-transform: uppercase;">Số dư khả dụng</div>
+                <div style="font-size: 2.5rem; font-weight: 800; margin: 8px 0;">4.250.000đ</div>
+                <button class="btn" style="background: white; color: var(--aff-primary); padding: 8px 24px; border-radius: 100px; font-weight: 700; border: none; cursor: pointer;">Rút tiền về Ngân hàng</button>
+            </div>
+            
+            <div style="background: #F8FAFC; padding: 32px; border-radius: var(--radius-xl); border: 2px dashed rgba(0,0,0,0.05);">
+                <div style="font-size: 1.125rem; font-weight: 700; margin-bottom: 16px;">Tài khoản nhận tiền</div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div style="width: 48px; height: 48px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #1E3A8A;">VCB</div>
+                    <div>
+                        <div style="font-weight: 700;">Vietcombank</div>
+                        <div style="color: var(--aff-text-muted); font-size: 0.875rem;">**** **** 1234</div>
+                    </div>
+                </div>
+                <button class="btn" style="background: white; border: 1px solid var(--border); padding: 8px 16px; border-radius: 100px; font-weight: 600;">Thay đổi tài khoản</button>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

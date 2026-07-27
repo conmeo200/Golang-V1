@@ -22,7 +22,7 @@ func seedOrdersAndTransactions(db *gorm.DB) error {
 		{
 			UUID:           uuid.New(), // Fixed ID for seeder consistency if needed, but uuid.New() is fine
 			UserID:         admin.ID,
-			Amount:         250.50,
+			TotalAmount:    250.50,
 			Status:         "completed",
 			PaymentStatus:  "paid",
 			IdempotencyKey: "seed-order-1",
@@ -31,7 +31,7 @@ func seedOrdersAndTransactions(db *gorm.DB) error {
 		{
 			UUID:           uuid.New(),
 			UserID:         admin.ID,
-			Amount:         100.00,
+			TotalAmount:         100.00,
 			Status:         "pending",
 			PaymentStatus:  "unpaid",
 			IdempotencyKey: "seed-order-2",

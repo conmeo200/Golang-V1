@@ -1,0 +1,54 @@
+{{define "content"}}
+<div class="container">
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        {{template "sidebar_user" .}}
+
+        <!-- Main Content -->
+        <div class="dashboard-content">
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 24px;">Danh sách yêu thích của tôi</h2>
+            
+            <div class="filter-bar mb-6" style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1rem; color: var(--text-muted);">
+                    Bạn có <span style="font-weight: 700; color: var(--text);">12</span> sản phẩm trong danh sách
+                </div>
+                <div class="filter-search" style="width: 300px;">
+                    <i class="ph ph-magnifying-glass"></i>
+                    <input type="text" placeholder="Tìm trong danh sách..." style="width: 100%;">
+                </div>
+            </div>
+
+            <!-- Wishlist Grid -->
+            <div class="grid grid-cols-4 gap-4">
+                {{range $i, $e := "12345678"}}
+                <div class="product-card" style="position: relative; border: 1px solid var(--border);">
+                    <button class="btn btn-outline" style="position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; padding: 0; border-radius: 50%; z-index: 10; background: white; color: var(--primary); border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                        <i class="ph-fill ph-heart"></i>
+                    </button>
+                    <a href="/product/1" class="product-image-wrap">
+                        <img src="https://via.placeholder.com/300/f3f4f6/374151?text=Yêu+thích+{{$e}}" alt="Wishlist Product" class="product-image">
+                    </a>
+                    <div class="product-info p-3">
+                        <a href="/product/1" class="product-title" style="font-size: 0.875rem; height: 40px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">Giày thể thao nam nữ phong cách hiện đại chạy bộ êm chân mã {{$e}}</a>
+                        <div class="product-meta mt-2 mb-3">
+                            <span class="product-price" style="font-size: 1.125rem;">250.000đ</span>
+                        </div>
+                        <button class="btn btn-primary w-full" style="padding: 8px;"><i class="ph ph-shopping-cart mr-2"></i> Thêm vào giỏ</button>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+            
+            <!-- Pagination Mock -->
+            <div class="flex justify-center mt-8 mb-4">
+                <div class="flex gap-2">
+                    <button class="btn btn-outline" style="padding: 8px 16px;"><i class="ph ph-caret-left"></i></button>
+                    <button class="btn btn-primary" style="padding: 8px 16px;">1</button>
+                    <button class="btn btn-outline" style="padding: 8px 16px;">2</button>
+                    <button class="btn btn-outline" style="padding: 8px 16px;"><i class="ph ph-caret-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

@@ -1,0 +1,104 @@
+{{define "content"}}
+<div class="container">
+    <div class="flex items-center justify-between mt-8 mb-4">
+        <h1 style="font-size: 1.5rem; font-weight: 500;">Kết quả tìm kiếm cho: <span style="font-weight: 700; color: var(--primary);">"Áo thun nam"</span></h1>
+        <div class="flex items-center gap-4">
+            <span style="color: var(--text-muted);">Sắp xếp theo:</span>
+            <select class="form-input" style="width: auto; padding: 8px 16px; border-radius: var(--radius-full);">
+                <option>Liên quan nhất</option>
+                <option>Mới nhất</option>
+                <option>Bán chạy</option>
+                <option>Giá: Thấp đến Cao</option>
+                <option>Giá: Cao đến Thấp</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="category-layout">
+        <!-- Filters -->
+        <div class="filter-sidebar">
+            <div class="filter-group">
+                <div class="filter-title">Theo Danh Mục</div>
+                <label class="filter-checkbox"><input type="checkbox"> Thời trang Nam (120)</label>
+                <label class="filter-checkbox"><input type="checkbox"> Thời trang Nữ (45)</label>
+                <label class="filter-checkbox"><input type="checkbox"> Phụ kiện (12)</label>
+            </div>
+
+            <div class="filter-group">
+                <div class="filter-title">Nơi Bán</div>
+                <label class="filter-checkbox"><input type="checkbox"> TP. Hồ Chí Minh</label>
+                <label class="filter-checkbox"><input type="checkbox"> Hà Nội</label>
+                <label class="filter-checkbox"><input type="checkbox"> Đà Nẵng</label>
+            </div>
+
+            <div class="filter-group">
+                <div class="filter-title">Đánh giá</div>
+                <label class="filter-checkbox"><input type="checkbox"> Từ 4 sao trở lên</label>
+                <label class="filter-checkbox"><input type="checkbox"> Từ 3 sao trở lên</label>
+            </div>
+
+            <div class="filter-group">
+                <div class="filter-title">Khoảng giá</div>
+                <div class="flex gap-2 items-center mb-2">
+                    <input type="number" class="form-input" placeholder="Từ" style="padding: 8px;">
+                    <span>-</span>
+                    <input type="number" class="form-input" placeholder="Đến" style="padding: 8px;">
+                </div>
+                <button class="btn btn-primary w-full" style="padding: 8px;">Áp dụng</button>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="grid grid-cols-4 gap-4">
+            {{if .Products}}
+                {{range .Products}}
+                <div class="product-card bg-white hover:shadow-lg transition-shadow">
+                    <a href="/product/1" class="product-image-wrap">
+                        <img src="{{.Image}}" alt="{{.Name}}" class="product-image">
+                    </a>
+                    <div class="product-info p-3">
+                        <a href="/product/1" class="product-title" style="font-size: 0.875rem; height: 40px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{{.Name}}</a>
+                        <div class="product-meta flex justify-between items-center mt-2">
+                            <span class="product-price" style="font-size: 1.125rem;">{{.Price}}</span>
+                            <span class="product-sold" style="font-size: 0.75rem; color: var(--text-muted);">Đã bán {{.Sold}}</span>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+            {{else}}
+                <!-- Mock products -->
+                {{range $i, $e := "123456789012"}}
+                <div class="product-card bg-white hover:shadow-lg transition-shadow">
+                    <a href="/product/1" class="product-image-wrap">
+                        <img src="https://via.placeholder.com/300/f3f4f6/374151?text=Áo+thun+nam+{{$e}}" alt="Sản phẩm" class="product-image">
+                    </a>
+                    <div class="product-info p-3">
+                        <a href="/product/1" class="product-title" style="font-size: 0.875rem; height: 40px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">Áo thun nam unisex phông rộng cổ tròn vải cotton dày dặn mã {{$e}}</a>
+                        <div class="flex items-center gap-2 mt-2 mb-2" style="font-size: 0.75rem;">
+                            <span style="border: 1px solid var(--primary); color: var(--primary); padding: 2px 4px;">Freeship</span>
+                        </div>
+                        <div class="product-meta flex justify-between items-center mt-2">
+                            <span class="product-price" style="font-size: 1.125rem;">89.000đ</span>
+                            <span class="product-sold" style="font-size: 0.75rem; color: var(--text-muted);">Đã bán 5.2k</span>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+            {{end}}
+        </div>
+    </div>
+    
+    <!-- Pagination Mock -->
+    <div class="flex justify-center mt-8 mb-8">
+        <div class="flex gap-2">
+            <button class="btn btn-outline" style="padding: 8px 16px;"><i class="ph ph-caret-left"></i></button>
+            <button class="btn btn-primary" style="padding: 8px 16px;">1</button>
+            <button class="btn btn-outline" style="padding: 8px 16px;">2</button>
+            <button class="btn btn-outline" style="padding: 8px 16px;">3</button>
+            <button class="btn btn-outline" style="padding: 8px 16px;">...</button>
+            <button class="btn btn-outline" style="padding: 8px 16px;">10</button>
+            <button class="btn btn-outline" style="padding: 8px 16px;"><i class="ph ph-caret-right"></i></button>
+        </div>
+    </div>
+</div>
+{{end}}

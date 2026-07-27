@@ -1,0 +1,141 @@
+{{define "content"}}
+<div class="container">
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        {{template "sidebar_user" .}}
+
+        <!-- Main Content -->
+        <div class="dashboard-content">
+            <div class="flex justify-between items-center mb-6 pb-4" style="border-bottom: 1px solid var(--border);">
+                <div class="flex items-center gap-4">
+                    <a href="/account/orders" style="color: var(--text-muted); font-size: 1.5rem;"><i class="ph ph-arrow-left"></i></a>
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin: 0;">Chi tiết đơn hàng #DH123456789</h2>
+                </div>
+                <div style="font-size: 1.125rem;">
+                    Trạng thái: <span style="color: var(--primary); font-weight: 700; text-transform: uppercase;">Đang giao hàng</span>
+                </div>
+            </div>
+
+            <!-- Tracking Timeline -->
+            <div class="mb-8 p-6" style="background: white; border-radius: var(--radius-md); border: 1px solid var(--border);">
+                <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 24px;">Hành trình đơn hàng</h3>
+                <div style="position: relative; border-left: 2px solid var(--primary); margin-left: 12px; padding-bottom: 12px;">
+                    <!-- Timeline Item -->
+                    <div style="position: relative; padding-left: 24px; margin-bottom: 24px;">
+                        <div style="position: absolute; left: -9px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: var(--primary); border: 3px solid white; box-shadow: 0 0 0 1px var(--primary);"></div>
+                        <div style="font-weight: 600; color: var(--primary);">Đơn hàng đã đến kho phân loại Củ Chi SOC</div>
+                        <div style="color: var(--text-muted); font-size: 0.875rem; margin-top: 4px;">15:30 15/07/2026</div>
+                    </div>
+                    <!-- Timeline Item -->
+                    <div style="position: relative; padding-left: 24px; margin-bottom: 24px;">
+                        <div style="position: absolute; left: -9px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: white; border: 3px solid var(--border);"></div>
+                        <div style="font-weight: 500; color: var(--text);">Đơn hàng đã rời kho phân loại</div>
+                        <div style="color: var(--text-muted); font-size: 0.875rem; margin-top: 4px;">09:15 15/07/2026</div>
+                    </div>
+                    <!-- Timeline Item -->
+                    <div style="position: relative; padding-left: 24px; margin-bottom: 24px;">
+                        <div style="position: absolute; left: -9px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: white; border: 3px solid var(--border);"></div>
+                        <div style="font-weight: 500; color: var(--text);">Người bán đang chuẩn bị hàng</div>
+                        <div style="color: var(--text-muted); font-size: 0.875rem; margin-top: 4px;">14:20 14/07/2026</div>
+                    </div>
+                    <!-- Timeline Item -->
+                    <div style="position: relative; padding-left: 24px;">
+                        <div style="position: absolute; left: -9px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: white; border: 3px solid var(--border);"></div>
+                        <div style="font-weight: 500; color: var(--text);">Đơn hàng đã được đặt thành công</div>
+                        <div style="color: var(--text-muted); font-size: 0.875rem; margin-top: 4px;">14:15 14/07/2026</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Info Grid -->
+            <div class="grid grid-cols-2 gap-6 mb-8">
+                <!-- Address Info -->
+                <div class="p-6" style="background: white; border-radius: var(--radius-md); border: 1px solid var(--border);">
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Địa chỉ nhận hàng</h3>
+                    <div style="font-weight: 700; font-size: 1rem; margin-bottom: 8px;">Nguyễn Văn A</div>
+                    <div style="color: var(--text-muted); margin-bottom: 4px;">(+84) 912 345 678</div>
+                    <div style="color: var(--text-muted); line-height: 1.5;">Số 123 Đường Lê Lợi, Phường Bến Thành, Quận 1, TP. Hồ Chí Minh</div>
+                </div>
+                <!-- Payment & Shipping Info -->
+                <div class="p-6" style="background: white; border-radius: var(--radius-md); border: 1px solid var(--border);">
+                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">Thông tin khác</h3>
+                    <div class="flex justify-between mb-3">
+                        <span style="color: var(--text-muted);">Phương thức thanh toán:</span>
+                        <span style="font-weight: 500;">Thanh toán khi nhận hàng (COD)</span>
+                    </div>
+                    <div class="flex justify-between mb-3">
+                        <span style="color: var(--text-muted);">Đơn vị vận chuyển:</span>
+                        <span style="font-weight: 500;">Giao Hàng Nhanh</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span style="color: var(--text-muted);">Mã vận đơn:</span>
+                        <span style="font-weight: 500; color: var(--primary);">GHN987654321</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products List -->
+            <div class="p-6 mb-8" style="background: white; border-radius: var(--radius-md); border: 1px solid var(--border);">
+                <div class="flex items-center gap-2 mb-4 pb-4" style="border-bottom: 1px dashed var(--border);">
+                    <i class="ph-fill ph-storefront" style="color: var(--primary); font-size: 1.25rem;"></i>
+                    <span style="font-weight: 700; font-size: 1.125rem;">Thời Trang Nam Store</span>
+                    <button class="btn btn-outline" style="padding: 2px 8px; font-size: 0.75rem; margin-left: 8px;"><i class="ph ph-chat-circle"></i> Chat</button>
+                    <button class="btn btn-outline" style="padding: 2px 8px; font-size: 0.75rem;"><i class="ph ph-storefront"></i> Xem Shop</button>
+                </div>
+
+                <!-- Product Item -->
+                <div class="flex gap-4 mb-4 pb-4" style="border-bottom: 1px solid #f3f4f6;">
+                    <img src="https://via.placeholder.com/100" style="width: 80px; height: 80px; border-radius: 4px; border: 1px solid var(--border);">
+                    <div class="flex-1">
+                        <h4 style="font-weight: 600; font-size: 1rem; margin-bottom: 8px;">Áo thun nam polo thể thao cao cấp</h4>
+                        <div style="color: var(--text-muted); font-size: 0.875rem;">Phân loại hàng: Đen, Size L</div>
+                        <div style="font-weight: 500; margin-top: 8px;">x2</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="color: var(--text-muted); text-decoration: line-through; font-size: 0.875rem;">200.000đ</div>
+                        <div style="color: var(--primary); font-weight: 600;">150.000đ</div>
+                    </div>
+                </div>
+
+                <!-- Product Item -->
+                <div class="flex gap-4 mb-4 pb-4" style="border-bottom: 1px solid #f3f4f6;">
+                    <img src="https://via.placeholder.com/100" style="width: 80px; height: 80px; border-radius: 4px; border: 1px solid var(--border);">
+                    <div class="flex-1">
+                        <h4 style="font-weight: 600; font-size: 1rem; margin-bottom: 8px;">Quần short đùi nam đi biển</h4>
+                        <div style="color: var(--text-muted); font-size: 0.875rem;">Phân loại hàng: Xanh navy, Size L</div>
+                        <div style="font-weight: 500; margin-top: 8px;">x1</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="color: var(--primary); font-weight: 600;">120.000đ</div>
+                    </div>
+                </div>
+
+                <!-- Total summary -->
+                <div style="width: 350px; margin-left: auto;">
+                    <div class="flex justify-between mb-2">
+                        <span style="color: var(--text-muted);">Tổng tiền hàng</span>
+                        <span>420.000đ</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span style="color: var(--text-muted);">Phí vận chuyển</span>
+                        <span>30.000đ</span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span style="color: var(--text-muted);">Voucher từ Shop</span>
+                        <span style="color: #10B981;">-20.000đ</span>
+                    </div>
+                    <div class="flex justify-between pt-4 mt-4" style="border-top: 1px solid var(--border);">
+                        <span style="font-weight: 600; font-size: 1.125rem;">Thành tiền</span>
+                        <span style="font-weight: 800; font-size: 1.5rem; color: var(--primary);">430.000đ</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-right">
+                <button class="btn btn-outline mr-2">Trở lại</button>
+                <button class="btn btn-primary">Mua Lại Đơn Này</button>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

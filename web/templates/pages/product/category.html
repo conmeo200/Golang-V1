@@ -45,7 +45,7 @@
             {{range .Products}}
             <div class="product-card">
                 <a href="/product/1" class="product-image-wrap">
-                    <img src="{{.Image}}" alt="{{.Name}}" class="product-image">
+                    <img src="{{if .Image}}{{.Image}}{{else}}https://via.placeholder.com/300/f3f4f6/374151?text={{.Name}}{{end}}" alt="{{.Name}}" class="product-image">
                 </a>
                 <div class="product-info">
                     <a href="/product/1" class="product-title">{{.Name}}</a>

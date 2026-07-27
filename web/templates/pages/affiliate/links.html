@@ -1,0 +1,111 @@
+{{define "content"}}
+<div class="animate-fade-up">
+    <!-- Link Generator Widget -->
+    <div class="aff-card mb-8" style="background: white; border: 1px solid rgba(0,0,0,0.05);">
+        <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--aff-text); margin-bottom: 8px;">Tạo & Quản lý Tracking Links</h2>
+        <p style="color: var(--aff-text-muted); font-size: 1rem; margin-bottom: 32px;">Tạo liên kết tiếp thị của riêng bạn để bắt đầu kiếm hoa hồng ngay hôm nay.</p>
+        
+        <div class="flex gap-4 mb-4">
+            <input type="text" class="custom-link-input" placeholder="Dán URL sản phẩm ShopeeClone vào đây...">
+            <button class="btn-gradient">Tạo Link Mới <i class="ph-bold ph-plus"></i></button>
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="aff-card">
+        <div class="flex justify-between items-center mb-6">
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--aff-text);">Danh sách Tracking Links</h3>
+            
+            <div class="flex gap-4 items-center">
+                <div style="position: relative;">
+                    <i class="ph-bold ph-magnifying-glass" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--aff-text-muted);"></i>
+                    <input type="text" placeholder="Tìm kiếm link..." style="background: #F8FAFC; border: 1px solid rgba(0,0,0,0.05); padding: 10px 16px 10px 44px; border-radius: 100px; font-size: 0.875rem; width: 250px; outline: none; transition: 0.2s;" onfocus="this.style.background='white'; this.style.borderColor='var(--aff-primary)'" onblur="this.style.background='#F8FAFC'; this.style.borderColor='rgba(0,0,0,0.05)'">
+                </div>
+                <button style="background: white; border: 1px solid rgba(0,0,0,0.1); padding: 10px 20px; border-radius: 100px; font-weight: 700; font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='white'"><i class="ph-bold ph-funnel"></i> Lọc</button>
+            </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: separate; border-spacing: 0 8px;">
+                <thead>
+                    <tr style="color: var(--aff-text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">
+                        <th style="padding: 0 24px; font-weight: 800; text-align: left; width: 35%;">Liên kết (Short Link)</th>
+                        <th style="padding: 0 24px; font-weight: 800; text-align: left;">Sản phẩm đích</th>
+                        <th style="padding: 0 24px; font-weight: 800; text-align: right;">Lượt Click</th>
+                        <th style="padding: 0 24px; font-weight: 800; text-align: right;">Đơn hàng</th>
+                        <th style="padding: 0 24px; font-weight: 800; text-align: center;">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="table-row">
+                        <td>
+                            <div style="font-weight: 700; color: var(--aff-primary); font-size: 1rem; font-family: monospace; display: flex; align-items: center; gap: 8px;">
+                                shopee.vn/koc-dung-1
+                                <i class="ph-bold ph-copy" style="cursor: pointer; color: var(--aff-text-muted); transition: 0.2s;" onmouseover="this.style.color='var(--aff-primary)'" onmouseout="this.style.color='var(--aff-text-muted)'" title="Copy link"></i>
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--aff-text-muted); margin-top: 4px;">Tạo lúc 10/07/2026 14:30</div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 700; font-size: 1rem;">Giày Nike Air Max</div>
+                            <div style="font-size: 0.875rem; color: #10B981; font-weight: 600;">Hoa hồng 20%</div>
+                        </td>
+                        <td style="text-align: right;">
+                            <div style="font-weight: 800; font-size: 1.125rem;">1,240</div>
+                        </td>
+                        <td style="text-align: right;">
+                            <div style="font-weight: 800; font-size: 1.125rem;">45</div>
+                        </td>
+                        <td style="text-align: center;">
+                            <button style="background: rgba(15, 23, 42, 0.05); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; color: var(--aff-text);" onmouseover="this.style.background='var(--aff-primary-glow)'; this.style.color='var(--aff-primary)'" onmouseout="this.style.background='rgba(15, 23, 42, 0.05)'; this.style.color='var(--aff-text)'">
+                                <i class="ph-bold ph-qr-code" style="font-size: 1.25rem;"></i>
+                            </button>
+                            <button style="background: rgba(15, 23, 42, 0.05); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; color: var(--aff-text); margin-left: 8px;" onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'; this.style.color='#ef4444'" onmouseout="this.style.background='rgba(15, 23, 42, 0.05)'; this.style.color='var(--aff-text)'">
+                                <i class="ph-bold ph-trash" style="font-size: 1.25rem;"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    
+                    <tr class="table-row">
+                        <td>
+                            <div style="font-weight: 700; color: var(--aff-primary); font-size: 1rem; font-family: monospace; display: flex; align-items: center; gap: 8px;">
+                                shopee.vn/koc-dung-2
+                                <i class="ph-bold ph-copy" style="cursor: pointer; color: var(--aff-text-muted); transition: 0.2s;" onmouseover="this.style.color='var(--aff-primary)'" onmouseout="this.style.color='var(--aff-text-muted)'" title="Copy link"></i>
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--aff-text-muted); margin-top: 4px;">Tạo lúc 09/07/2026 09:15</div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 700; font-size: 1rem;">Tai nghe Bluetooth</div>
+                            <div style="font-size: 0.875rem; color: #10B981; font-weight: 600;">Hoa hồng 18%</div>
+                        </td>
+                        <td style="text-align: right;">
+                            <div style="font-weight: 800; font-size: 1.125rem;">850</div>
+                        </td>
+                        <td style="text-align: right;">
+                            <div style="font-weight: 800; font-size: 1.125rem;">12</div>
+                        </td>
+                        <td style="text-align: center;">
+                            <button style="background: rgba(15, 23, 42, 0.05); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; color: var(--aff-text);" onmouseover="this.style.background='var(--aff-primary-glow)'; this.style.color='var(--aff-primary)'" onmouseout="this.style.background='rgba(15, 23, 42, 0.05)'; this.style.color='var(--aff-text)'">
+                                <i class="ph-bold ph-qr-code" style="font-size: 1.25rem;"></i>
+                            </button>
+                            <button style="background: rgba(15, 23, 42, 0.05); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; color: var(--aff-text); margin-left: 8px;" onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'; this.style.color='#ef4444'" onmouseout="this.style.background='rgba(15, 23, 42, 0.05)'; this.style.color='var(--aff-text)'">
+                                <i class="ph-bold ph-trash" style="font-size: 1.25rem;"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="flex justify-between items-center mt-6 pt-6" style="border-top: 1px solid rgba(0,0,0,0.05);">
+            <div style="font-size: 0.875rem; color: var(--aff-text-muted); font-weight: 600;">Hiển thị 2 trên tổng số 15 liên kết</div>
+            <div class="flex gap-2">
+                <button style="background: white; border: 1px solid rgba(0,0,0,0.1); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: not-allowed; opacity: 0.5;"><i class="ph-bold ph-caret-left"></i></button>
+                <button style="background: var(--aff-primary); border: none; color: white; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; cursor: pointer;">1</button>
+                <button style="background: white; border: 1px solid rgba(0,0,0,0.1); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='white'">2</button>
+                <button style="background: white; border: 1px solid rgba(0,0,0,0.1); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 600; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='white'"><i class="ph-bold ph-caret-right"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

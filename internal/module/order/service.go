@@ -46,7 +46,7 @@ func (s *OrderService) CreateOrder(ctx context.Context, userID uuid.UUID, amount
 	order := &model.Order{
 		UUID:           uuid.New(),
 		UserID:         userID,
-		Amount:         amount,
+		TotalAmount:    amount,
 		Status:         "pending",
 		PaymentStatus:  "unpaid",
 		IdempotencyKey: uuid.New().String(),
@@ -77,7 +77,7 @@ func (s *OrderService) PublishOrderCreated(ctx context.Context, order *model.Ord
 		Data: dto.OrderMessage{
 			OrderUUID: order.UUID.String(),
 			UserID:    order.UserID.String(),
-			Amount:    order.Amount,
+			Amount:    order.TotalAmount,
 		},
 	}
 

@@ -14,7 +14,7 @@ type APIApp struct {
 
 func NewAPIApp(container *Container) *APIApp {
 	// Router (Gin)
-	router := handler.InitRouter()
+	router := handler.InitRouter(container.AuthService)
 	log.Println("✅ Web routes registered successfully")
 
 	server := &http.Server{

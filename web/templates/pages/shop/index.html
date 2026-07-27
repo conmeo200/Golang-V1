@@ -1,0 +1,103 @@
+{{define "content"}}
+<div class="container">
+    <!-- Shop Header Profile -->
+    <div class="mt-8 mb-6" style="background: white; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md);">
+        <!-- Shop Banner -->
+        <div style="height: 200px; background: url('https://via.placeholder.com/1200x300/374151/ffffff?text=Shop+Banner') center/cover no-repeat; position: relative;">
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 100px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);"></div>
+        </div>
+        
+        <!-- Shop Info -->
+        <div class="p-6 flex items-end gap-6" style="position: relative; margin-top: -60px;">
+            <div style="width: 120px; height: 120px; border-radius: 50%; border: 4px solid white; overflow: hidden; background: white;">
+                <img src="https://via.placeholder.com/150/f3f4f6/374151?text=Logo" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div class="flex-1 text-white pb-2">
+                <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Thời Trang Nam Store <i class="ph-fill ph-check-circle" style="color: #10B981; font-size: 1.25rem;"></i></h1>
+                <div style="font-size: 0.875rem; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">Online 5 phút trước</div>
+            </div>
+            <div class="flex gap-2 pb-2">
+                <button class="btn btn-outline" style="background: white; color: var(--text); border-color: white;"><i class="ph ph-chat-circle mr-2"></i> Chat ngay</button>
+                <button class="btn btn-primary"><i class="ph ph-plus mr-2"></i> Theo dõi</button>
+            </div>
+        </div>
+        
+        <!-- Shop Stats -->
+        <div class="flex justify-around p-4" style="border-top: 1px solid var(--border); background: #fdfdfd;">
+            <div class="text-center">
+                <div style="color: var(--text-muted); font-size: 0.875rem;">Sản phẩm</div>
+                <div style="font-weight: 700; font-size: 1.125rem; color: var(--primary);">125</div>
+            </div>
+            <div class="text-center" style="border-left: 1px solid var(--border); padding-left: 40px;">
+                <div style="color: var(--text-muted); font-size: 0.875rem;">Người theo dõi</div>
+                <div style="font-weight: 700; font-size: 1.125rem; color: var(--primary);">14.2k</div>
+            </div>
+            <div class="text-center" style="border-left: 1px solid var(--border); padding-left: 40px;">
+                <div style="color: var(--text-muted); font-size: 0.875rem;">Đánh giá</div>
+                <div style="font-weight: 700; font-size: 1.125rem; color: var(--primary);">4.9/5.0</div>
+            </div>
+            <div class="text-center" style="border-left: 1px solid var(--border); padding-left: 40px;">
+                <div style="color: var(--text-muted); font-size: 0.875rem;">Tỉ lệ phản hồi</div>
+                <div style="font-weight: 700; font-size: 1.125rem; color: var(--primary);">98%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shop Tabs -->
+    <div class="flex gap-6 mb-6" style="border-bottom: 2px solid var(--border);">
+        <a href="#" style="padding: 12px 24px; font-weight: 600; color: var(--primary); border-bottom: 2px solid var(--primary); margin-bottom: -2px;">Sản phẩm</a>
+        <a href="#" style="padding: 12px 24px; font-weight: 600; color: var(--text-muted);">Khuyến mãi</a>
+        <a href="#" style="padding: 12px 24px; font-weight: 600; color: var(--text-muted);">Danh mục</a>
+        <a href="#" style="padding: 12px 24px; font-weight: 600; color: var(--text-muted);">Đánh giá</a>
+    </div>
+
+    <div class="category-layout">
+        <!-- Shop Categories Sidebar -->
+        <div class="filter-sidebar">
+            <div class="filter-group">
+                <div class="filter-title">Danh Mục Của Shop</div>
+                <a href="#" style="display: block; padding: 8px 0; color: var(--text); font-weight: 500;">Tất cả sản phẩm</a>
+                <a href="#" style="display: block; padding: 8px 0; color: var(--text-muted); border-top: 1px dashed var(--border);">Áo thun nam (45)</a>
+                <a href="#" style="display: block; padding: 8px 0; color: var(--text-muted); border-top: 1px dashed var(--border);">Quần jean (30)</a>
+                <a href="#" style="display: block; padding: 8px 0; color: var(--text-muted); border-top: 1px dashed var(--border);">Áo sơ mi (25)</a>
+                <a href="#" style="display: block; padding: 8px 0; color: var(--text-muted); border-top: 1px dashed var(--border);">Phụ kiện (25)</a>
+            </div>
+        </div>
+
+        <!-- Shop Products Grid -->
+        <div class="grid grid-cols-4 gap-4">
+            {{if .Products}}
+                {{range .Products}}
+                <!-- Dynamic Products here -->
+                {{end}}
+            {{else}}
+                <!-- Mock products -->
+                {{range $i, $e := "123456789012"}}
+                <div class="product-card bg-white hover:shadow-lg transition-shadow">
+                    <a href="/product/1" class="product-image-wrap">
+                        <img src="https://via.placeholder.com/300/f3f4f6/374151?text=Sản+phẩm+{{$e}}" alt="Sản phẩm" class="product-image">
+                    </a>
+                    <div class="product-info p-3">
+                        <a href="/product/1" class="product-title" style="font-size: 0.875rem; height: 40px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">Sản phẩm áo nam thời trang cao cấp mã {{$e}}</a>
+                        <div class="product-meta flex justify-between items-center mt-2">
+                            <span class="product-price" style="font-size: 1.125rem;">150.000đ</span>
+                            <span class="product-sold" style="font-size: 0.75rem; color: var(--text-muted);">Đã bán 120</span>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+            {{end}}
+        </div>
+    </div>
+    
+    <!-- Pagination Mock -->
+    <div class="flex justify-center mt-8 mb-8">
+        <div class="flex gap-2">
+            <button class="btn btn-outline" style="padding: 8px 16px;"><i class="ph ph-caret-left"></i></button>
+            <button class="btn btn-primary" style="padding: 8px 16px;">1</button>
+            <button class="btn btn-outline" style="padding: 8px 16px;">2</button>
+            <button class="btn btn-outline" style="padding: 8px 16px;"><i class="ph ph-caret-right"></i></button>
+        </div>
+    </div>
+</div>
+{{end}}

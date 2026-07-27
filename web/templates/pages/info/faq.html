@@ -1,0 +1,89 @@
+{{define "content"}}
+<div class="container mt-8 mb-12">
+    <div class="text-center mb-10">
+        <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 16px;">Trung tâm Trợ giúp</h1>
+        <p style="font-size: 1.125rem; color: var(--text-muted); max-width: 600px; margin: 0 auto;">Chúng tôi có thể giúp gì cho bạn? Hãy tìm kiếm câu hỏi hoặc chọn các chủ đề bên dưới.</p>
+        
+        <div class="mt-8" style="max-width: 600px; margin: 32px auto 0; position: relative;">
+            <i class="ph ph-magnifying-glass" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 1.25rem; color: var(--text-muted);"></i>
+            <input type="text" placeholder="Nhập từ khóa tìm kiếm..." style="width: 100%; padding: 16px 16px 16px 48px; border-radius: var(--radius-full); border: 1px solid var(--border); box-shadow: var(--shadow-sm); font-size: 1rem;">
+            <button class="btn btn-primary" style="position: absolute; right: 4px; top: 4px; bottom: 4px; border-radius: var(--radius-full);">Tìm kiếm</button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-4 gap-6 mb-12">
+        <div class="p-6 text-center" style="background: white; border-radius: var(--radius-md); border: 1px solid var(--border); cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--primary)'; this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+            <i class="ph ph-package" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 16px;"></i>
+            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 8px;">Đơn hàng & Vận chuyển</h3>
+        </div>
+        <div class="p-6 text-center" style="background: white; border-radius: var(--radius-md); border: 1px solid var(--border); cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--primary)'; this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+            <i class="ph ph-arrow-counter-clockwise" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 16px;"></i>
+            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 8px;">Trả hàng & Hoàn tiền</h3>
+        </div>
+        <div class="p-6 text-center" style="background: white; border-radius: var(--radius-md); border: 1px solid var(--border); cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--primary)'; this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+            <i class="ph ph-credit-card" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 16px;"></i>
+            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 8px;">Thanh toán</h3>
+        </div>
+        <div class="p-6 text-center" style="background: white; border-radius: var(--radius-md); border: 1px solid var(--border); cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--primary)'; this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.borderColor='var(--border)'; this.style.boxShadow='none'">
+            <i class="ph ph-user" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 16px;"></i>
+            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 8px;">Tài khoản & Bảo mật</h3>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-8">
+        <div class="col-span-2">
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 24px;">Câu hỏi thường gặp</h2>
+            
+            <div style="background: white; border-radius: var(--radius-md); border: 1px solid var(--border); overflow: hidden;">
+                <!-- FAQ Item -->
+                <div style="border-bottom: 1px solid var(--border);">
+                    <div style="padding: 16px 24px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                        Thời gian giao hàng mất bao lâu? <i class="ph ph-caret-down text-muted"></i>
+                    </div>
+                    <div style="padding: 0 24px 24px; color: var(--text-muted); line-height: 1.6;">
+                        Thời gian giao hàng thường dao động từ 2-5 ngày làm việc tùy thuộc vào địa chỉ nhận hàng của bạn. Đối với các đơn hàng tại TP.HCM và Hà Nội, thời gian có thể chỉ từ 1-2 ngày.
+                    </div>
+                </div>
+                
+                <!-- FAQ Item -->
+                <div style="border-bottom: 1px solid var(--border);">
+                    <div style="padding: 16px 24px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                        Làm thế nào để đổi trả hàng? <i class="ph ph-caret-right text-muted"></i>
+                    </div>
+                </div>
+
+                <!-- FAQ Item -->
+                <div style="border-bottom: 1px solid var(--border);">
+                    <div style="padding: 16px 24px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                        Làm sao để biết kích cỡ (size) nào vừa với tôi? <i class="ph ph-caret-right text-muted"></i>
+                    </div>
+                </div>
+
+                <!-- FAQ Item -->
+                <div style="border-bottom: 1px solid var(--border);">
+                    <div style="padding: 16px 24px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                        Tôi có thể thay đổi địa chỉ nhận hàng sau khi đã đặt hàng không? <i class="ph ph-caret-right text-muted"></i>
+                    </div>
+                </div>
+
+                <!-- FAQ Item -->
+                <div>
+                    <div style="padding: 16px 24px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                        Chi phí vận chuyển được tính như thế nào? <i class="ph ph-caret-right text-muted"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-span-1">
+            <div class="p-6 text-center" style="background: var(--primary); border-radius: var(--radius-md); color: white;">
+                <i class="ph-fill ph-headset" style="font-size: 3rem; margin-bottom: 16px;"></i>
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px;">Bạn vẫn cần hỗ trợ?</h3>
+                <p style="margin-bottom: 24px; font-size: 0.875rem; opacity: 0.9;">Nhân viên CSKH của chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7.</p>
+                <button class="btn" style="background: white; color: var(--primary); font-weight: 700; width: 100%; margin-bottom: 12px;"><i class="ph-fill ph-chat-circle mr-2"></i> Chat Trực Tuyến</button>
+                <button class="btn" style="background: transparent; color: white; border: 1px solid white; font-weight: 600; width: 100%;"><i class="ph-fill ph-phone mr-2"></i> Gọi 1900 1234</button>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}

@@ -1,13 +1,23 @@
-main.go
-   ↓
-router.New()
-   ↓
-routes
-   ↓
-ServeMux
-   ↓
-handler
-   ↓
-service
-   ↓
-database
+Ghi log:   // Sử dụng buffered channel
+
+// File Service Auth
+
+  // After login -> write log
+type LogJob struct {
+    ID        string
+    Message   string
+    Timestamp time.Time
+}
+
+chLog := make(chanel LogJob, 100) // ["id", "message", "time"]
+
+chLog <- jobLog
+
+go WriteLog(chLog)
+
+// File Respository Log
+func WriteLog(chanel string) {
+    for msg := range ch {
+        logger.AppLogger.Println(msg)
+    }
+}

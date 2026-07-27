@@ -29,7 +29,7 @@
                 </a>
                 <a href="/cart" class="cart-icon" aria-label="Giỏ hàng">
                     <i class="ph ph-shopping-cart"></i>
-                    <span class="cart-badge">3</span>
+                    <span class="cart-badge" id="cart-badge" style="transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">0</span>
                 </a>
             </div>
         </div>
@@ -77,6 +77,8 @@
 
     <!-- Load custom JS -->
     <script src="/static/js/main.js"></script>
+    <script src="/static/js/cart.js"></script>
+    <script src="/static/js/validator.js"></script>
 </body>
 </html>
 {{end}}

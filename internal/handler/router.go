@@ -2,11 +2,12 @@ package handler
 
 import (
 	"github.com/conmeo200/Golang-V1/internal/handler/web"
+	"github.com/conmeo200/Golang-V1/internal/module/auth/port"
 	"github.com/gin-gonic/gin"
 )
 
 // InitRouter initializes the Gin router and registers all module routes
-func InitRouter() *gin.Engine {
+func InitRouter(authService port.AuthService) *gin.Engine {
 	r := gin.Default()
 
 	// Serve static files
@@ -18,13 +19,16 @@ func InitRouter() *gin.Engine {
 	cartHandler     := web.NewCartHandler()
 	checkoutHandler := web.NewCheckoutHandler()
 	accountHandler  := web.NewAccountHandler()
-	authHandler     := web.NewAuthHandler()
+	authHandler     := web.NewAuthHandler(authService)
 	pageHandler     := web.NewPageHandler()
+	affiliateHandler := web.NewAffiliateHandler()
 
 	// Web routes
 	
 	r.GET("/login", authHandler.Login)
+	r.POST("/login", authHandler.LoginPost)
 	r.GET("/register", authHandler.Register)
+	r.POST("/register", authHandler.RegisterPost)
 	
 	// Info pages
 	r.GET("/about", pageHandler.About)
@@ -54,6 +58,16 @@ func InitRouter() *gin.Engine {
 	r.GET("/cart", cartHandler.Index)
 	r.GET("/checkout", checkoutHandler.Index)
 	r.GET("/checkout/success", checkoutHandler.Success)
+
+	// Affiliate
+	r.GET("/affiliate/dashboard", affiliateHandler.Dashboard)
+	r.GET("/affiliate/links", affiliateHandler.Links)
+	r.GET("/affiliate/performance", affiliateHandler.Performance)
+	r.GET("/affiliate/orders", affiliateHandler.Orders)
+	r.GET("/affiliate/payment", affiliateHandler.Payment)
 	
+	// 404 Not Found
+	r.NoRoute(pageHandler.NotFound)
+
 	return r
 }

@@ -18,14 +18,14 @@
         <form action="/login" method="POST">
             <div class="form-group">
                 <label class="form-label">Email hoặc Số điện thoại</label>
-                <input type="text" class="form-input" placeholder="Nhập email/SĐT của bạn" required>
+                <input type="text" name="email" class="form-input" placeholder="Nhập email/SĐT của bạn" required>
             </div>
             <div class="form-group">
                 <div class="flex justify-between items-center mb-2">
                     <label class="form-label" style="margin-bottom: 0;">Mật khẩu</label>
                     <a href="#" style="font-size: 0.875rem; color: var(--primary); font-weight: 500;">Quên mật khẩu?</a>
                 </div>
-                <input type="password" class="form-input" placeholder="Nhập mật khẩu" required>
+                <input type="password" name="password" class="form-input" placeholder="Nhập mật khẩu" required>
             </div>
             <button type="submit" class="btn btn-primary w-full" style="padding: 16px;">Đăng nhập</button>
         </form>

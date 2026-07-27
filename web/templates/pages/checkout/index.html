@@ -37,31 +37,88 @@
             </div>
 
             <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--border); padding-top: 32px;">
+                <i class="ph ph-truck" style="color: var(--primary);"></i> Đơn vị vận chuyển
+            </h2>
+
+            <style>
+                .radio-label {
+                    border: 1px solid var(--border);
+                    background: white;
+                    transition: all 0.2s ease;
+                }
+                .radio-label:has(input[type="radio"]:checked) {
+                    border-color: var(--primary);
+                    background: rgba(79, 70, 229, 0.05);
+                }
+                .radio-label:has(input[type="radio"]:checked) .title-text {
+                    font-weight: 600;
+                }
+                .radio-label:has(input[type="radio"]:checked) i.ph {
+                    color: var(--primary) !important;
+                }
+            </style>
+
+            <div class="form-group mb-8">
+                <label class="radio-label" style="display: flex; gap: 16px; padding: 16px; border-radius: var(--radius-md); cursor: pointer; margin-bottom: 12px; align-items: flex-start;">
+                    <input type="radio" name="shipping" value="30000" checked style="width: 20px; height: 20px; accent-color: var(--primary); flex-shrink: 0; margin-top: 2px;">
+                    <div style="flex-grow: 1; width: 100%;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+                            <div class="title-text" style="font-weight: 500; line-height: 1.4;">Giao Hàng Nhanh (GHN)</div>
+                            <div style="font-weight: 700; color: var(--primary); white-space: nowrap; line-height: 1.4;">30.000đ</div>
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: 4px;">Nhận hàng vào 12 Th07 - 14 Th07</div>
+                    </div>
+                </label>
+
+                <label class="radio-label" style="display: flex; gap: 16px; padding: 16px; border-radius: var(--radius-md); cursor: pointer; margin-bottom: 12px; align-items: flex-start;">
+                    <input type="radio" name="shipping" value="25000" style="width: 20px; height: 20px; accent-color: var(--primary); flex-shrink: 0; margin-top: 2px;">
+                    <div style="flex-grow: 1; width: 100%;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+                            <div class="title-text" style="font-weight: 500; line-height: 1.4;">Viettel Post</div>
+                            <div style="font-weight: 600; white-space: nowrap; line-height: 1.4;">25.000đ</div>
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: 4px;">Nhận hàng vào 13 Th07 - 15 Th07</div>
+                    </div>
+                </label>
+
+                <label class="radio-label" style="display: flex; gap: 16px; padding: 16px; border-radius: var(--radius-md); cursor: pointer; margin-bottom: 12px; align-items: flex-start;">
+                    <input type="radio" name="shipping" value="55000" style="width: 20px; height: 20px; accent-color: var(--primary); flex-shrink: 0; margin-top: 2px;">
+                    <div style="flex-grow: 1; width: 100%;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;">
+                            <div class="title-text" style="font-weight: 500; line-height: 1.4;">Hỏa tốc (GrabExpress)</div>
+                            <div style="font-weight: 600; white-space: nowrap; line-height: 1.4;">55.000đ</div>
+                        </div>
+                        <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: 4px;">Nhận hàng trong 2 giờ</div>
+                    </div>
+                </label>
+            </div>
+
+            <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--border); padding-top: 32px;">
                 <i class="ph ph-credit-card" style="color: var(--primary);"></i> Phương thức thanh toán
             </h2>
 
             <div class="form-group">
-                <label class="flex items-center gap-4" style="padding: 16px; border: 1px solid var(--primary); border-radius: var(--radius-md); background: rgba(79, 70, 229, 0.05); cursor: pointer; margin-bottom: 12px;">
+                <label class="radio-label flex items-center gap-4" style="padding: 16px; border-radius: var(--radius-md); cursor: pointer; margin-bottom: 12px;">
                     <input type="radio" name="payment" checked style="width: 20px; height: 20px; accent-color: var(--primary);">
                     <div class="flex items-center gap-2">
-                        <i class="ph ph-money" style="font-size: 1.5rem; color: var(--primary);"></i>
-                        <span style="font-weight: 600;">Thanh toán khi nhận hàng (COD)</span>
+                        <i class="ph ph-money" style="font-size: 1.5rem; color: var(--text-muted);"></i>
+                        <span class="title-text" style="font-weight: 500;">Thanh toán khi nhận hàng (COD)</span>
                     </div>
                 </label>
 
-                <label class="flex items-center gap-4" style="padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; margin-bottom: 12px; transition: all var(--transition-fast);">
-                    <input type="radio" name="payment" style="width: 20px; height: 20px;">
+                <label class="radio-label flex items-center gap-4" style="padding: 16px; border-radius: var(--radius-md); cursor: pointer; margin-bottom: 12px;">
+                    <input type="radio" name="payment" style="width: 20px; height: 20px; accent-color: var(--primary);">
                     <div class="flex items-center gap-2">
                         <i class="ph ph-credit-card" style="font-size: 1.5rem; color: var(--text-muted);"></i>
-                        <span style="font-weight: 500;">Thẻ Tín dụng/Ghi nợ</span>
+                        <span class="title-text" style="font-weight: 500;">Thẻ Tín dụng/Ghi nợ</span>
                     </div>
                 </label>
 
-                <label class="flex items-center gap-4" style="padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; transition: all var(--transition-fast);">
-                    <input type="radio" name="payment" style="width: 20px; height: 20px;">
+                <label class="radio-label flex items-center gap-4" style="padding: 16px; border-radius: var(--radius-md); cursor: pointer; margin-bottom: 12px;">
+                    <input type="radio" name="payment" style="width: 20px; height: 20px; accent-color: var(--primary);">
                     <div class="flex items-center gap-2">
                         <img src="https://vnpay.vn/assets/images/logo-icon/logo-primary.svg" alt="VNPAY" style="height: 24px;">
-                        <span style="font-weight: 500;">Ví điện tử VNPAY</span>
+                        <span class="title-text" style="font-weight: 500;">Ví điện tử VNPAY</span>
                     </div>
                 </label>
             </div>
@@ -86,13 +143,112 @@
                 {{end}}
             </div>
 
-            <div class="summary-total" style="margin-top: 16px; padding-top: 16px;">
-                <span>Tổng thanh toán</span>
-                <span style="color: var(--primary);">{{.Total}}</span>
+            <!-- Mã khuyến mãi -->
+            <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px dashed var(--border);">
+                <label style="font-size: 0.875rem; font-weight: 600; display: block; margin-bottom: 8px;">Mã khuyến mãi</label>
+                <div class="flex gap-2">
+                    <input type="text" id="promo-code" class="form-input" placeholder="Nhập mã (VD: GIAM50K)" style="flex: 1;">
+                    <button type="button" id="apply-promo" class="btn btn-outline" style="padding: 8px 16px; white-space: nowrap;">Áp dụng</button>
+                </div>
+                <div id="promo-message" style="font-size: 0.875rem; margin-top: 8px; display: none;"></div>
             </div>
 
-            <button class="btn btn-primary w-full" style="padding: 16px; font-size: 1.125rem;">Đặt hàng</button>
+            <!-- Tính toán chi phí -->
+            <div style="margin-bottom: 16px;">
+                <div class="flex justify-between mb-3" style="font-size: 0.875rem; color: var(--text-muted);">
+                    <span>Tạm tính</span>
+                    <span id="subtotal-val">{{.Total}}</span>
+                </div>
+                <div class="flex justify-between mb-3" style="font-size: 0.875rem; color: var(--text-muted);">
+                    <span>Phí vận chuyển</span>
+                    <span id="shipping-val">30.000đ</span>
+                </div>
+                <div class="flex justify-between mb-3" style="font-size: 0.875rem; color: #10B981; display: none;" id="discount-row">
+                    <span>Giảm giá</span>
+                    <span id="discount-val">-0đ</span>
+                </div>
+            </div>
+
+            <div class="summary-total" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                <span style="font-size: 1.125rem;">Tổng thanh toán</span>
+                <span style="color: var(--primary); font-size: 1.5rem; font-weight: 800;" id="final-total">{{.Total}}</span>
+            </div>
+
+            <button class="btn btn-primary w-full mt-6" style="padding: 16px; font-size: 1.125rem;">Đặt hàng</button>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const shippingRadios = document.querySelectorAll('input[name="shipping"]');
+        const shippingValEl = document.getElementById('shipping-val');
+        const subtotalEl = document.getElementById('subtotal-val');
+        const finalTotalEl = document.getElementById('final-total');
+        const applyPromoBtn = document.getElementById('apply-promo');
+        const promoInput = document.getElementById('promo-code');
+        const discountRow = document.getElementById('discount-row');
+        const discountValEl = document.getElementById('discount-val');
+        const promoMsg = document.getElementById('promo-message');
+
+        let shippingFee = 30000;
+        let discount = 0;
+
+        // Extract subtotal from backend template render (e.g., "500.000đ" -> 500000)
+        let rawSubtotalText = subtotalEl.textContent;
+        let subtotal = parseInt(rawSubtotalText.replace(/[^0-9]/g, '')) || 0;
+
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('vi-VN').format(num) + 'đ';
+        }
+
+        function calculateTotal() {
+            const total = subtotal + shippingFee - discount;
+            shippingValEl.textContent = formatCurrency(shippingFee);
+            finalTotalEl.textContent = formatCurrency(total > 0 ? total : 0);
+            
+            if (discount > 0) {
+                discountRow.style.display = 'flex';
+                discountValEl.textContent = '-' + formatCurrency(discount);
+            } else {
+                discountRow.style.display = 'none';
+            }
+        }
+
+        shippingRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    shippingFee = parseInt(this.value);
+                    calculateTotal();
+                }
+            });
+        });
+
+        applyPromoBtn.addEventListener('click', function() {
+            const code = promoInput.value.trim().toUpperCase();
+            promoMsg.style.display = 'block';
+
+            if (code === 'GIAM50K') {
+                discount = 50000;
+                promoMsg.textContent = 'Áp dụng thành công mã giảm 50.000đ!';
+                promoMsg.style.color = '#10B981';
+            } else if (code === 'FREESHIP') {
+                discount = shippingFee; // Discount equals shipping fee
+                promoMsg.textContent = 'Áp dụng mã miễn phí vận chuyển!';
+                promoMsg.style.color = '#10B981';
+            } else if (code === '') {
+                discount = 0;
+                promoMsg.style.display = 'none';
+            } else {
+                discount = 0;
+                promoMsg.textContent = 'Mã khuyến mãi không hợp lệ hoặc đã hết hạn.';
+                promoMsg.style.color = '#ef4444';
+            }
+            calculateTotal();
+        });
+
+        // Initialize calculation on load
+        calculateTotal();
+    });
+</script>
 {{end}}

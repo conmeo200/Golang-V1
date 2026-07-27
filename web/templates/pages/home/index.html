@@ -1,36 +1,168 @@
 {{define "content"}}
 <div class="container">
-    <!-- Hero Section -->
-    <section class="hero text-center">
-        <div class="hero-content mx-auto" style="margin: 0 auto;">
-            <h1 class="hero-title">Khám phá phong cách <br><span style="color: var(--primary);">đẳng cấp của bạn</span></h1>
-            <p class="hero-subtitle">Bộ sưu tập thời trang và phụ kiện mới nhất đã cập bến. Mua sắm ngay để nhận ưu đãi đặc biệt.</p>
-            <a href="#products" class="btn btn-primary">Mua sắm ngay <i class="ph ph-arrow-right" style="margin-left: 8px;"></i></a>
+    <!-- Hero Banner Slider Mockup -->
+    <section class="hero-banner mt-4 mb-8" style="border-radius: var(--radius-lg); overflow: hidden; position: relative; background: linear-gradient(90deg, var(--primary) 0%, #ff8a00 100%); color: white; padding: 60px 40px; display: flex; align-items: center; justify-content: space-between;">
+        <div style="max-width: 50%;">
+            <span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.875rem; font-weight: 600; margin-bottom: 16px; display: inline-block;">🔥 Siêu sale tháng này</span>
+            <h1 style="font-size: 3rem; font-weight: 800; line-height: 1.2; margin-bottom: 16px;">Bộ Sưu Tập<br>Mùa Hè 2026</h1>
+            <p style="font-size: 1.125rem; margin-bottom: 24px; opacity: 0.9;">Giảm giá lên đến 50% cho tất cả các mặt hàng thời trang nam nữ. Miễn phí vận chuyển toàn quốc.</p>
+            <a href="/category" class="btn" style="background: white; color: var(--primary); font-weight: 700; padding: 12px 24px; border-radius: var(--radius-full);">Khám phá ngay</a>
+        </div>
+        <div>
+            <!-- Placeholder for banner image -->
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80" alt="Summer Sale" style="border-radius: var(--radius-md); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); width: 400px; height: 300px; object-fit: cover;">
         </div>
     </section>
 
-    <!-- Products Section -->
-    <section id="products" class="mt-8 mb-8">
+    <!-- Affiliate Banner Section -->
+    <section class="mb-10 flex items-center justify-between" style="background: linear-gradient(135deg, #FF6B00 0%, #EE4D2D 100%); border-radius: var(--radius-lg); padding: 40px; color: white; box-shadow: 0 10px 30px rgba(238, 77, 45, 0.2);">
+        <div style="max-width: 60%;">
+            <h2 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px;">Chương trình Affiliate Siêu Đỉnh 🚀</h2>
+            <p style="font-size: 1.125rem; opacity: 0.9; margin-bottom: 24px; line-height: 1.6;">Tham gia mạng lưới tiếp thị liên kết để nhận mức hoa hồng lên tới <strong style="color: #FFD700; font-size: 1.25rem;">20%</strong> cho mỗi đơn hàng thành công. Thu nhập không giới hạn!</p>
+            <div class="flex gap-4 items-center">
+                <a href="/affiliate/dashboard" class="btn" style="background: white; color: #EE4D2D; font-weight: 800; padding: 14px 32px; border-radius: 100px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 1.125rem; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    Đăng ký KOC / KOL <i class="ph-bold ph-arrow-right"></i>
+                </a>
+                <span style="font-size: 0.875rem; font-weight: 600; opacity: 0.9;"><i class="ph-fill ph-users"></i> Hơn 10.000+ KOC đang tham gia</span>
+            </div>
+        </div>
+        <div style="width: 300px; display: flex; justify-content: flex-end;">
+            <i class="ph-fill ph-rocket-launch" style="font-size: 12rem; opacity: 0.2; transform: rotate(15deg);"></i>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="mb-10">
         <div class="flex justify-between items-center mb-6">
-            <h2 style="font-size: 2rem; font-weight: 700;">Sản phẩm nổi bật</h2>
+            <h2 style="font-size: 1.5rem; font-weight: 700; text-transform: uppercase;">Danh mục nổi bật</h2>
+        </div>
+        <div class="grid grid-cols-6 gap-4 text-center">
+            <!-- Category Item -->
+            <a href="/category" class="category-item" style="display: block; padding: 16px; background: white; border-radius: var(--radius-md); border: 1px solid var(--border); transition: all 0.2s;">
+                <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&w=150&q=80" alt="Áo Nam" style="width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 12px; object-fit: cover;">
+                <span style="font-weight: 600; font-size: 0.875rem;">Thời trang Nam</span>
+            </a>
+            <!-- Category Item -->
+            <a href="/category" class="category-item" style="display: block; padding: 16px; background: white; border-radius: var(--radius-md); border: 1px solid var(--border); transition: all 0.2s;">
+                <img src="https://images.unsplash.com/photo-1515347619362-7dd0b5558120?auto=format&fit=crop&w=150&q=80" alt="Váy Nữ" style="width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 12px; object-fit: cover;">
+                <span style="font-weight: 600; font-size: 0.875rem;">Thời trang Nữ</span>
+            </a>
+            <a href="/category" class="category-item" style="display: block; padding: 16px; background: white; border-radius: var(--radius-md); border: 1px solid var(--border); transition: all 0.2s;">
+                <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=150&q=80" alt="Giày Dép" style="width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 12px; object-fit: cover;">
+                <span style="font-weight: 600; font-size: 0.875rem;">Giày Dép</span>
+            </a>
+            <a href="/category" class="category-item" style="display: block; padding: 16px; background: white; border-radius: var(--radius-md); border: 1px solid var(--border); transition: all 0.2s;">
+                <img src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=150&q=80" alt="Túi Xách" style="width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 12px; object-fit: cover;">
+                <span style="font-weight: 600; font-size: 0.875rem;">Túi Xách</span>
+            </a>
+            <a href="/category" class="category-item" style="display: block; padding: 16px; background: white; border-radius: var(--radius-md); border: 1px solid var(--border); transition: all 0.2s;">
+                <img src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=150&q=80" alt="Phụ kiện" style="width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 12px; object-fit: cover;">
+                <span style="font-weight: 600; font-size: 0.875rem;">Phụ kiện</span>
+            </a>
+            <a href="/category" class="category-item" style="display: block; padding: 16px; background: white; border-radius: var(--radius-md); border: 1px solid var(--border); transition: all 0.2s;">
+                <img src="https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=150&q=80" alt="Công nghệ" style="width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 12px; object-fit: cover;">
+                <span style="font-weight: 600; font-size: 0.875rem;">Thiết bị điện tử</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Flash Sale -->
+    <section class="mb-10" style="background: white; border-radius: var(--radius-lg); padding: 24px; border: 1px solid var(--border);">
+        <div class="flex justify-between items-center mb-6" style="border-bottom: 2px solid var(--primary); padding-bottom: 12px;">
+            <div class="flex items-center gap-4">
+                <img src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/flashsale/fb1088de81e42c4e538967ec12cb5caa.png" alt="Flash Sale" style="height: 30px;">
+                <div class="flex gap-2" style="font-size: 1.25rem; font-weight: 700; color: white;">
+                    <span style="background: black; padding: 2px 8px; border-radius: 4px;">02</span> : 
+                    <span style="background: black; padding: 2px 8px; border-radius: 4px;">45</span> : 
+                    <span style="background: black; padding: 2px 8px; border-radius: 4px;">12</span>
+                </div>
+            </div>
             <a href="#" style="color: var(--primary); font-weight: 600;">Xem tất cả <i class="ph ph-caret-right"></i></a>
         </div>
-
-        <div class="grid grid-cols-4 gap-6">
-            {{range .Products}}
-            <div class="product-card">
+        <div class="grid grid-cols-5 gap-4">
+            <!-- Flash sale items mock -->
+            {{range $i, $e := "12345"}}
+            <div class="product-card" style="position: relative;">
+                <div style="position: absolute; top: 0; right: 0; background: #FFD12A; color: #D0011B; font-weight: 700; padding: 2px 6px; font-size: 0.75rem; z-index: 10;">Giảm 50%</div>
                 <a href="/product/1" class="product-image-wrap">
-                    <img src="{{.Image}}" alt="{{.Name}}" class="product-image">
+                    <img src="https://via.placeholder.com/300/f3f4f6/374151?text=Sản+Phẩm+{{$e}}" alt="Flash Sale Product" class="product-image">
                 </a>
-                <div class="product-info">
-                    <a href="/product/1" class="product-title">{{.Name}}</a>
-                    <div class="product-meta">
-                        <span class="product-price">{{.Price}}</span>
-                        <span class="product-sold">{{.Sold}}</span>
+                <div class="product-info text-center">
+                    <div style="color: var(--primary); font-weight: 700; font-size: 1.25rem; margin-bottom: 8px;">150.000đ</div>
+                    <div style="background: #ffbaba; border-radius: 10px; height: 16px; position: relative; overflow: hidden;">
+                        <div style="background: var(--primary); width: 80%; height: 100%; position: absolute; top: 0; left: 0;"></div>
+                        <span style="position: absolute; top: 0; left: 0; right: 0; font-size: 0.7rem; color: white; line-height: 16px; font-weight: 600;">Đã bán 120</span>
                     </div>
                 </div>
             </div>
             {{end}}
+        </div>
+    </section>
+
+    <!-- Suggested Products -->
+    <section id="products" class="mb-10">
+        <div class="flex justify-between items-center mb-6" style="background: white; padding: 16px; border-radius: var(--radius-md); border-bottom: 4px solid var(--primary);">
+            <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--primary); text-transform: uppercase;">Gợi Ý Hôm Nay</h2>
+        </div>
+
+        <div class="grid grid-cols-5 gap-4">
+            <!-- Normal loop with fallback to static mock if .Products is empty -->
+            {{if .Products}}
+                {{range .Products}}
+                <div class="product-card">
+                    <a href="/product/1" class="product-image-wrap">
+                        <img src="{{if .Image}}{{.Image}}{{else}}https://via.placeholder.com/300/f3f4f6/374151?text={{.Name}}{{end}}" alt="{{.Name}}" class="product-image">
+                    </a>
+                    <div class="product-info">
+                        <a href="/product/1" class="product-title" style="height: 40px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{{.Name}}</a>
+                        <div class="flex items-center gap-2 mt-2 mb-2" style="font-size: 0.75rem;">
+                            <span style="border: 1px solid var(--primary); color: var(--primary); padding: 2px 4px;">Freeship Xtra</span>
+                        </div>
+                        <div class="product-meta flex justify-between items-end">
+                            <span class="product-price">{{.Price}}</span>
+                            <span class="product-sold" style="font-size: 0.75rem; color: var(--text-muted);">Đã bán {{.Sold}}</span>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+            {{else}}
+                <!-- Mock products if no data -->
+                {{range $i, $e := "1234567890"}}
+                <div class="product-card bg-white hover:shadow-lg transition-shadow">
+                    <a href="/product/1" class="product-image-wrap">
+                        <img src="https://via.placeholder.com/300/f3f4f6/374151?text=Gợi+ý+{{$e}}" alt="Sản phẩm" class="product-image">
+                    </a>
+                    <div class="product-info p-3">
+                        <a href="/product/1" class="product-title" style="font-size: 0.875rem; height: 40px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">Áo phông nam ngắn tay cotton thoáng mát phong cách trẻ trung thời trang mẫu {{$e}}</a>
+                        <div class="flex items-center gap-2 mt-2 mb-2" style="font-size: 0.75rem;">
+                            <span style="background: #fdf6e3; color: #ee4d2d; padding: 2px 4px;">Mall</span>
+                        </div>
+                        <div class="product-meta flex justify-between items-center mt-2">
+                            <span class="product-price" style="font-size: 1.125rem;">199.000đ</span>
+                            <span class="product-sold" style="font-size: 0.75rem; color: var(--text-muted);">Đã bán 1k</span>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+            {{end}}
+        </div>
+        <div class="text-center mt-6">
+            <button class="btn btn-outline" style="width: 300px;">Xem thêm</button>
+        </div>
+    </section>
+
+    <!-- App Download Section -->
+    <section class="mb-10 flex gap-6 items-center" style="background: white; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border);">
+        <div class="flex-1 p-10">
+            <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 16px;">Tải Ứng Dụng Ngay</h2>
+            <p style="margin-bottom: 24px; color: var(--text-muted);">Mua sắm dễ dàng, nhận ngàn ưu đãi với ứng dụng của chúng tôi. Quét mã QR hoặc tải trực tiếp từ các chợ ứng dụng.</p>
+            <div class="flex gap-4">
+                <img src="https://via.placeholder.com/150x50/000000/ffffff?text=App+Store" alt="App Store" style="border-radius: var(--radius-sm);">
+                <img src="https://via.placeholder.com/150x50/000000/ffffff?text=Google+Play" alt="Google Play" style="border-radius: var(--radius-sm);">
+            </div>
+        </div>
+        <div class="flex-1" style="text-align: right;">
+            <img src="https://via.placeholder.com/500x300/f3f4f6/374151?text=App+Mockup" alt="App Preview" style="display: inline-block;">
         </div>
     </section>
 </div>

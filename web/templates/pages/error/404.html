@@ -1,0 +1,43 @@
+{{define "content"}}
+<div class="container text-center" style="padding: 120px 20px; min-height: 70vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    
+    <!-- Animated 404 SVG Illustration -->
+    <svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 24px; animation: float 4s ease-in-out infinite;">
+        <defs>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#FF5A5F;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#FF385C;stop-opacity:1" />
+            </linearGradient>
+            <style>
+                @keyframes float {
+                    0% { transform: translateY(0px); }
+                    50% { transform: translateY(-15px); }
+                    100% { transform: translateY(0px); }
+                }
+                .hover-scale { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+                .hover-scale:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(255, 56, 92, 0.3); }
+            </style>
+        </defs>
+        <text x="150" y="140" font-family="'Inter', sans-serif" font-size="120" font-weight="900" fill="url(#grad1)" text-anchor="middle" letter-spacing="-5">404</text>
+        <circle cx="150" cy="150" r="40" fill="none" stroke="rgba(255, 56, 92, 0.2)" stroke-width="4" />
+        <circle cx="150" cy="150" r="50" fill="none" stroke="rgba(255, 56, 92, 0.1)" stroke-width="2" />
+        <path d="M 120 180 Q 150 200 180 180" fill="none" stroke="rgba(255, 56, 92, 0.5)" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+
+    <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text-dark, #111827); margin-bottom: 12px; font-family: 'Inter', sans-serif;">
+        Oops! Lạc đường mất rồi.
+    </h1>
+    <p style="font-size: 1.125rem; color: var(--text-muted, #6B7280); max-width: 480px; margin: 0 auto 32px; line-height: 1.6;">
+        Trang bạn đang tìm kiếm có vẻ đã bị di dời, xóa bỏ hoặc không bao giờ tồn tại. Đừng lo, hãy cùng chúng tôi quay về nhà nhé!
+    </p>
+    
+    <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+        <a href="/" class="btn hover-scale" style="background: linear-gradient(135deg, #FF5A5F 0%, #FF385C 100%); color: white; padding: 14px 32px; font-weight: 600; border-radius: 99px; text-decoration: none; display: flex; align-items: center; border: none; font-size: 1rem;">
+            <i class="ph-bold ph-house" style="margin-right: 8px; font-size: 1.25rem;"></i> Quay Về Trang Chủ
+        </a>
+        <a href="/faq" class="btn" style="background: white; color: #374151; padding: 14px 32px; font-weight: 600; border-radius: 99px; text-decoration: none; display: flex; align-items: center; border: 1px solid #E5E7EB; font-size: 1rem; transition: all 0.3s ease;" onmouseover="this.style.borderColor='#FF5A5F'; this.style.color='#FF5A5F';" onmouseout="this.style.borderColor='#E5E7EB'; this.style.color='#374151';">
+            <i class="ph-bold ph-lifebuoy" style="margin-right: 8px; font-size: 1.25rem;"></i> Cần Trợ Giúp?
+        </a>
+    </div>
+</div>
+{{end}}

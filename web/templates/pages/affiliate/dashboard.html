@@ -1,0 +1,216 @@
+{{define "content"}}
+<div class="animate-fade-up">
+    <!-- Top Stats -->
+    <div class="aff-grid-4 mb-8">
+        <div class="aff-card flex items-center gap-6">
+            <div class="stat-badge" style="background: rgba(16, 185, 129, 0.1); color: #10B981;">
+                <i class="ph-fill ph-cursor-click"></i>
+            </div>
+            <div>
+                <div class="stat-label">LƯỢT CLICK</div>
+                <div class="stat-value">12,450</div>
+                <div style="font-size: 0.875rem; color: #10B981; font-weight: 700;"><i class="ph-bold ph-trend-up"></i> +15.2%</div>
+            </div>
+        </div>
+        
+        <div class="aff-card flex items-center gap-6">
+            <div class="stat-badge" style="background: rgba(59, 130, 246, 0.1); color: #3B82F6;">
+                <i class="ph-fill ph-shopping-bag"></i>
+            </div>
+            <div>
+                <div class="stat-label">ĐƠN HÀNG</div>
+                <div class="stat-value">342</div>
+                <div style="font-size: 0.875rem; color: #3B82F6; font-weight: 700;"><i class="ph-bold ph-trend-up"></i> +8.4%</div>
+            </div>
+        </div>
+        
+        <div class="aff-card flex items-center gap-6">
+            <div class="stat-badge" style="background: rgba(245, 158, 11, 0.1); color: #F59E0B;">
+                <i class="ph-fill ph-percent"></i>
+            </div>
+            <div>
+                <div class="stat-label">CHUYỂN ĐỔI</div>
+                <div class="stat-value">2.74%</div>
+                <div style="font-size: 0.875rem; color: #F59E0B; font-weight: 700;"><i class="ph-bold ph-minus"></i> 0.0%</div>
+            </div>
+        </div>
+
+        <div class="aff-card gradient-card flex flex-col justify-center" style="border: none; padding: 24px 32px;">
+            <div style="position: relative; z-index: 10;">
+                <div style="font-size: 0.875rem; font-weight: 700; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px;">Hoa hồng chờ rút</div>
+                <div style="font-size: 2.5rem; font-weight: 800; margin: 4px 0 12px 0; letter-spacing: -1px;">4.250k</div>
+                <button style="background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.5); color: white; padding: 8px 20px; border-radius: 100px; font-weight: 700; font-size: 0.875rem; cursor: pointer; backdrop-filter: blur(8px); transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.1);" onmouseover="this.style.background='rgba(255,255,255,0.35)'" onmouseout="this.style.background='rgba(255,255,255,0.25)'">
+                    Rút tiền ngay <i class="ph-bold ph-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="aff-grid-3 mb-8">
+        <!-- Smart Link Generator -->
+        <div class="aff-card aff-col-2" style="position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px;">
+                <div>
+                    <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; color: var(--aff-text);">Tạo Tracking Link</h3>
+                    <p style="color: var(--aff-text-muted); font-size: 1rem;">Dán URL bất kỳ của hệ thống vào đây để tạo link chia sẻ nhận hoa hồng.</p>
+                </div>
+                <div style="background: rgba(238, 77, 45, 0.1); border: 1px solid rgba(238, 77, 45, 0.2); color: var(--aff-primary); padding: 8px 16px; border-radius: 100px; font-weight: 700; font-size: 0.875rem; display: flex; align-items: center; gap: 6px;">
+                    <i class="ph-fill ph-identification-badge"></i> ID: KOC-TAN-DUNG
+                </div>
+            </div>
+            
+            <div class="flex gap-4 mb-8">
+                <input type="text" id="origin-url" class="custom-link-input" placeholder="Ví dụ: https://shopeeclone.vn/product/123...">
+                <button class="btn-gradient" onclick="generateLink()">Tạo Link <i class="ph-bold ph-magic-wand"></i></button>
+            </div>
+            
+            <div id="result-box" style="background: #F8FAFC; padding: 24px; border-radius: var(--radius-xl); border: 2px dashed rgba(0,0,0,0.08); display: none; animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+                <div style="font-size: 0.875rem; color: var(--aff-text-muted); font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">Link liên kết của bạn:</div>
+                <div class="flex justify-between items-center bg-white p-3 rounded-full shadow-sm border border-gray-100 pl-6">
+                    <span id="generated-link" style="font-family: 'SF Mono', Consolas, monospace; color: var(--aff-text); font-weight: 600; font-size: 1.125rem;"></span>
+                    <button style="background: var(--aff-primary); color: white; border: none; padding: 12px 32px; border-radius: 100px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px;" onclick="copyLink()" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        Sao chép <i class="ph-bold ph-copy"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trending Campaigns -->
+        <div class="aff-card">
+            <div class="flex justify-between items-center mb-6">
+                <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--aff-text);">🔥 Top Hoa Hồng</h3>
+                <div style="background: #F1F5F9; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='var(--aff-primary-glow)'; this.style.color='var(--aff-primary)'" onmouseout="this.style.background='#F1F5F9'; this.style.color='inherit'">
+                    <i class="ph-bold ph-arrow-right"></i>
+                </div>
+            </div>
+            
+            <div class="flex flex-col gap-6">
+                <!-- Item 1 -->
+                <div class="flex gap-4 items-center group cursor-pointer">
+                    <div style="width: 72px; height: 72px; border-radius: 16px; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;" class="group-hover:scale-110">
+                    </div>
+                    <div style="flex-grow: 1;">
+                        <div style="font-size: 1rem; font-weight: 800; color: var(--aff-text); margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">Giày Nike Air Max 2026</div>
+                        <div style="font-size: 0.875rem; color: var(--aff-text-muted); font-weight: 500;">Giá: 2.500.000đ</div>
+                    </div>
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #10B981; padding: 6px 12px; border-radius: 100px; font-weight: 800; font-size: 0.875rem;">
+                        20%
+                    </div>
+                </div>
+                
+                <!-- Item 2 -->
+                <div class="flex gap-4 items-center group cursor-pointer">
+                    <div style="width: 72px; height: 72px; border-radius: 16px; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;" class="group-hover:scale-110">
+                    </div>
+                    <div style="flex-grow: 1;">
+                        <div style="font-size: 1rem; font-weight: 800; color: var(--aff-text); margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">Apple Watch Series 8</div>
+                        <div style="font-size: 0.875rem; color: var(--aff-text-muted); font-weight: 500;">Giá: 8.900.000đ</div>
+                    </div>
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #10B981; padding: 6px 12px; border-radius: 100px; font-weight: 800; font-size: 0.875rem;">
+                        15%
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="flex gap-4 items-center group cursor-pointer">
+                    <div style="width: 72px; height: 72px; border-radius: 16px; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;" class="group-hover:scale-110">
+                    </div>
+                    <div style="flex-grow: 1;">
+                        <div style="font-size: 1rem; font-weight: 800; color: var(--aff-text); margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">Tai nghe Sony XM5</div>
+                        <div style="font-size: 0.875rem; color: var(--aff-text-muted); font-weight: 500;">Giá: 6.200.000đ</div>
+                    </div>
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #10B981; padding: 6px 12px; border-radius: 100px; font-weight: 800; font-size: 0.875rem;">
+                        18%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="aff-card">
+        <div class="flex justify-between items-center mb-8">
+            <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--aff-text);">Giao dịch phát sinh</h3>
+            <div class="flex gap-3">
+                <button style="background: white; border: 1px solid rgba(0,0,0,0.1); padding: 10px 20px; border-radius: 100px; font-weight: 700; font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='white'"><i class="ph-bold ph-funnel"></i> Lọc dữ liệu</button>
+                <button style="background: rgba(238, 77, 45, 0.1); border: none; padding: 10px 20px; border-radius: 100px; font-weight: 800; color: var(--aff-primary); font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;" onmouseover="this.style.background='rgba(238, 77, 45, 0.15)'" onmouseout="this.style.background='rgba(238, 77, 45, 0.1)'"><i class="ph-bold ph-file-csv"></i> Xuất CSV</button>
+            </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: separate; border-spacing: 0 8px;">
+                <thead>
+                    <tr style="color: var(--aff-text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">
+                        <th style="padding: 0 24px; font-weight: 800; text-align: left;">Mã đơn</th>
+                        <th style="padding: 0 24px; font-weight: 800; text-align: left;">Sản phẩm</th>
+                        <th style="padding: 0 24px; font-weight: 800; text-align: left;">Thời gian</th>
+                        <th style="padding: 0 24px; font-weight: 800; text-align: right;">Giá trị</th>
+                        <th style="padding: 0 24px; font-weight: 800; color: var(--aff-primary); text-align: right;">Hoa hồng</th>
+                        <th style="padding: 0 24px; font-weight: 800; text-align: center;">Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="table-row">
+                        <td style="font-weight: 700; font-family: monospace; font-size: 1rem;">#ORD-99812</td>
+                        <td style="font-weight: 700; font-size: 1rem;">Giày Nike Air Max</td>
+                        <td style="color: var(--aff-text-muted); font-size: 0.875rem; font-weight: 500;">Vừa xong</td>
+                        <td style="font-weight: 700; text-align: right; font-size: 1rem;">2.500.000đ</td>
+                        <td style="font-weight: 800; color: var(--aff-primary); text-align: right; font-size: 1.125rem;">+375.000đ</td>
+                        <td style="text-align: center;">
+                            <span style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); color: #10B981; padding: 6px 16px; border-radius: 100px; font-weight: 800; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 4px;"><i class="ph-fill ph-check-circle"></i> Đã duyệt</span>
+                        </td>
+                    </tr>
+                    
+                    <tr class="table-row">
+                        <td style="font-weight: 700; font-family: monospace; font-size: 1rem;">#ORD-99815</td>
+                        <td style="font-weight: 700; font-size: 1rem;">Tai nghe Bluetooth</td>
+                        <td style="color: var(--aff-text-muted); font-size: 0.875rem; font-weight: 500;">2 giờ trước</td>
+                        <td style="font-weight: 700; text-align: right; font-size: 1rem;">1.200.000đ</td>
+                        <td style="font-weight: 800; color: var(--aff-primary); text-align: right; font-size: 1.125rem;">+240.000đ</td>
+                        <td style="text-align: center;">
+                            <span style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); color: #F59E0B; padding: 6px 16px; border-radius: 100px; font-weight: 800; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 4px;"><i class="ph-fill ph-clock"></i> Chờ đối soát</span>
+                        </td>
+                    </tr>
+                    
+                    <tr class="table-row">
+                        <td style="font-weight: 700; font-family: monospace; font-size: 1rem;">#ORD-99820</td>
+                        <td style="font-weight: 700; font-size: 1rem;">Đồng hồ Apple Watch</td>
+                        <td style="color: var(--aff-text-muted); font-size: 0.875rem; font-weight: 500;">Hôm qua</td>
+                        <td style="font-weight: 700; text-align: right; font-size: 1rem;">8.900.000đ</td>
+                        <td style="font-weight: 800; color: var(--aff-text-muted); text-align: right; text-decoration: line-through; font-size: 1.125rem;">890.000đ</td>
+                        <td style="text-align: center;">
+                            <span style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; padding: 6px 16px; border-radius: 100px; font-weight: 800; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 4px;"><i class="ph-fill ph-x-circle"></i> Đã hủy</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function generateLink() {
+        const url = document.getElementById('origin-url').value;
+        if(!url) {
+            alert("Vui lòng nhập URL sản phẩm!");
+            return;
+        }
+        
+        const affiliateId = 'koc-tan-dung';
+        const link = url + (url.includes('?') ? '&' : '?') + 'ref=' + affiliateId;
+        
+        document.getElementById('generated-link').textContent = link;
+        document.getElementById('result-box').style.display = 'block';
+    }
+    
+    function copyLink() {
+        const text = document.getElementById('generated-link').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Đã copy link thành công! Bạn có thể dán lên Facebook/TikTok.');
+        });
+    }
+</script>
+{{end}}

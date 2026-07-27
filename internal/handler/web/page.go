@@ -75,3 +75,16 @@ func (h *PageHandler) Promotions(c *gin.Context) {
 	}
 	tmpl.ExecuteTemplate(c.Writer, "base", data)
 }
+
+func (h *PageHandler) NotFound(c *gin.Context) {
+	data := map[string]interface{}{
+		"Title": "404 - Không tìm thấy trang",
+	}
+	tmpl, err := template.ParseFiles("web/templates/layouts/base.html", "web/templates/pages/error/404.html")
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Error parsing template")
+		return
+	}
+	c.Status(http.StatusNotFound)
+	tmpl.ExecuteTemplate(c.Writer, "base", data)
+}

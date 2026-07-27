@@ -30,7 +30,7 @@ func ToOrderResponse(order *model.Order) OrderResponse {
 	return OrderResponse{
 		UUID:           order.UUID.String(),
 		UserID:         order.UserID.String(),
-		Amount:         order.Amount,
+		Amount:         order.TotalAmount,
 		Status:         order.Status,
 		PaymentStatus:  order.PaymentStatus,
 		IdempotencyKey: order.IdempotencyKey,

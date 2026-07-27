@@ -32,5 +32,25 @@ func Migrate(db *gorm.DB) error {
 		&model.ArticleStats{},
 		&model.ArticleViewLog{},
 		&model.ArticleVersion{},
+		// E-commerce Multi-vendor & Products
+		&model.Shop{},
+		&model.ShopAddress{},
+		&model.ProductCategory{},
+		&model.Product{},
+		&model.ProductVariant{},
+		&model.ProductImage{},
+		// Inventory
+		&model.Inventory{},
+		&model.InventoryLog{},
+		// Cart & Checkout
+		&model.Cart{},
+		&model.CartItem{},
+		&model.ShippingAddress{},
+		// Order Items (Order is already registered above)
+		&model.OrderItem{},
+		// Affiliate
+		&model.AffiliateProfile{},
+		&model.AffiliateLink{},
+		&model.AffiliateCommission{},
 	)
 }
